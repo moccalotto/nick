@@ -1,0 +1,22 @@
+if @_rand <= 0.5
+    init W60/H20/R.31       # Yields one-to-two room caves
+    			    # width 60, height 20, 31% random dots
+else
+    if @_rand <= 0.5
+        init W60/H20/R.39   # Yields complex caves
+    		            # width 60, height 20, 39% random dots
+    else
+        init W20/H20/R.31   # Yield one room caves
+    		            # width 20, height 20, 31% random dots
+    endif
+endif
+border 1                    # create a 1-cell border along the edges of the work-area
+evolve B5678/S345678
+egress random;              # create a random entrence.
+evolve B5678/S345678
+loop 2
+    scale 2
+    evolve B5678/S5678      # edge smoother
+endloop
+## evolve B05678/S05678 # This automaton is good for drawing edges.
+## evolve B012345/S012345 # Running an "inverse" automaton inverses the map
