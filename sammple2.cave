@@ -1,29 +1,23 @@
-; The Cave Assembly Language.
+$smoother = B5678/S5678
+evolve    = B5678/S345678
 
-SEED 42         ; Seed the RNG with the number 42
-
-INIT 60, 45     ; Create a 60x45 map
-
-SNOW 0.45       ; cover with 45% randomly distributed living cells
-
-SET.S @Rules,    "B3/S23"   ; Assign the string "B2/S23" to the variable @Rules
-SET.S @Foo,      @Rules     ; Assign the string "B2/S23" to the variable @Foo
-SET.I @Meaning,  42         ; Assign the integer 42 to the variable @Meaning
-SET.F @MeaningF, @Meaning   ; Assign the float 42.0 to the variable @MeaningF
-
-ADD.F @MeaningF, 1.0        ; Add 1.0 to @MeaningF so it is now 43.0
-
-RAND.F @MyFloat,    0.0, 0.5     ; @MyFloat is now set to a number [0.0, 0.5)
-RAND.I @Iterations, 10, @Meaning ; @Iterations is not set to a number [10, 42)
-
-LOOP @Iterations
-    LOG "Loop is %d", @@LOOP
-    IF @@RandF < 0.5
-        EVOLVE @Rules
-    ELIF @@RandF < 0.5
-        EVOLVE "B1234/S"
-    ELSE
-        LOG "we didn't do any initial evolving"
-        # Dont do anything
-    END
-END
+if @_rand <= 0.5
+    init W60/H20            # Yields one-to-two room caves
+    snow 0.31
+elseif @_rand <= 0.5
+    init W60/H20            # Yields complex caves
+    snow 0.39               # width 60, height 20, 39% random dots
+else
+    init W20/H20/R.31       # Yield one room caves
+    snow 0.31               # width 20, height 20, 31% random dots
+endif
+border 1                    # create a 1-cell border along the edges of the work-area
+evolve $cave
+egress random               # create a random entrence.
+evolve $cave
+loop 2
+        scale 2
+        evolve $smoother
+endloop
+## evolve B05678/S05678     # This automaton is good for strengthening edges.
+## evolve B012345/S012345   # Running an "inverse" automaton inverses the map
