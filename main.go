@@ -4,6 +4,7 @@ import (
 	tm "github.com/buger/goterm"
 	"github.com/moccaloto/nick/field"
 	Mod "github.com/moccaloto/nick/field/modifiers"
+	"github.com/moccaloto/nick/field/printers"
 	"math/rand"
 	"time"
 )
@@ -30,7 +31,7 @@ func main() {
 		f.Apply(gameOfLife)
 		tm.Clear()
 		tm.MoveCursor(1, 1)
-		tm.Println(f.ToText())
+		tm.Println(printers.Text(f))
 		tm.Println(gameOfLife.String())
 		tm.Flush()
 		time.Sleep(100 * time.Millisecond)
