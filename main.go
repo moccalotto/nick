@@ -18,7 +18,7 @@ func makeField() *field.Field {
 	// r := Mod.NewAutomaton("B36/S125")      // 2x2 CA
 	// r := Mod.NewAutomaton("B2/S")          // Seeds CA
 	f.Apply(Mod.NewSnow(0.4))
-	// f.Apply(Mod.NewBorderSnow(0.5))
+	f.Apply(Mod.NewBorder())
 	// f.Apply(Mod.NewEgress(Mod.NorthWest, 13).WithThickness(0))
 	f.Apply(Mod.NewEgress(Mod.Random, 9).WithThickness(1))
 	f.Apply(Mod.NewEgress(Mod.Random, 5).WithThickness(2))
