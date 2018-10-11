@@ -9,11 +9,13 @@ evolve 				ABC
 kim    FOO 		BAR		# comment that will be stripped but stored
 		mov    eax ebx
 
+
+# ÆØÅUUU
 `
 
 func TestScriptToInstructions(t *testing.T) {
 	m := MachineFromScript(script)
-	s := m.tape
+	s := m.Tape
 
 	x := []Instruction{
 		Instruction{
@@ -46,24 +48,24 @@ func TestScriptToInstructions(t *testing.T) {
 	for i, xInstr := range x {
 		sInstr := s[i]
 
-		if sInstr.cmd != xInstr.cmd {
-			t.Errorf("Expected instruction %d to be »%s«, but it was »%s«", i, xInstr.cmd, sInstr.cmd)
+		if sInstr.Cmd != xInstr.Cmd {
+			t.Errorf("Expected instruction %d to be »%s«, but it was »%s«", i, xInstr.Cmd, sInstr.Cmd)
 		}
 
-		if len(xInstr.args) != len(sInstr.args) {
+		if len(xInstr.Args) != len(sInstr.Args) {
 			t.Errorf(
-				"Expected instruction %d (%s) to have %d args, but it had %d",
-				i, 
-				xInstr.cmd,
-				len(xInstr.args),
-				len(sInstr.args),
+				"Expected instruction %d (%s) to have %d Args, but it had %d",
+				i,
+				xInstr.Cmd,
+				len(xInstr.Args),
+				len(sInstr.Args),
 			)
 			continue
 		}
 
-		for j, xArg := range sInstr.args {
+		for j, xArg := range sInstr.Args {
 
-			sArg := sInstr.args[j]
+			sArg := sInstr.Args[j]
 
 			if sArg != xArg {
 				t.Errorf(
