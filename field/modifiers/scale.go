@@ -2,33 +2,42 @@ package modifiers
 
 import (
 	"github.com/moccaloto/nick/field"
+	"math"
 )
 
 // Randomly bring cells to life.
 // Each cell has aliveProbability chance to be born.
 // NOTE: cells do not die via this method, they are only brought to life.
-type Snow struct {
-	Probability float64
-	Alive       bool
+
+type Scale struct {
+	x, y float64
 }
 
-func NewSnow(p float64) *Snow {
-	return &Snow{p, true}
+func NewScale(f float64) *Scale {
+	return &Scale{f, f}
 }
 
-// The snow will now add dead cells instead of living cells
-func (s *Snow) Inverted(dead bool) *Snow {
-	return &Snow{
-		s.Probability,
-		!dead,
-	}
+func NewScaleXY(x, y float64) *Scale {
+	return &Scale{x, y}
 }
 
 // Rain living or dead snow onto the given field.
-func (s *Snow) ApplyToField(f *field.Field) {
-	NewRect(0, 0, f.Width()-1, f.Height()-1).
-		WithSnow(s.Probability).
-		ApplyToField(f)
+func (s *Scale) ApplyToField(f *field.Field) {
+	nw := int(math.Round(float64(f.Width()) * s.x))
+	nh := int(math.Round(float64(f.Height()) * s.y))
+	tmp := field.NewField(nw, nh)
+
+	for y := 0; y < nh; y++ {
+		_y := int(math.Round(float64(y) / s.y))
+		for x := 0; x < nw; x++ {
+			_x := int(math.Round(float64(x) / s.x))
+			if f.Alive(_x, _y) {
+				tmp.Set(x, y, true)
+			}
+		}
+	}
+
+	f.SetCells(tmp.Cells())
 }
 
 /* TODO

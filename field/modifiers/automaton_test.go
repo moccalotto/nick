@@ -6,7 +6,7 @@ import (
 )
 
 func TestNextCellState(t *testing.T) {
-	ca := NewAutomaton("B0/S")	// rules that inverses
+	ca := NewAutomaton("B0/S") // rules that inverses
 	f := field.NewField(3, 3)
 
 	f.Set(0, 0, true)
@@ -21,7 +21,7 @@ func TestNextCellState(t *testing.T) {
 				continue
 			}
 			if ca.NextCellState(f, i, j) == true {
-				t.Errorf("NextCellState(%d,%d) != %v", i,j, true)
+				t.Errorf("NextCellState(%d,%d) != %v", i, j, true)
 			}
 		}
 	}

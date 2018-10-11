@@ -19,22 +19,20 @@ func NewField(w, h int) *Field {
 	return &Field{s, w, h}
 }
 
-
 func (f *Field) Apply(m Modifier) {
 	m.ApplyToField(f)
 }
 
-
 // Set sets the state of the specified cell to the given value.
 func (f *Field) Set(x, y int, b bool) {
-	f.s[(y + f.h) % f.h][(x + f.h % f.h)] = b
+	f.s[(y+f.h)%f.h][(x + f.h%f.h)] = b
 }
 
 // Alive reports whether the specified cell is alive.
 // If the x or y coordinates are outside the field boundaries they are wrapped
 // toroidally. For instance, an x value of -1 is treated as width-1.
 func (f *Field) Alive(x, y int) bool {
-	return f.s[(y + f.h) % f.h][(x + f.w) % f.w]
+	return f.s[(y+f.h)%f.h][(x+f.w)%f.w]
 }
 
 func (f *Field) Width() int {
@@ -51,19 +49,21 @@ func (f *Field) Cells() [][]bool {
 
 func (f *Field) SetCells(s [][]bool) {
 	f.s = s
+	f.h = len(s)
+	f.w = len(s[0])
 }
 
 func (f *Field) NeighbourCount(x, y int) int {
 	neighbourCount := 0
 
 	// Check neighbours above
-	for _x := x-1; _x <= x+1; _x++ {
+	for _x := x - 1; _x <= x+1; _x++ {
 		if f.Alive(_x, y-1) {
 			neighbourCount++
 		}
 	}
 	// Check neighbours on the line below
-	for _x := x-1; _x <= x+1; _x++ {
+	for _x := x - 1; _x <= x+1; _x++ {
 		if f.Alive(_x, y+1) {
 			neighbourCount++
 		}

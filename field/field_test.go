@@ -20,7 +20,7 @@ func TestNewField(t *testing.T) {
 	for i := 0; i < 3; i++ {
 		for j := 0; j < 3; j++ {
 			if f.s[i][j] == true {
-				t.Errorf("Cell %d,%d != %v", i,j, false)
+				t.Errorf("Cell %d,%d != %v", i, j, false)
 			}
 		}
 	}
@@ -41,7 +41,7 @@ func TestSet(t *testing.T) {
 				continue
 			}
 			if f.s[i][j] == true {
-				t.Errorf("Cell %d,%d != %v", i,j, false)
+				t.Errorf("Cell %d,%d != %v", i, j, false)
 			}
 		}
 	}
@@ -62,7 +62,7 @@ func TestAlive(t *testing.T) {
 				continue
 			}
 			if f.Alive(i, j) == true {
-				t.Errorf("Alive(%d,%d) != %v", i,j, false)
+				t.Errorf("Alive(%d,%d) != %v", i, j, false)
 			}
 		}
 	}

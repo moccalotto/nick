@@ -2,16 +2,16 @@ package modifiers
 
 import (
 	"github.com/moccaloto/nick/field"
+	"regexp"
 	"strconv"
 	"strings"
-	"regexp"
 )
 
 // Automaton for evolving a field.
 type Automaton struct {
 	// lookup tables
-	B [9]bool	// if B[X] is true, it means that a cell will be born if it has X neighbours
-	S [9]bool	// if S[X] is true, it means that a cell will survive if it has X neighbours
+	B [9]bool // if B[X] is true, it means that a cell will be born if it has X neighbours
+	S [9]bool // if S[X] is true, it means that a cell will survive if it has X neighbours
 }
 
 // Create new Automaton
@@ -25,7 +25,7 @@ func NewAutomaton(str string) *Automaton {
 
 	re := regexp.MustCompile("^B([0-9]*)/S([0-9]*)$")
 	matches := re.FindStringSubmatch(str)
-	if (len(matches) != 3) {
+	if len(matches) != 3 {
 		// TODO: correct error handling.
 		panic("Bad Rule-String")
 	}
@@ -33,16 +33,16 @@ func NewAutomaton(str string) *Automaton {
 	bDigits := strings.Split(matches[1], "")
 	sDigits := strings.Split(matches[2], "")
 
-	for _, digit := range(bDigits) {
-		v,e := strconv.Atoi(digit)
-		if (e != nil) {
+	for _, digit := range bDigits {
+		v, e := strconv.Atoi(digit)
+		if e != nil {
 			panic(e)
 		}
 		_b[v] = true
 	}
-	for _, digit := range(sDigits) {
-		v,e := strconv.Atoi(digit)
-		if (e != nil) {
+	for _, digit := range sDigits {
+		v, e := strconv.Atoi(digit)
+		if e != nil {
 			panic(e)
 		}
 		_s[v] = true
