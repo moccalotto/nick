@@ -17,7 +17,7 @@ func main() {
 	// r := Mod.NewAutomaton("B35678/S5678")  // []int{3, 5, 6, 7, 8}, []int{5, 6, 7, 8}) // Diamoeba CA
 	// r := Mod.NewAutomaton("B36/S125")      // 2x2 CA
 	// r := Mod.NewAutomaton("B2/S")          // Seeds CA
-	f.Seed(0.0)
+	f.Apply(Mod.NewSnow(0.1))
 
 	// glider
 	f.Set(3, 1, true)

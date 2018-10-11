@@ -6,6 +6,10 @@ type Field struct {
 	w, h int
 }
 
+type Modifier interface {
+	ApplyToField(f *Field)
+}
+
 // NewField returns an empty field of the specified width and height.
 func NewField(w, h int) *Field {
 	s := make([][]bool, h)
@@ -14,6 +18,12 @@ func NewField(w, h int) *Field {
 	}
 	return &Field{s, w, h}
 }
+
+
+func (f *Field) Apply(m Modifier) {
+	m.ApplyToField(f)
+}
+
 
 // Set sets the state of the specified cell to the given value.
 func (f *Field) Set(x, y int, b bool) {

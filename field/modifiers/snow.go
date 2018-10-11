@@ -1,15 +1,38 @@
-package field
+package modifiers
 
-import "math/rand"
+import (
+	"math/rand"
+	"github.com/moccaloto/nick/field"
+)
+
 
 // Randomly bring cells to life.
 // Each cell has aliveProbability chance to be born.
 // NOTE: cells do not die via this method, they are only brought to life.
-func (f *Field) Seed(aliveProbability float64) {
-	for y := 0; y < f.h; y++ {
-		for x := 0; x < f.w; x++ {
-			if rand.Float64() < aliveProbability {
-				f.Set(x, y, true)
+
+type Snow struct {
+	probability float64
+	alive       bool
+}
+
+func NewSnow(p float64) *Snow {
+	return &Snow{p, true}
+}
+
+// The snow will now add dead cells instead of living cells
+func (s *Snow) Inverse() *Snow {
+	return &Snow{
+		s.probability,
+		!s.alive,
+	}
+}
+
+// Rain living or dead snow onto the given field.
+func (s *Snow) ApplyToField(f *field.Field) {
+	for y := 0; y < f.Height(); y++ {
+		for x := 0; x < f.Width(); x++ {
+			if rand.Float64() < s.probability {
+				f.Set(x, y, s.alive)
 			}
 		}
 	}
