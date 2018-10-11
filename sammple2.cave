@@ -1,0 +1,29 @@
+; The Cave Assembly Language.
+
+SEED 42         ; Seed the RNG with the number 42
+
+INIT 60, 45     ; Create a 60x45 map
+
+SNOW 0.45       ; cover with 45% randomly distributed living cells
+
+SET.S @Rules,    "B3/S23"   ; Assign the string "B2/S23" to the variable @Rules
+SET.S @Foo,      @Rules     ; Assign the string "B2/S23" to the variable @Foo
+SET.I @Meaning,  42         ; Assign the integer 42 to the variable @Meaning
+SET.F @MeaningF, @Meaning   ; Assign the float 42.0 to the variable @MeaningF
+
+ADD.F @MeaningF, 1.0        ; Add 1.0 to @MeaningF so it is now 43.0
+
+RAND.F @MyFloat,    0.0, 0.5     ; @MyFloat is now set to a number [0.0, 0.5)
+RAND.I @Iterations, 10, @Meaning ; @Iterations is not set to a number [10, 42)
+
+LOOP @Iterations
+    LOG "Loop is %d", @@LOOP
+    IF @@RandF < 0.5
+        EVOLVE @Rules
+    ELIF @@RandF < 0.5
+        EVOLVE "B1234/S"
+    ELSE
+        LOG "we didn't do any initial evolving"
+        # Dont do anything
+    END
+END

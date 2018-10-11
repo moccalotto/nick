@@ -67,25 +67,3 @@ func TestAlive(t *testing.T) {
 		}
 	}
 }
-
-func TestNextCellState(t *testing.T) {
-	r := NewRules("B0/S")	// rules that inverses
-	f := NewField(3, 3)
-
-	f.Set(0, 0, true)
-
-	if f.NextCellState(0, 0, r) == true {
-		t.Errorf("NextCellState(0,0) != %v", false)
-	}
-	for i := 0; i < 3; i++ {
-		for j := 0; j < 3; j++ {
-			if i == 0 && j == 0 {
-				// we already tested (0, 0)
-				continue
-			}
-			if f.NextCellState(i, j, r) == true {
-				t.Errorf("NextCellState(%d,%d) != %v", i,j, true)
-			}
-		}
-	}
-}

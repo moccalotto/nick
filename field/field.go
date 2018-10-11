@@ -27,38 +27,47 @@ func (f *Field) Alive(x, y int) bool {
 	return f.s[(y + f.h) % f.h][(x + f.w) % f.w]
 }
 
-// Next returns the state of the specified cell at the next time step.
-func (f *Field) NextCellState(x, y int, r *Rules) bool {
-	// Count the adjacent cells that are alive.
-	neighbourCount := 0
-
-	// TODO: optimize.
-	// 	Inspect the entire "line" of 3 cells above the current cell in one go.
-	//	Inspect the entire "line" of 3 cells below the current cell in one go.
-	//	Inspect left neighbour.
-	//	Inspect right neighbour.
-	for i := -1; i <= 1; i++ {
-		for j := -1; j <= 1; j++ {
-			if (j != 0 || i != 0) && f.Alive(x+i, y+j) {
-				neighbourCount++
-			}
-		}
-	}
-
-	return r.NextCellState(
-		f.Alive(x, y),
-		neighbourCount,
-	)
+func (f *Field) Width() int {
+	return f.w
 }
 
-func (f *Field) Evolve(r *Rules) *Field {
-	next := NewField(f.w, f.h)
+func (f *Field) Height() int {
+	return f.h
+}
 
-	for x := 0; x < f.w; x++ {
-		for y := 0; y < f.w; y++ {
-			next.Set(x, y, f.NextCellState(x, y, r))
+func (f *Field) Cells() [][]bool {
+	return f.s
+}
+
+func (f *Field) SetCells(s [][]bool) {
+	f.s = s
+}
+
+func (f *Field) NeighbourCount(x, y int) int {
+	neighbourCount := 0
+
+	// Check neighbours above
+	for _x := x-1; _x <= x+1; _x++ {
+		if f.Alive(_x, y-1) {
+			neighbourCount++
+		}
+	}
+	// Check neighbours on the line below
+	for _x := x-1; _x <= x+1; _x++ {
+		if f.Alive(_x, y+1) {
+			neighbourCount++
 		}
 	}
 
-	return next
+	// Check neighbour to the left
+	if f.Alive(x-1, y) {
+		neighbourCount++
+	}
+
+	// Check neighbourCount to the right
+	if f.Alive(x+1, y) {
+		neighbourCount++
+	}
+
+	return neighbourCount
 }
