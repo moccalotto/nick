@@ -14,12 +14,19 @@ type Instruction struct {
 	Comment string
 }
 
+// This entire state is pushed whenever we enter a control structure
+type MachineState struct {
+	PC    int           // program counter
+	Last  int           // Last address (differs from PC-1 when inside IF statements and LOOPs)
+	Loop  int	    // Loop Counter (used to count iterations inside iterators)
+	Cond  bool          // condition bit (did last comparison succeed)
+	Vars  map<string>string  // Map of variables set inside the program
+}
+
 type Machine struct {
 	Field *F.Field      // field to populate
 	Stack *S.Stack      // Stack used for nesting and looping
-	PC    int           // program counter
-	Last  int           // Last address (differs from PC-1 when inside IF statements and LOOPs)
-	Cond  bool          // condition bit (did last comparison succeed)
+	State *MachineState // The current state of the machine
 	Tape  []Instruction // the entire program
 	Trace []int         // trace of executed instructions
 }
@@ -27,9 +34,7 @@ type Machine struct {
 func MachineFromScript(p string) *Machine {
 	return &Machine{
 		Stack: S.New(),
-		PC:    0,
-		Last:  0,
-		Cond:  false,
+		State: &MachineState{},
 		Tape:  ScriptToInstructions(p),
 	}
 }

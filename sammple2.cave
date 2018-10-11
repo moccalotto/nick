@@ -1,14 +1,14 @@
-$smoother = B5678/S5678
-evolve    = B5678/S345678
+set smoother B5678/S5678
+set evolve   B5678/S345678
 
-if @_rand <= 0.5
+if @rand <= 0.5
     init W60/H20            # Yields one-to-two room caves
     snow 0.31
-elseif @_rand <= 0.5
+elseif @rand <= 0.5
     init W60/H20            # Yields complex caves
     snow 0.39               # width 60, height 20, 39% random dots
 else
-    init W20/H20/R.31       # Yield one room caves
+    init W20/H20            # Yield one room caves
     snow 0.31               # width 20, height 20, 31% random dots
 endif
 border 1                    # create a 1-cell border along the edges of the work-area
