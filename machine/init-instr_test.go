@@ -2,12 +2,12 @@ package machine
 
 import "testing"
 
-func TestHandleInitInstructionOK(t *testing.T) {
-	script = `init 20x30`
+func TestInit(t *testing.T) {
+	script := `init 20x30`
 
 	m := MachineFromScript(script)
 
-	HandleInitInstruction(m, m.Tape[0].Args)
+	Init(m)
 
 	if m.Field.Width() != 20 {
 		t.Errorf("Expected width to be 20, but it was %d", m.Field.Width())
@@ -17,8 +17,8 @@ func TestHandleInitInstructionOK(t *testing.T) {
 	}
 }
 
-func TestHandleInitInstructionTooManyArgs(t *testing.T) {
-	script = `init 10 20`
+func TestInitTooManyArgs(t *testing.T) {
+	script := `init 10 20`
 
 	m := MachineFromScript(script)
 
@@ -34,11 +34,11 @@ func TestHandleInitInstructionTooManyArgs(t *testing.T) {
 		}
 	}()
 
-	HandleInitInstruction(m, m.Tape[0].Args)
+	Init(m)
 }
 
-func TestHandleInitInstructionMalformedArg(t *testing.T) {
-	script = `init 10X20`
+func TestInitMalformedArg(t *testing.T) {
+	script := `init 10X20`
 
 	m := MachineFromScript(script)
 
@@ -54,11 +54,11 @@ func TestHandleInitInstructionMalformedArg(t *testing.T) {
 		}
 	}()
 
-	HandleInitInstruction(m, m.Tape[0].Args)
+	Init(m)
 }
 
-func TestHandleInitInstructionCalledTwice(t *testing.T) {
-	script = `init 10x20`
+func TestInitCalledTwice(t *testing.T) {
+	script := `init 10x20`
 
 	m := MachineFromScript(script)
 
@@ -74,6 +74,6 @@ func TestHandleInitInstructionCalledTwice(t *testing.T) {
 		}
 	}()
 
-	HandleInitInstruction(m, m.Tape[0].Args)
-	HandleInitInstruction(m, m.Tape[0].Args) // this time it should crash!
+	Init(m)
+	Init(m) // this time it should crash!
 }

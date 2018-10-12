@@ -4,9 +4,9 @@ import (
 	"errors"
 	"github.com/golang-collections/collections/stack"
 	"github.com/op/go-logging"
+	"os"
 	"regexp"
 	"strings"
-	"os"
 )
 
 var log = logging.MustGetLogger("logger")
@@ -18,9 +18,9 @@ func DefaultExceptionHandler(m *Machine, msg interface{}, a ...interface{}) {
 
 func MachineFromScript(p string) *Machine {
 	return &Machine{
-		Stack: stack.New(),
-		State: &MachineState{},
-		Tape:  scriptToInstructions(p),
+		Stack:     stack.New(),
+		State:     &MachineState{},
+		Tape:      scriptToInstructions(p),
 		Exception: DefaultExceptionHandler,
 	}
 }

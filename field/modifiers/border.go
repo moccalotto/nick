@@ -13,18 +13,6 @@ func NewBorder() *Border {
 	return &Border{1, true}
 }
 
-func (b *Border) WithThickness(t int) *Border {
-	return &Border{t, b.Alive}
-}
-
-// The snow will now add dead cells instead of living cells
-func (b *Border) Inverted(dead bool) *Border {
-	return &Border{
-		b.Thickness,
-		!dead,
-	}
-}
-
 func (b *Border) ApplyToField(f *field.Field) {
 	w := f.Width()
 	h := f.Height()

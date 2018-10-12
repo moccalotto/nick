@@ -5,11 +5,30 @@ import (
 	"github.com/moccaloto/nick/field"
 	Mod "github.com/moccaloto/nick/field/modifiers"
 	"github.com/moccaloto/nick/field/printers"
+	"github.com/moccaloto/nick/machine"
 	"math/rand"
 	"time"
 )
 
 func makeField() *field.Field {
+	m := machine.MachineFromScript(`
+		init 20x20
+		snow 0.4
+		evolve B5678/S345678
+		scale 2
+		evolve B5678/S345678
+		scale 2
+		evolve B5678/S5678
+		scale 2
+		evolve B5678/S5678
+		scale 2
+		evolve B5678/S5678
+	`)
+
+	m.Execute()
+
+	return m.Field
+
 	f := field.NewField(40, 20)
 	// flip := Mod.NewAutomaton("B0/S") 	  // Flip
 	// r := Mod.NewAutomaton("B3/S23") 	  // Conway game of life rules
@@ -20,9 +39,9 @@ func makeField() *field.Field {
 	f.Apply(Mod.NewSnow(0.4))
 	f.Apply(Mod.NewBorder())
 	// f.Apply(Mod.NewEgress(Mod.NorthWest, 13).WithThickness(0))
-	f.Apply(Mod.NewEgress(Mod.Random, 9).WithThickness(1))
-	f.Apply(Mod.NewEgress(Mod.Random, 5).WithThickness(2))
-	f.Apply(Mod.NewEgress(Mod.Random, 1).WithThickness(3))
+	// f.Apply(Mod.NewEgress(Mod.Random, 9).WithThickness(1))
+	// f.Apply(Mod.NewEgress(Mod.Random, 5).WithThickness(2))
+	// f.Apply(Mod.NewEgress(Mod.Random, 1).WithThickness(3))
 
 	f.Apply(Mod.NewAutomaton("B5678/S345678"))
 	f.Apply(Mod.NewAutomaton("B5678/S345678"))

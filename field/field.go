@@ -35,6 +35,10 @@ func (f *Field) Alive(x, y int) bool {
 	return f.s[(y+f.h)%f.h][(x+f.w)%f.w]
 }
 
+func (f *Field) Dead(x, y int) bool {
+	return !f.Alive(x, y)
+}
+
 func (f *Field) Width() int {
 	return f.w
 }

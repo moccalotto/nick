@@ -5,37 +5,23 @@ import (
 )
 
 type HLine struct {
-	StartX      int
-	StartY      int
-	Length      int
-	Probability float64
-	Thickness   int
-	Alive       bool
+	StartX    int
+	StartY    int
+	Length    int
+	Coverage  float64
+	Thickness int
+	Alive     bool
 }
 
 func NewHLine(startX, startY, length int) *HLine {
 	return &HLine{
-		StartX:      startX,
-		StartY:      startY,
-		Length:      length,
-		Probability: 1.0,
-		Thickness:   1,
-		Alive:       true,
+		StartX:    startX,
+		StartY:    startY,
+		Length:    length,
+		Coverage:  1.0,
+		Thickness: 1,
+		Alive:     true,
 	}
-}
-
-func (b *HLine) WithThickness(t int) *HLine {
-	tmp := *b
-	tmp.Thickness = t
-
-	return &tmp
-}
-
-func (b *HLine) WithSnow(probability float64) *HLine {
-	tmp := *b
-	tmp.Probability = probability
-
-	return &tmp
 }
 
 // The snow will now add dead cells instead of living cells
@@ -55,7 +41,7 @@ func (b *HLine) ToRect() *Rect {
 	)
 
 	r.Alive = b.Alive
-	r.Probability = b.Probability
+	r.Coverage = b.Coverage
 
 	return r
 }

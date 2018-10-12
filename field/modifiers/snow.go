@@ -5,30 +5,23 @@ import (
 )
 
 // Randomly bring cells to life.
-// Each cell has aliveProbability chance to be born.
-// NOTE: cells do not die via this method, they are only brought to life.
+// Each cell has »Coverage« chance to be born.
+// NOTE: cells do not die via this method, they are only brought to Coverage.
 type Snow struct {
-	Probability float64
-	Alive       bool
+	Coverage float64
+	Alive    bool
 }
 
 func NewSnow(p float64) *Snow {
 	return &Snow{p, true}
 }
 
-// The snow will now add dead cells instead of living cells
-func (s *Snow) Inverted(dead bool) *Snow {
-	return &Snow{
-		s.Probability,
-		!dead,
-	}
-}
-
 // Rain living or dead snow onto the given field.
 func (s *Snow) ApplyToField(f *field.Field) {
-	NewRect(0, 0, f.Width()-1, f.Height()-1).
-		WithSnow(s.Probability).
-		ApplyToField(f)
+	r := NewRect(0, 0, f.Width()-1, f.Height()-1)
+	r.Coverage = s.Coverage
+	r.Alive = s.Alive
+	r.ApplyToField(f)
 }
 
 /* TODO

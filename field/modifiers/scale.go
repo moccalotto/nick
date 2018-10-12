@@ -5,10 +5,6 @@ import (
 	"math"
 )
 
-// Randomly bring cells to life.
-// Each cell has aliveProbability chance to be born.
-// NOTE: cells do not die via this method, they are only brought to life.
-
 type Scale struct {
 	x, y float64
 }

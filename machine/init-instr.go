@@ -5,11 +5,14 @@ import (
 	"regexp"
 )
 
-func HandleInitInstruction(m *Machine, args []string) {
-	m.Assert(m.Field == nil, "You cannot call 'init' more than once!")
-	m.Assert(len(args) == 1, "'init' instruction must have exactly 1 argument, but it was given %d", len(args))
+func init() {
+	InstructionHandlers["init"] = Init
+}
 
-	arg0 := m.MustGetString(args[0])
+func Init(m *Machine) {
+	m.Assert(m.Field == nil, "You cannot call 'init' more than once!")
+
+	arg0 := m.ArgAsString(0)
 	nums := regexp.MustCompile(`^(\d+)x(\d+)$`).FindStringSubmatch(arg0)
 
 	m.Assert(
