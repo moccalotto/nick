@@ -20,6 +20,7 @@ type Machine struct {
 	Tape      []Instruction    // the entire program
 	Trace     []int            // trace of executed instructions
 	Exception ExceptionHandler // Exception Handler
+	Vars 	  map[string]string // Map of variables set inside the program
 }
 
 var InstructionHandlers map[string]InstructionHandler = make(map[string]InstructionHandler)
@@ -49,10 +50,11 @@ func (m *Machine) StrToFloat(s string) float64 {
 }
 
 func (m *Machine) MustGetVar(id string) string {
-	if val, ok := m.State.Vars[id]; ok {
-		return val
-	}
-	panic("DAFUQ MAYN: var " + id + " does not exist!")
+	val, ok := m.Vars[id]
+
+	m.Assert(ok, "The variable '%s' was referenced, but does not exist", id)
+
+	return val
 }
 
 func (m *Machine) getInterpolatedValue(s string) string {
@@ -69,6 +71,12 @@ func (m *Machine) MustGetString(s string) string {
 	// They could then be registered on runtime.
 	if s == "@rand" {
 		return strconv.FormatFloat(rand.Float64(), 'E', -1, 64)
+	}
+	if s == "@pc" {
+		return strconv.Itoa(m.State.PC)
+	}
+	if s == "@loop" {
+		return strconv.Itoa(m.State.Loop)
 	}
 
 	if !strings.HasPrefix(s, "$") {
@@ -119,13 +127,6 @@ func (m *Machine) ArgAsFloat(n int) float64 {
 	}
 	return m.StrToFloat(s)
 }
-
-func (m *Machine) Execute() {
-	for m.State.PC = 0; m.State.PC < len(m.Tape); m.State.PC++ {
-		m.execCurrentInstruction()
-	}
-}
-
 // Number of args for the current instruction
 func (m *Machine) ArgCount() int {
 	return len(m.CurrentInstruction().Args)
@@ -135,6 +136,26 @@ func (m *Machine) ArgCount() int {
 func (m *Machine) HasArg(n int) bool {
 	return m.ArgCount() > n
 }
+
+// Push the entire state into the stack
+func (m *Machine) PushState() {
+	m.Stack.Push(m.State)
+}
+
+func (m *Machine) PopState() {
+	m.State = m.Stack.Pop().(*MachineState)
+}
+
+func (m *Machine) PeekState() *MachineState {
+	return m.Stack.Peek().(*MachineState)
+}
+
+func (m *Machine) Execute() {
+	for m.State.PC = 0; m.State.PC < len(m.Tape); m.State.PC++ {
+		m.execCurrentInstruction()
+	}
+}
+
 
 func (m *Machine) execCurrentInstruction() {
 	i := m.Tape[m.State.PC]

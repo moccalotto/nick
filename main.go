@@ -12,20 +12,22 @@ import (
 
 func makeField() *field.Field {
 	m := machine.MachineFromScript(`
-		init 40 x 40
-		snow 40%
-		evolve B5678/S345678
-		scale 1.3
-		snow 0.1 (dead)
-		evolve B5678/S345678
-		scale 150% x 270%
-		evolve B5678/S5678
-		scale 2.7 x 1.5
-		evolve B5678/S5678
-		scale 2.3
-		evolve B5678/S5678
-		evolve B5678/S5678
-		evolve B5678/S5678
+		init 50 x 40		# new canvas
+		snow 40%		# add 40% snow
+		evolve B5678/S345678	# run standard escavator
+		scale 1.3		# scale up by 30%
+		snow 0.1 (dead)		# add 10% holes
+		evolve B5678/S345678	# run standard escavator
+		scale 150% x 270%	# scale up
+		evolve B5678/S5678	# run edge smoother
+		scale 2.7 x 1.5		# scale up
+		evolve B5678/S5678	# run edge smoother
+		scale 2.3		# scape up
+		loop 2
+			log kim er sej
+			evolve B5678/S5678	# run edge smoother
+			exit
+		endloop
 	`)
 
 	m.Execute()
