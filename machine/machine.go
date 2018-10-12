@@ -113,10 +113,11 @@ func (m *Machine) ArgAsInt(n int) int {
 }
 
 func (m *Machine) ArgAsFloat(n int) float64 {
-	// TODO:
-	// Consider allowing percentages.
-	// For instance: 85% would be converted to 0.85
-	return m.StrToFloat(m.ArgAsString(n))
+	s := m.ArgAsString(n)
+	if strings.HasSuffix(s, "%") {
+		return m.StrToFloat(s[:len(s)-1]) / 100.0
+	}
+	return m.StrToFloat(s)
 }
 
 func (m *Machine) Execute() {
@@ -125,11 +126,14 @@ func (m *Machine) Execute() {
 	}
 }
 
+// Number of args for the current instruction
+func (m *Machine) ArgCount() int {
+	return len(m.CurrentInstruction().Args)
+}
+
 // Does the current instruction have at least n+1 argmments
 func (m *Machine) HasArg(n int) bool {
-	instr := m.CurrentInstruction()
-
-	return len(instr.Args) > n
+	return m.ArgCount() > n
 }
 
 func (m *Machine) execCurrentInstruction() {

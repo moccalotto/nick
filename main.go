@@ -12,16 +12,19 @@ import (
 
 func makeField() *field.Field {
 	m := machine.MachineFromScript(`
-		init 20x20
-		snow 0.4
+		init 40 x 40
+		snow 40%
 		evolve B5678/S345678
-		scale 2
+		scale 1.3
+		snow 0.1 (dead)
 		evolve B5678/S345678
-		scale 2
+		scale 150% x 270%
 		evolve B5678/S5678
-		scale 2
+		scale 2.7 x 1.5
 		evolve B5678/S5678
-		scale 2
+		scale 2.3
+		evolve B5678/S5678
+		evolve B5678/S5678
 		evolve B5678/S5678
 	`)
 

@@ -1,9 +1,6 @@
 package machine
 
-import (
-	"github.com/moccaloto/nick/field"
-	"regexp"
-)
+import "github.com/moccaloto/nick/field"
 
 func init() {
 	InstructionHandlers["init"] = Init
@@ -12,18 +9,10 @@ func init() {
 func Init(m *Machine) {
 	m.Assert(m.Field == nil, "You cannot call 'init' more than once!")
 
-	arg0 := m.ArgAsString(0)
-	nums := regexp.MustCompile(`^(\d+)x(\d+)$`).FindStringSubmatch(arg0)
-
-	m.Assert(
-		len(nums) == 3,
-		"Invalid argument for 'init'. Must be [number]x[number], but it was '%s' (%+v)",
-		arg0,
-		nums,
-	)
+	m.Assert(m.ArgAsString(1) == "x", "Args for 'init' must be [number] x [number]")
 
 	m.Field = field.NewField(
-		m.StrToInt(nums[1]),
-		m.StrToInt(nums[2]),
+		m.ArgAsInt(0),
+		m.ArgAsInt(2),
 	)
 }
