@@ -1,20 +1,26 @@
-set smoother B5678/S5678
-set evolve   B5678/S345678
+set $smoother B5678/S5678
+set $carver   B5678/S345678
 
-if @rand <= 0.5
-    init W60/H20            # Yields one-to-two room caves
-    snow 0.31
-elseif @rand <= 0.5
-    init W60/H20            # Yields complex caves
-    snow 0.39               # width 60, height 20, 39% random dots
+if @rand < 0.5
+    # Caves with 1 or two rooms
+    set $size 60x20
+    set $snow 0.31
+elseif @rand < 0.5
+    # Complex caves
+    set $size 60x20
+    set $snow 0.39
 else
-    init W20/H20            # Yield one room caves
-    snow 0.31               # width 20, height 20, 31% random dots
+    # Caves with one room
+    set $size 20x20
+    set $snow 0.31
 endif
+
+init $size
+snow $snow
 border 1                    # create a 1-cell border along the edges of the work-area
-evolve $cave
+evolve $carver
 egress random               # create a random entrence.
-evolve $cave
+evolve $carver
 loop 2
         scale 2
         evolve $smoother
