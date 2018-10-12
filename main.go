@@ -24,9 +24,9 @@ func makeField() *field.Field {
 		evolve B5678/S5678	# run edge smoother
 		scale 2.3		# scape up
 		loop 2
-			log kim er sej
+			log Loop: @loop
 			evolve B5678/S5678	# run edge smoother
-			exit
+			exit			# exit - so the loop only runs once
 		endloop
 	`)
 

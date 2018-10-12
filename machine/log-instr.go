@@ -9,6 +9,9 @@ func init() {
 
 // TODO: this should log via the machine. The machine should have a mechanism for outputting log commands.
 func Log(m *Machine) {
-	instr := m.CurrentInstruction()
-	L.Printf("LOG: %s (%+v)", strings.Join(instr.Args, " "), m)
+	buf := make([]string, m.ArgCount())
+	for n := 0; n < m.ArgCount(); n++ {
+		buf[n] = m.ArgAsString(n)
+	}
+	L.Printf("LOG: %s", strings.Join(buf, " "))
 }
