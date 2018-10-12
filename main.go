@@ -12,22 +12,21 @@ import (
 
 func makeField() *field.Field {
 	m := machine.MachineFromScript(`
-		init 50 x 40		# new canvas
-		snow 40%		# add 40% snow
+		init 25 x 20		# new canvas
+		snow 31%		# add 40% snow
+		border 1		# Add a 1-cell border all the way around
 		evolve B5678/S345678	# run standard escavator
-		scale 1.3		# scale up by 30%
-		snow 0.1 (dead)		# add 10% holes
-		evolve B5678/S345678	# run standard escavator
-		scale 150% x 270%	# scale up
-		evolve B5678/S5678	# run edge smoother
-		scale 2.7 x 1.5		# scale up
-		evolve B5678/S5678	# run edge smoother
-		scale 2.3		# scape up
-		loop 2
-			log Loop: @loop
+		loop 3
+			scale 1.75		# scale up by 50% in both directions
+			evolve B5678/S345678	# run standard escavator
+			evolve B5678/S345678	# run standard escavator
+		endloop 
+		loop 3
+			scale 1.75
 			evolve B5678/S5678	# run edge smoother
-			exit			# exit - so the loop only runs once
 		endloop
+		evolve B05678/S05678     # This automaton is good for strengthening edges.
+		evolve B012345/S012345   # Running an "inverse" automaton inverses the map
 	`)
 
 	m.Execute()
