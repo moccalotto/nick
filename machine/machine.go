@@ -3,7 +3,6 @@ package machine
 import (
 	"github.com/golang-collections/collections/stack"
 	"github.com/moccalotto/nick/field"
-	"log"
 	"math/rand"
 	"regexp"
 	"strconv"
@@ -142,13 +141,11 @@ func (m *Machine) HasArg(n int) bool {
 // Push the entire state into the stack
 func (m *Machine) PushState() {
 	m.Stack.Push(*m.State)
-	log.Printf("Pushed: %#v", m.State)
 }
 
 func (m *Machine) PopState() {
 	tmp := m.Stack.Pop().(MachineState)
 	m.State = &tmp
-	log.Printf("Popped: %#v", m.State)
 }
 
 func (m *Machine) PeekState() *MachineState {
@@ -164,8 +161,6 @@ func (m *Machine) Execute() {
 
 func (m *Machine) execCurrentInstruction() {
 	i := m.Tape[m.State.PC]
-
-	log.Println(m.State.PC)
 
 	handler, ok := InstructionHandlers[i.Cmd]
 
