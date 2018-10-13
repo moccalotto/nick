@@ -20,6 +20,8 @@ func EndLoop(m *Machine) {
 		m.State.PC = m.State.Return
 		return
 	}
+	next := m.State.PC
 
 	m.PopState()
+	m.State.PC = next
 }

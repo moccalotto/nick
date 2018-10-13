@@ -3,6 +3,7 @@ package machine
 import (
 	"github.com/golang-collections/collections/stack"
 	"github.com/moccalotto/nick/field"
+	"log"
 	"math/rand"
 	"regexp"
 	"strconv"
@@ -14,13 +15,13 @@ type ExceptionHandler func(m *Machine, msg interface{}, a ...interface{})
 type InstructionHandler func(m *Machine)
 
 type Machine struct {
-	Field     *field.Field     // field to populate
-	Stack     *stack.Stack     // Stack used for nesting and looping
-	State     *MachineState    // The current state of the machine
-	Tape      []Instruction    // the entire program
-	Trace     []int            // trace of executed instructions
-	Exception ExceptionHandler // Exception Handler
-	Vars 	  map[string]string // Map of variables set inside the program
+	Field     *field.Field      // field to populate
+	Stack     *stack.Stack      // Stack used for nesting and looping
+	State     *MachineState     // The current state of the machine
+	Tape      []Instruction     // the entire program
+	Trace     []int             // trace of executed instructions
+	Exception ExceptionHandler  // Exception Handler
+	Vars      map[string]string // Map of variables set inside the program
 }
 
 var InstructionHandlers map[string]InstructionHandler = make(map[string]InstructionHandler)
@@ -52,13 +53,13 @@ func (m *Machine) StrToFloat(s string) float64 {
 func (m *Machine) MustGetVar(id string) string {
 	val, ok := m.Vars[id]
 
-	m.Assert(ok, "The variable '%s' was referenced, but does not exist", id)
+	m.Assert(ok, "The variable '%s' was referenced, but does not exist in map: %v", id, m.Vars)
 
 	return val
 }
 
-func (m *Machine) getInterpolatedValue(s string) string {
-	return regexp.MustCompile(`\{\$[^$)+\}`).ReplaceAllStringFunc(s, func(v string) string {
+func (m *Machine) interpolatedValue(s string) string {
+	return regexp.MustCompile(`\{\$[^$}]+\}`).ReplaceAllStringFunc(s, func(v string) string {
 		var id string = v[2 : len(v)-1]
 
 		return m.MustGetVar(id)
@@ -80,7 +81,7 @@ func (m *Machine) MustGetString(s string) string {
 	}
 
 	if !strings.HasPrefix(s, "$") {
-		return s
+		return m.interpolatedValue(s)
 	}
 
 	return m.MustGetVar(s[1:])
@@ -127,6 +128,7 @@ func (m *Machine) ArgAsFloat(n int) float64 {
 	}
 	return m.StrToFloat(s)
 }
+
 // Number of args for the current instruction
 func (m *Machine) ArgCount() int {
 	return len(m.CurrentInstruction().Args)
@@ -139,15 +141,19 @@ func (m *Machine) HasArg(n int) bool {
 
 // Push the entire state into the stack
 func (m *Machine) PushState() {
-	m.Stack.Push(m.State)
+	m.Stack.Push(*m.State)
+	log.Printf("Pushed: %#v", m.State)
 }
 
 func (m *Machine) PopState() {
-	m.State = m.Stack.Pop().(*MachineState)
+	tmp := m.Stack.Pop().(MachineState)
+	m.State = &tmp
+	log.Printf("Popped: %#v", m.State)
 }
 
 func (m *Machine) PeekState() *MachineState {
-	return m.Stack.Peek().(*MachineState)
+	tmp := m.Stack.Peek().(MachineState)
+	return &tmp
 }
 
 func (m *Machine) Execute() {
@@ -156,9 +162,10 @@ func (m *Machine) Execute() {
 	}
 }
 
-
 func (m *Machine) execCurrentInstruction() {
 	i := m.Tape[m.State.PC]
+
+	log.Println(m.State.PC)
 
 	handler, ok := InstructionHandlers[i.Cmd]
 

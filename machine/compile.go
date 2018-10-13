@@ -3,17 +3,13 @@ package machine
 import (
 	"errors"
 	"github.com/golang-collections/collections/stack"
-	"github.com/op/go-logging"
-	"os"
+	"log"
 	"regexp"
 	"strings"
 )
 
-var log = logging.MustGetLogger("logger")
-
 func DefaultExceptionHandler(m *Machine, msg interface{}, a ...interface{}) {
-	log.Errorf("Exception: "+msg.(string), a...)
-	os.Exit(1)
+	log.Fatalf("Exception: "+msg.(string), a...)
 }
 
 func MachineFromScript(p string) *Machine {
@@ -22,6 +18,7 @@ func MachineFromScript(p string) *Machine {
 		State:     &MachineState{},
 		Tape:      scriptToInstructions(p),
 		Exception: DefaultExceptionHandler,
+		Vars:      map[string]string{},
 	}
 }
 
