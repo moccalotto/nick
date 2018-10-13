@@ -22,7 +22,7 @@ func makeField() *field.Field {
 			evolve B5678/S345678	# run standard escavator
 		endloop 
 		loop 3
-			scale 1.75
+			scale 1.8
 			evolve B5678/S5678	# run edge smoother
 		endloop
 		evolve B05678/S05678     # This automaton is good for strengthening edges.
