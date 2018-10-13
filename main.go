@@ -9,10 +9,10 @@ import (
 
 func createMachine() *machine.Machine {
 	m := machine.MachineFromScript(`
-		# suggest export.type      = image	# We would like to export an image
-		# suggest export.format    = png		# in png
-		# suggest export.width     = 1600		# with a fixed width
-		# suggest export.algorithm = Box		# using the »box« scaling method
+		suggest export.type      = image	# We would like to export an image
+		suggest export.format    = png		# in png
+		suggest export.width     = 1600		# with a fixed width
+		suggest export.algorithm = Lanczos	# using the »box« scaling method
 
 		init 25 x 20		# new canvas
 		snow 31%		# add 40% snow
@@ -26,9 +26,9 @@ func createMachine() *machine.Machine {
 			endloop
 		endloop 
 
-		loop 4
-			scale 2
-			loop 3
+		loop 7
+			scale 1.5
+			loop 2
 				evolve B5678/S5678	# run edge smoother
 			endloop
 		endloop
@@ -37,8 +37,6 @@ func createMachine() *machine.Machine {
 		# evolve B012345/S012345   # Running an "inverse" automaton inverses the map
 	`)
 
-	m.Execute()
-
 	return m
 }
 
@@ -46,6 +44,13 @@ func main() {
 	rand.Seed(time.Now().UTC().UnixNano())
 
 	m := createMachine()
+	mrt, _ := time.ParseDuration("5s") // don't allow the program to run for more than 5 seconds.
+	m.MaxRunTime = &mrt
+	err := m.Execute()
+
+	if err != nil {
+		panic(err)
+	}
 
 	fallback := exporters.NewItermExporter(exporters.NewImageExporter())
 	e := exporters.NewSuggestionExporter(m.Vars, fallback)
