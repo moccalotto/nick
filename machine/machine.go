@@ -140,7 +140,8 @@ func (m *Machine) HasArg(n int) bool {
 
 // Push the entire state into the stack
 func (m *Machine) PushState() {
-	m.Stack.Push(*m.State)
+	tmp := *m.State
+	m.Stack.Push(tmp)
 }
 
 func (m *Machine) PopState() {

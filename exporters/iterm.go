@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/base64"
 	"fmt"
-	tm "github.com/buger/goterm"
+	"github.com/buger/goterm"
 	"github.com/moccalotto/nick/field"
 	"image/png"
 )
@@ -30,16 +30,16 @@ func (p *ItermExporter) Export(f *field.Field) {
 	png.Encode(buf, img)
 
 	if p.ClearScreen {
-		tm.Clear()
-		tm.MoveCursor(1, 1)
+		goterm.Clear()
+		goterm.MoveCursor(1, 1)
 	}
 
-	tm.Print(
+	goterm.Print(
 		fmt.Sprintf(
 			"\033]1337;File=inline=1:%s\a",
 			base64.StdEncoding.EncodeToString(buf.Bytes()),
 		),
 	)
 
-	tm.Flush()
+	goterm.Flush()
 }

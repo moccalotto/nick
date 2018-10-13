@@ -7,6 +7,8 @@ Considerations:
 		Patterns in filename (such as %rand %Y-%m-%d-%H:%i:s or similar)
 		Sequenced filenames (map-%seq that auto-detects previous maps)
 	Detect map format from extension
+	Define colors via strings á la https://github.com/go-playground/colors
+		Steal code and rewrite to fit the real go colors.
 	Do we draw a grid?
 		Do we scale the grid?
 		Do we use instructions for that?
@@ -74,20 +76,20 @@ func NewImageExporter() *ImageExporter {
 }
 
 // Calculate the output dimensions of the image
-func (p *ImageExporter) dimensions(f *field.Field) (int, int) {
-	if p.Width == 0 && p.Height == 0 {
-		return int(float64(f.Width()) * p.Scale), int(float64(f.Height()) * p.Scale)
+func (e *ImageExporter) dimensions(f *field.Field) (int, int) {
+	if e.Width == 0 && e.Height == 0 {
+		return int(float64(f.Width()) * e.Scale), int(float64(f.Height()) * e.Scale)
 	}
 
-	return p.Width, p.Height
+	return e.Width, e.Height
 }
 
-func (p *ImageExporter) detectFormat() (string, error) {
-	if p.Format != "" {
-		return p.Format, nil
+func (e *ImageExporter) detectFormat() (string, error) {
+	if e.Format != "" {
+		return e.Format, nil
 	}
 
-	parts := strings.Split(p.FileName, ".")
+	parts := strings.Split(e.FileName, ".")
 	suffix := parts[len(parts)-1]
 
 	switch suffix {
@@ -104,8 +106,8 @@ func (p *ImageExporter) detectFormat() (string, error) {
 	return "", fmt.Errorf("Could not determine file type from suffix: %s", suffix)
 }
 
-func (p *ImageExporter) filter() imaging.ResampleFilter {
-	switch p.Algorithm {
+func (e *ImageExporter) filter() imaging.ResampleFilter {
+	switch e.Algorithm {
 	case "NearestNeighbor":
 		// NearestNeighbor is a nearest-neighbor filter (no anti-aliasing).
 		return imaging.NearestNeighbor
@@ -126,14 +128,14 @@ func (p *ImageExporter) filter() imaging.ResampleFilter {
 		// When upscaling it's similar to NearestNeighbor.
 		return imaging.Box
 	default:
-		log.Fatalf("Unknown image scaling algorithm: %s", p.Algorithm)
+		log.Fatalf("Unknown image scaling algorithm: %s", e.Algorithm)
 	}
 
 	panic("Should never be reached!")
 }
 
 // GetImage returns a raw NRGBA image (for use in other exporters, etc.)
-func (p *ImageExporter) GetImage(f *field.Field) *image.NRGBA {
+func (e *ImageExporter) GetImage(f *field.Field) *image.NRGBA {
 	fw := f.Width()
 	fh := f.Height()
 
@@ -143,30 +145,30 @@ func (p *ImageExporter) GetImage(f *field.Field) *image.NRGBA {
 	for y := 0; y < fh; y++ {
 		for x := 0; x < fw; x++ {
 			if f.Alive(x, y) {
-				img.Set(x, y, p.LiveColor)
+				img.Set(x, y, e.LiveColor)
 			} else {
-				img.Set(x, y, p.DeadColor)
+				img.Set(x, y, e.DeadColor)
 			}
 		}
 	}
 
-	imgW, imgH := p.dimensions(f)
+	imgW, imgH := e.dimensions(f)
 
-	return imaging.Resize(img, imgW, imgH, p.filter())
+	return imaging.Resize(img, imgW, imgH, e.filter())
 }
 
 // Export the image to a file
-func (p *ImageExporter) Export(f *field.Field) {
-	img := p.GetImage(f)
+func (e *ImageExporter) Export(f *field.Field) {
+	img := e.GetImage(f)
 
-	file, err := os.Create(p.FileName)
+	file, err := os.Create(e.FileName)
 	if err != nil {
-		log.Fatalf("Could not open file '%s': %s", p.FileName, err)
+		log.Fatalf("Could not open file '%s': %s", e.FileName, err)
 	}
 
 	defer file.Close()
 
-	format, err := p.detectFormat()
+	format, err := e.detectFormat()
 	if err != nil {
 		log.Fatal("Could not auto-detect image format")
 	}
@@ -179,7 +181,7 @@ func (p *ImageExporter) Export(f *field.Field) {
 	case "jpeg":
 		err = jpeg.Encode(file, img, &jpeg.Options{Quality: 90})
 	default:
-		log.Fatalf("Unknown file format: %s", p.Format)
+		log.Fatalf("Unknown file format: %s", e.Format)
 	}
 
 	if err != nil {
