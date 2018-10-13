@@ -14,8 +14,8 @@ func Scale(m *Machine) {
 	y := x
 	if m.HasArg(2) {
 		y = m.ArgAsFloat(2)
-		m.Assert(m.ArgAsString(1) == "x", "Second arg to scale must be an 'x', an '%s' was given")
+		m.Assert(m.ArgAsString(1) == "x", "Second arg to scale must be an 'x', but '%s' was given")
 
 	}
-	m.Field.Apply(modifiers.NewScaleXY(x,y))
+	m.Field.Apply(modifiers.NewScaleXY(x, y))
 }

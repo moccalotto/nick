@@ -32,7 +32,20 @@ func (f *Field) Set(x, y int, b bool) {
 // If the x or y coordinates are outside the field boundaries they are wrapped
 // toroidally. For instance, an x value of -1 is treated as width-1.
 func (f *Field) Alive(x, y int) bool {
-	return f.s[(y+f.h)%f.h][(x+f.w)%f.w]
+	if x >= f.w {
+		return true
+	}
+	if x < 0 {
+		return true
+	}
+	if y >= f.h {
+		return true
+	}
+	if y < 0 {
+		return true
+	}
+
+	return f.s[y][x]
 }
 
 func (f *Field) Dead(x, y int) bool {
