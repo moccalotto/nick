@@ -3,7 +3,7 @@ package machine
 import "testing"
 
 func TestInit(t *testing.T) {
-	script := `init 20x30`
+	script := `init 20 x 30`
 
 	m := MachineFromScript(script)
 
@@ -17,7 +17,7 @@ func TestInit(t *testing.T) {
 	}
 }
 
-func TestInitTooManyArgs(t *testing.T) {
+func TestInitTooFewArgs(t *testing.T) {
 	script := `init 10 20`
 
 	m := MachineFromScript(script)
@@ -58,7 +58,7 @@ func TestInitMalformedArg(t *testing.T) {
 }
 
 func TestInitCalledTwice(t *testing.T) {
-	script := `init 10x20`
+	script := `init 10 x 20`
 
 	m := MachineFromScript(script)
 
