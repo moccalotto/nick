@@ -1,6 +1,6 @@
 package machine
 
-import "github.com/moccaloto/nick/field/modifiers"
+import "github.com/moccalotto/nick/field/modifiers"
 
 func init() {
 	InstructionHandlers["snow"] = Snow

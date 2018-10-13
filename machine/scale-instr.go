@@ -1,7 +1,7 @@
 package machine
 
 import (
-	"github.com/moccaloto/nick/field/modifiers"
+	"github.com/moccalotto/nick/field/modifiers"
 )
 
 func init() {

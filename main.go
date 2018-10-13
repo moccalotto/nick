@@ -2,10 +2,10 @@ package main
 
 import (
 	tm "github.com/buger/goterm"
-	"github.com/moccaloto/nick/field"
-	Mod "github.com/moccaloto/nick/field/modifiers"
-	"github.com/moccaloto/nick/field/printers"
-	"github.com/moccaloto/nick/machine"
+	"github.com/moccalotto/nick/field"
+	Mod "github.com/moccalotto/nick/field/modifiers"
+	"github.com/moccalotto/nick/field/printers"
+	"github.com/moccalotto/nick/machine"
 	"math/rand"
 	"time"
 )

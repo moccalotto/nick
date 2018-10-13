@@ -2,7 +2,7 @@ package machine
 
 import (
 	"github.com/golang-collections/collections/stack"
-	"github.com/moccaloto/nick/field"
+	"github.com/moccalotto/nick/field"
 	"math/rand"
 	"regexp"
 	"strconv"

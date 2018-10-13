@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/base64"
 	"fmt"
-	"github.com/moccaloto/nick/field"
+	"github.com/moccalotto/nick/field"
 	"image"
 	"image/color"
 	"image/png"

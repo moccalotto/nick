@@ -1,6 +1,6 @@
 package machine
 
-import "github.com/moccaloto/nick/field"
+import "github.com/moccalotto/nick/field"
 
 func init() {
 	InstructionHandlers["init"] = Init

@@ -1,7 +1,6 @@
 package modifiers
 
 import (
-	//	"github.com/moccaloto/nick/field"
 	"testing"
 )
 

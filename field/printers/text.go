@@ -1,7 +1,7 @@
 package printers
 
 import (
-	"github.com/moccaloto/nick/field"
+	"github.com/moccalotto/nick/field"
 	"strings"
 )
 
