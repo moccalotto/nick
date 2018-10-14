@@ -58,7 +58,7 @@ func Egress(m *Machine) {
 		}
 	}
 
-	egress := modifiers.NewEgress(direction, length)
+	egress := modifiers.NewEgress(direction, length, m.Rng)
 	egress.Thickness = thickness
 
 	m.Field.Apply(egress)

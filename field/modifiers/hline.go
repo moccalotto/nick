@@ -2,6 +2,7 @@ package modifiers
 
 import (
 	"github.com/moccalotto/nick/field"
+	"math/rand"
 )
 
 type HLine struct {
@@ -11,9 +12,10 @@ type HLine struct {
 	Coverage  float64
 	Thickness int
 	Alive     bool
+	rng       *rand.Rand
 }
 
-func NewHLine(startX, startY, length int) *HLine {
+func NewHLine(startX, startY, length int, rng *rand.Rand) *HLine {
 	return &HLine{
 		StartX:    startX,
 		StartY:    startY,
@@ -21,6 +23,7 @@ func NewHLine(startX, startY, length int) *HLine {
 		Coverage:  1.0,
 		Thickness: 1,
 		Alive:     true,
+		rng:       rng,
 	}
 }
 
@@ -38,6 +41,7 @@ func (b *HLine) ToRect() *Rect {
 		b.StartY,
 		b.StartX+b.Length-1,
 		b.StartY+b.Thickness-1,
+		b.rng,
 	)
 
 	r.Alive = b.Alive

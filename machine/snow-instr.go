@@ -19,7 +19,7 @@ func Snow(m *Machine) {
 		probability,
 	)
 
-	snow := modifiers.NewSnow(probability)
+	snow := modifiers.NewSnow(probability, m.Rng)
 
 	if m.HasArg(1) {
 		arg1 := m.ArgAsString(1)

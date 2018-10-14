@@ -4,8 +4,10 @@ import (
 	"errors"
 	"github.com/golang-collections/collections/stack"
 	"log"
+	"math/rand"
 	"regexp"
 	"strings"
+	"time"
 )
 
 func DefaultExceptionHandler(m *Machine, msg interface{}, a ...interface{}) {
@@ -13,7 +15,12 @@ func DefaultExceptionHandler(m *Machine, msg interface{}, a ...interface{}) {
 }
 
 func MachineFromScript(p string) *Machine {
+	seed := time.Now().UTC().UnixNano()
+	source := rand.NewSource(seed)
+	rng := rand.New(source)
 	return &Machine{
+		Rng:       rng,
+		Seed:      seed,
 		Stack:     stack.New(),
 		State:     &MachineState{},
 		Tape:      scriptToInstructions(p),

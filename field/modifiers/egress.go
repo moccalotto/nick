@@ -24,14 +24,16 @@ type Egress struct {
 	Thickness int
 	Position  Direction
 	Alive     bool
+	rng       *rand.Rand
 }
 
-func NewEgress(position Direction, length int) *Egress {
+func NewEgress(position Direction, length int, rng *rand.Rand) *Egress {
 	return &Egress{
 		Length:    length,
 		Thickness: 1,
 		Position:  position,
 		Alive:     false, // by default, an egress consists of empty/dead space.
+		rng:       rng,
 	}
 }
 
@@ -39,7 +41,7 @@ func (e *Egress) ApplyToField(f *field.Field) {
 	pos := e.Position
 
 	if pos == Random {
-		pos = Direction(rand.Intn(8) + 1)
+		pos = Direction(e.rng.Intn(8) + 1)
 	}
 
 	switch pos {

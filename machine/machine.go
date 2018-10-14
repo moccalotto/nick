@@ -15,6 +15,8 @@ type ExceptionHandler func(m *Machine, msg interface{}, a ...interface{})
 type InstructionHandler func(m *Machine)
 
 type Machine struct {
+	Rng       *rand.Rand        // Random Number Generator
+	Seed      int64             // Seed for the Rng
 	Field     *field.Field      // field to populate.
 	Stack     *stack.Stack      // Stack used for nesting and looping.
 	State     *MachineState     // The current state of the machine.
@@ -73,7 +75,7 @@ func (m *Machine) MustGetString(s string) string {
 	// TODO: @rand, @foo, etc. could be special value handlers, just like InstructionHandlers
 	// They could then be registered on runtime.
 	if s == "@rand" {
-		return strconv.FormatFloat(rand.Float64(), 'E', -1, 64)
+		return strconv.FormatFloat(m.Rng.Float64(), 'E', -1, 64)
 	}
 	if s == "@pc" {
 		return strconv.Itoa(m.State.PC)

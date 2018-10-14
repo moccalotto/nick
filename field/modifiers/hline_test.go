@@ -1,11 +1,17 @@
 package modifiers
 
 import (
+	"math/rand"
 	"testing"
+	"time"
 )
 
 func TestNewHLine(t *testing.T) {
-	h := NewHLine(20, 20, 5)
+	seed := time.Now().UTC().UnixNano()
+	source := rand.NewSource(seed)
+	rng := rand.New(source)
+
+	h := NewHLine(20, 20, 5, rng)
 
 	if h.StartX != 20 {
 		t.Errorf("StartX != 20")

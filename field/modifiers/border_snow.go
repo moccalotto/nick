@@ -9,10 +9,11 @@ type BorderSnow struct {
 	Coverage  float64
 	Thickness int
 	Alive     bool
+	rng       *rand.Rand
 }
 
-func NewBorderSnow(Coverage float64) *BorderSnow {
-	return &BorderSnow{Coverage, 1, true}
+func NewBorderSnow(Coverage float64, rng *rand.Rand) *BorderSnow {
+	return &BorderSnow{Coverage, 1, true, rng}
 }
 
 func (b *BorderSnow) ApplyToField(f *field.Field) {
@@ -29,7 +30,7 @@ func (b *BorderSnow) ApplyToField(f *field.Field) {
 				x > bw || // east line
 				y > bh // south line
 
-			if inDrawArea && (b.Coverage == 1.0 || rand.Float64() < b.Coverage) {
+			if inDrawArea && (b.Coverage == 1.0 || b.rng.Float64() < b.Coverage) {
 				f.Set(x, y, b.Alive)
 			}
 		}

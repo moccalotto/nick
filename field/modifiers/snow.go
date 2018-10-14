@@ -2,6 +2,7 @@ package modifiers
 
 import (
 	"github.com/moccalotto/nick/field"
+	"math/rand"
 )
 
 // Randomly bring cells to life.
@@ -10,15 +11,16 @@ import (
 type Snow struct {
 	Coverage float64
 	Alive    bool
+	rng      *rand.Rand
 }
 
-func NewSnow(p float64) *Snow {
-	return &Snow{p, true}
+func NewSnow(p float64, rng *rand.Rand) *Snow {
+	return &Snow{p, true, rng}
 }
 
 // Rain living or dead snow onto the given field.
 func (s *Snow) ApplyToField(f *field.Field) {
-	r := NewRect(0, 0, f.Width()-1, f.Height()-1)
+	r := NewRect(0, 0, f.Width()-1, f.Height()-1, s.rng)
 	r.Coverage = s.Coverage
 	r.Alive = s.Alive
 	r.ApplyToField(f)

@@ -12,9 +12,10 @@ type Rect struct {
 	EndY     int
 	Coverage float64
 	Alive    bool
+	rng      *rand.Rand
 }
 
-func NewRect(startX, startY, endX, endY int) *Rect {
+func NewRect(startX, startY, endX, endY int, rng *rand.Rand) *Rect {
 	return &Rect{
 		StartX:   startX,
 		StartY:   startY,
@@ -22,6 +23,7 @@ func NewRect(startX, startY, endX, endY int) *Rect {
 		EndY:     endY,
 		Coverage: 1.0,
 		Alive:    true,
+		rng:      rng,
 	}
 }
 
@@ -42,7 +44,7 @@ func (r *Rect) ApplyToField(f *field.Field) {
 	for y := r.StartY; y <= r.EndY; y++ {
 		for x := r.StartX; x <= r.EndX; x++ {
 			// TODO - this statement could be optimized if coverage is 1.0
-			if rand.Float64() < r.Coverage {
+			if r.rng.Float64() < r.Coverage {
 				f.Set(x, y, r.Alive)
 			}
 		}

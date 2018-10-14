@@ -2,6 +2,7 @@ package modifiers
 
 import (
 	"github.com/moccalotto/nick/field"
+	"math/rand"
 )
 
 type VLine struct {
@@ -11,9 +12,10 @@ type VLine struct {
 	Coverage  float64
 	Thickness int
 	Alive     bool
+	rng       *rand.Rand
 }
 
-func NewVLine(startX, startY, length int) *VLine {
+func NewVLine(startX, startY, length int, rng *rand.Rand) *VLine {
 	return &VLine{
 		StartX:    startX,
 		StartY:    startY,
@@ -21,6 +23,7 @@ func NewVLine(startX, startY, length int) *VLine {
 		Coverage:  1.0,
 		Thickness: 1,
 		Alive:     true,
+		rng:       rng,
 	}
 }
 
@@ -30,6 +33,7 @@ func (b *VLine) ToRect() *Rect {
 		b.StartY,
 		b.StartX+b.Thickness-1,
 		b.StartY+b.Length-1,
+		b.rng,
 	)
 
 	r.Alive = b.Alive

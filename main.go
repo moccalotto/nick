@@ -3,7 +3,6 @@ package main
 import (
 	"github.com/moccalotto/nick/exporters"
 	"github.com/moccalotto/nick/machine"
-	"math/rand"
 	"time"
 )
 
@@ -41,8 +40,6 @@ func createMachine() *machine.Machine {
 }
 
 func main() {
-	rand.Seed(time.Now().UTC().UnixNano())
-
 	m := createMachine()
 	m.Limits.MaxRuntime, _ = time.ParseDuration("5s")
 	err := m.Execute()
