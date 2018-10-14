@@ -44,8 +44,7 @@ func main() {
 	rand.Seed(time.Now().UTC().UnixNano())
 
 	m := createMachine()
-	mrt, _ := time.ParseDuration("5s") // don't allow the program to run for more than 5 seconds.
-	m.MaxRunTime = &mrt
+	m.Limits.MaxRuntime, _ = time.ParseDuration("5s")
 	err := m.Execute()
 
 	if err != nil {

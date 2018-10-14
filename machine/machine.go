@@ -1,7 +1,6 @@
 package machine
 
 import (
-	"fmt"
 	"github.com/golang-collections/collections/stack"
 	"github.com/moccalotto/nick/field"
 	"math/rand"
@@ -16,16 +15,15 @@ type ExceptionHandler func(m *Machine, msg interface{}, a ...interface{})
 type InstructionHandler func(m *Machine)
 
 type Machine struct {
-	Field      *field.Field      // field to populate.
-	Stack      *stack.Stack      // Stack used for nesting and looping.
-	State      *MachineState     // The current state of the machine.
-	Tape       []Instruction     // the entire program.
-	Trace      []int             // trace of executed instructions.
-	Exception  ExceptionHandler  // Exception Handler.
-	Vars       map[string]string // Map of variables set inside the program.
-	MaxCells   int               // Max number of cells in the generated Field. If ≤ 0, there is no limit.
-	MaxRunTime *time.Duration    // Max execution time from start to finish. If nil, there is no limit.
-	StartAt    *time.Time        // When did the execution start. If nil, it hasn't started yet.
+	Field     *field.Field      // field to populate.
+	Stack     *stack.Stack      // Stack used for nesting and looping.
+	State     *MachineState     // The current state of the machine.
+	Tape      []Instruction     // the entire program.
+	Trace     []int             // trace of executed instructions.
+	Exception ExceptionHandler  // Exception Handler.
+	Vars      map[string]string // Map of variables set inside the program.
+	Limits    Restrictions      // Restrictions on runtime, cell count, etc.
+	StartedAt time.Time         // When did the execution start. If nil, it hasn't started yet.
 }
 
 var InstructionHandlers map[string]InstructionHandler = make(map[string]InstructionHandler)
@@ -160,20 +158,13 @@ func (m *Machine) PeekState() *MachineState {
 }
 
 func (m *Machine) Execute() error {
-	t := time.Now()
-	m.StartAt = &t
+	m.StartedAt = time.Now()
 	_m := *m // run the script on a clone.
-	var endAt time.Time
-
-	if m.MaxRunTime != nil {
-		endAt = m.StartAt.Add(*m.MaxRunTime)
-	}
-
 	for _m.State.PC = 0; _m.State.PC < len(_m.Tape); _m.State.PC++ {
 		_m.execCurrentInstruction()
 
-		if time.Now().After(endAt) {
-			return fmt.Errorf("Timeout")
+		if err := m.checkRestrictions(); err != nil {
+			return err
 		}
 	}
 
