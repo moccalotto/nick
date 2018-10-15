@@ -1,6 +1,7 @@
 package machine
 
 import "github.com/moccalotto/nick/field/modifiers"
+import "sort"
 
 func init() {
 	InstructionHandlers["egress"] = Egress
@@ -10,30 +11,39 @@ func Egress(m *Machine) {
 	m.Assert(m.Field != nil, "Cannot snow a non-initialized field!")
 
 	var thickness, length int
-	var direction modifiers.Direction
 
-	switch m.ArgAsString(0) {
-	case "north":
-		direction = modifiers.North
-	case "south":
-		direction = modifiers.South
-	case "east":
-		direction = modifiers.East
-	case "west":
-		direction = modifiers.West
-	case "north-east":
-		direction = modifiers.NorthEast
-	case "north-west":
-		direction = modifiers.NorthWest
-	case "south-east":
-		direction = modifiers.SouthEast
-	case "south-west":
-		direction = modifiers.SouthWest
-	default:
+	dirs := map[string]modifiers.Direction{
+		"north":      modifiers.North,
+		"N":          modifiers.North,
+		"north-east": modifiers.NorthEast,
+		"NE":         modifiers.NorthEast,
+		"east":       modifiers.East,
+		"E":          modifiers.East,
+		"south-east": modifiers.SouthEast,
+		"SE":         modifiers.SouthEast,
+		"south":      modifiers.South,
+		"S":          modifiers.South,
+		"south-west": modifiers.SouthWest,
+		"SW":         modifiers.SouthWest,
+		"west":       modifiers.West,
+		"W":          modifiers.West,
+		"north-west": modifiers.NorthWest,
+		"NW":         modifiers.NorthWest,
+	}
+
+	direction, ok := dirs[m.ArgAsString(0)]
+
+	if !ok {
+		keys := make([]string, 0, len(dirs))
+		for k := range dirs {
+			keys = append(keys, k)
+		}
+		sort.Strings(keys)
 		m.Assert(
 			false,
-			"Invalid direction '%s'. Must be one of [north, south, east, west, north-east, north-west, south-east, south-west]",
+			"Invalid direction '%s'. Must be one of %v",
 			m.ArgAsString(0),
+			keys,
 		)
 	}
 

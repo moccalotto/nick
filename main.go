@@ -8,7 +8,7 @@ import (
 
 func createMachine() *machine.Machine {
 	m := machine.MachineFromScript(`
-		suggest export.type      = image	# We would like to export an image
+		suggest export.type      = iterm	# We would like to export an image
 		suggest export.format    = png		# in png
 		suggest export.width     = 1600		# with a fixed width
 		suggest export.algorithm = Lanczos	# using the »box« scaling method
@@ -48,7 +48,7 @@ func main() {
 		panic(err)
 	}
 
-	fallback := exporters.NewItermExporter(exporters.NewImageExporter())
+	fallback := exporters.NewTextExporter()
 	e := exporters.NewSuggestionExporter(m.Vars, fallback)
 	e.Export(m.Field) // export an image.
 }

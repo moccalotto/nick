@@ -20,7 +20,7 @@ func NewSuggestionExporter(v map[string]string, fallback Exporter) *SuggestionEx
 	return &SuggestionExporter{v, fallback}
 }
 
-func (e *SuggestionExporter) image(f *field.Field) {
+func (e *SuggestionExporter) image() *ImageExporter {
 	ie := NewImageExporter()
 
 	var err error = nil
@@ -55,7 +55,11 @@ func (e *SuggestionExporter) image(f *field.Field) {
 		ie.Algorithm = al
 	}
 
-	ie.Export(f)
+	return ie
+}
+
+func (e *SuggestionExporter) iterm() *ItermExporter {
+	return NewItermExporter(e.image())
 }
 
 func (e *SuggestionExporter) Export(f *field.Field) {
@@ -68,7 +72,9 @@ func (e *SuggestionExporter) Export(f *field.Field) {
 
 	switch ex {
 	case "image":
-		e.image(f)
+		e.image().Export(f)
+	case "iterm":
+		e.iterm().Export(f)
 	default:
 		log.Fatalf("Unknown exporter: %s", ex)
 	}
