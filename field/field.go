@@ -2,8 +2,9 @@ package field
 
 // Field represents a two-dimensional field of cells.
 type Field struct {
-	s    [][]bool // cells
-	w, h int
+	s       [][]bool // cells
+	w, h    int
+	outside bool // are the cells outside the scope defined by [0..w]x[0..y] alive ?
 }
 
 type Modifier interface {
@@ -16,7 +17,7 @@ func NewField(w, h int) *Field {
 	for i := range s {
 		s[i] = make([]bool, w)
 	}
-	return &Field{s, w, h}
+	return &Field{s, w, h, true}
 }
 
 func (f *Field) Apply(m Modifier) {
@@ -25,27 +26,31 @@ func (f *Field) Apply(m Modifier) {
 
 // Set sets the state of the specified cell to the given value.
 func (f *Field) Set(x, y int, b bool) {
-	f.s[(y+f.h)%f.h][(x + f.h%f.h)] = b
+	f.s[y][x] = b
+	// f.s[(y+f.h)%f.h][(x + f.h%f.h)] = b
 }
 
 // Alive reports whether the specified cell is alive.
 // If the x or y coordinates are outside the field boundaries they are wrapped
 // toroidally. For instance, an x value of -1 is treated as width-1.
 func (f *Field) Alive(x, y int) bool {
+	return f.s[y][x]
+}
+
+func (f *Field) robustAlive(x, y int) bool {
 	if x >= f.w {
-		return true
+		return f.outside
 	}
 	if x < 0 {
-		return true
+		return f.outside
 	}
 	if y >= f.h {
-		return true
+		return f.outside
 	}
 	if y < 0 {
-		return true
+		return f.outside
 	}
-
-	return f.s[y][x]
+	return f.Alive(x, y)
 }
 
 func (f *Field) Dead(x, y int) bool {
@@ -75,24 +80,24 @@ func (f *Field) NeighbourCount(x, y int) int {
 
 	// Check neighbours above
 	for _x := x - 1; _x <= x+1; _x++ {
-		if f.Alive(_x, y-1) {
+		if f.robustAlive(_x, y-1) {
 			neighbourCount++
 		}
 	}
 	// Check neighbours on the line below
 	for _x := x - 1; _x <= x+1; _x++ {
-		if f.Alive(_x, y+1) {
+		if f.robustAlive(_x, y+1) {
 			neighbourCount++
 		}
 	}
 
 	// Check neighbour to the left
-	if f.Alive(x-1, y) {
+	if f.robustAlive(x-1, y) {
 		neighbourCount++
 	}
 
 	// Check neighbourCount to the right
-	if f.Alive(x+1, y) {
+	if f.robustAlive(x+1, y) {
 		neighbourCount++
 	}
 

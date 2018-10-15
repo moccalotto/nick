@@ -24,9 +24,9 @@ func (s *Scale) ApplyToField(f *field.Field) {
 	tmp := field.NewField(nw, nh)
 
 	for y := 0; y < nh; y++ {
-		_y := int(math.Round(float64(y) / s.y))
+		_y := int(math.Floor(float64(y) / s.y))
 		for x := 0; x < nw; x++ {
-			_x := int(math.Round(float64(x) / s.x))
+			_x := int(math.Floor(float64(x) / s.x))
 			if f.Alive(_x, _y) {
 				tmp.Set(x, y, true)
 			}
