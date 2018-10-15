@@ -13,19 +13,23 @@ func createMachine() *machine.Machine {
 		suggest export.width     = 1600		# with a fixed width
 		suggest export.algorithm = Lanczos	# using the »box« scaling method
 
-		init 25 x 20		# new canvas
+		init 25 x 20		# New canvas. Small initial canvas yields simple caves
 		snow 31%		# add 40% snow
-		border 2 @ 85%		# Cover the border with snow at a 85% density
-		egress north @ 10 x 2	# create an entrence to the north 10 cells wide and 2 cells thick
-		evolve B5678/S345678	# run standard escavator
+		border 1      		# Cover the border with snow at a 85% density
+
 		loop 3
-			scale 1.5
+			evolve B5678/S345678	# run standard escavator
+			egress random @ 8 x 2	# create an opening
+		endloop
+
+		loop 2
+			scale 2
 			loop 3
 				evolve B5678/S345678	# run standard escavator
 			endloop
 		endloop 
 
-		loop 7
+		loop 8
 			scale 1.5
 			loop 2
 				evolve B5678/S5678	# run edge smoother
