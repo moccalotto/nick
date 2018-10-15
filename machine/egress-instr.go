@@ -13,6 +13,7 @@ func Egress(m *Machine) {
 	var thickness, length int
 
 	dirs := map[string]modifiers.Direction{
+		"random":     modifiers.Random,
 		"north":      modifiers.North,
 		"N":          modifiers.North,
 		"north-east": modifiers.NorthEast,
