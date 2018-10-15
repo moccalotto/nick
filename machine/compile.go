@@ -15,7 +15,7 @@ func DefaultExceptionHandler(m *Machine, msg interface{}, a ...interface{}) {
 }
 
 func MachineFromScript(p string) *Machine {
-	seed := time.Now().UTC().UnixNano()
+	seed := time.Now().UnixNano()
 	source := rand.NewSource(seed)
 	rng := rand.New(source)
 	return &Machine{

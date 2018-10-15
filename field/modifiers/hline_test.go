@@ -7,7 +7,7 @@ import (
 )
 
 func TestNewHLine(t *testing.T) {
-	seed := time.Now().UTC().UnixNano()
+	seed := time.Now().UnixNano()
 	source := rand.NewSource(seed)
 	rng := rand.New(source)
 
