@@ -61,6 +61,36 @@ func (ca *Automaton) Birth(neighbourCount int) bool {
 	return ca.B[neighbourCount]
 }
 
+// Next returns the state of the specified cell at the next time step.
+func (ca *Automaton) NextCellState(f *field.Field, x, y int) bool {
+	neighbourCount := f.NeighbourCount(x, y)
+	if f.Alive(x, y) {
+		return ca.Survival(neighbourCount)
+	}
+
+	return ca.Birth(neighbourCount)
+}
+
+// Apply a CA to the field
+func (ca *Automaton) ApplyToField(f *field.Field) {
+	tmp := field.NewField(f.Width(), f.Height())
+	done := make(chan bool)
+	for y := 0; y < f.Height(); y++ {
+		go func(_y int) {
+			for x := 0; x < f.Width(); x++ {
+				tmp.SetAlive(x, _y, ca.NextCellState(f, x, _y))
+			}
+			done <- true
+		}(y)
+	}
+
+	for i := 0; i < f.Height(); i++ {
+		<-done
+	}
+
+	f.SetCells(f.Width(), f.Height(), tmp.Cells())
+}
+
 func (ca *Automaton) String() string {
 	var buf strings.Builder
 	buf.WriteString("B")
@@ -76,27 +106,4 @@ func (ca *Automaton) String() string {
 		}
 	}
 	return buf.String()
-}
-
-// Next returns the state of the specified cell at the next time step.
-func (ca *Automaton) NextCellState(f *field.Field, x, y int) bool {
-	neighbourCount := f.NeighbourCount(x, y)
-	if f.Alive(x, y) {
-		return ca.Survival(neighbourCount)
-	}
-
-	return ca.Birth(neighbourCount)
-}
-
-// Apply a CA to the field
-func (ca *Automaton) ApplyToField(f *field.Field) {
-	tmp := field.NewField(f.Width(), f.Height())
-
-	for x := 0; x < f.Width(); x++ {
-		for y := 0; y < f.Height(); y++ {
-			tmp.SetAlive(x, y, ca.NextCellState(f, x, y))
-		}
-	}
-
-	f.SetCells(f.Width(), f.Height(), tmp.Cells())
 }
