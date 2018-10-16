@@ -136,10 +136,30 @@ func makeArg(w string) Arg {
 	}
 
 	if v, e := strconv.ParseFloat(w, 64); e == nil {
+		i := int(v)
+		if v == float64(i) {
+			return Arg{
+				T:        IntArg,
+				FloatVal: v,
+				IntVal:   i,
+				StrVal:   strconv.FormatFloat(v, 'f', -1, 64),
+			}
+		}
 		return Arg{
 			T:        FloatArg,
 			FloatVal: v,
 			StrVal:   strconv.FormatFloat(v, 'f', -1, 64),
+		}
+	}
+
+	if strings.HasSuffix(w, "%") {
+		if v, e := strconv.ParseFloat(w[0:len(w)-1], 64); e == nil {
+			v = v / 100.0
+			return Arg{
+				T:        FloatArg,
+				FloatVal: v,
+				StrVal:   strconv.FormatFloat(v, 'f', -1, 64),
+			}
 		}
 	}
 

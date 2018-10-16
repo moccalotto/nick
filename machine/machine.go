@@ -6,7 +6,6 @@ import (
 	"github.com/moccalotto/nick/field"
 	"math/rand"
 	"strconv"
-	"strings"
 	"time"
 )
 
@@ -45,7 +44,7 @@ func (m *Machine) Throw(msg interface{}, a ...interface{}) {
 func (m *Machine) StrToInt(s string) int {
 	i, e := strconv.Atoi(s)
 
-	m.Assert(e == nil, "Could not convert string '%s' to ingeger: %+v", s, e)
+	m.Assert(e == nil, "Could not convert string '%s' to integer", s)
 
 	return i
 }
@@ -53,7 +52,7 @@ func (m *Machine) StrToInt(s string) int {
 func (m *Machine) StrToFloat(s string) float64 {
 	f, e := strconv.ParseFloat(s, 64)
 
-	m.Assert(e == nil, "Could not convert string '%s' to float: %+v", s, e)
+	m.Assert(e == nil, "Could not convert string '%s' to float", s)
 
 	return f
 }
@@ -95,7 +94,7 @@ func (m *Machine) MustGetString(a Arg) string {
 func (m *Machine) MustGetFloat(a Arg) float64 {
 	switch a.T {
 	case StrArg:
-		m.Throw("Could not convert argument %v into float", a)
+		m.Throw("Could not convert argument %v into float", a.StrVal)
 	case FloatArg:
 		return a.FloatVal
 	case IntArg:
@@ -126,7 +125,7 @@ func (m *Machine) MustGetFloat(a Arg) float64 {
 func (m *Machine) MustGetInt(a Arg) int {
 	switch a.T {
 	case StrArg, FloatArg:
-		m.Throw("Could not convert argument %v into an integer", a)
+		m.Throw("Could not convert argument (%v) into an integer", a.StrVal)
 	case IntArg:
 		return a.IntVal
 	case CmdArg:
@@ -157,9 +156,7 @@ func (m *Machine) CurrentInstruction() Instruction {
 	return m.Tape[m.State.PC]
 }
 
-// Get then nth argument to the current instruction as a string.
-// Any magic interpolations and value-replacements are done seamlessly.
-func (m *Machine) ArgAsString(n int) string {
+func (m *Machine) Arg(n int) Arg {
 	instr := m.CurrentInstruction()
 
 	m.Assert(
@@ -170,19 +167,21 @@ func (m *Machine) ArgAsString(n int) string {
 		len(instr.Args),
 	)
 
-	return m.MustGetString(instr.Args[n])
+	return instr.Args[n]
+}
+
+// Get then nth argument to the current instruction as a string.
+// Any magic interpolations and value-replacements are done seamlessly.
+func (m *Machine) ArgAsString(n int) string {
+	return m.MustGetString(m.Arg(n))
 }
 
 func (m *Machine) ArgAsInt(n int) int {
-	return m.StrToInt(m.ArgAsString(n))
+	return m.MustGetInt(m.Arg(n))
 }
 
 func (m *Machine) ArgAsFloat(n int) float64 {
-	s := m.ArgAsString(n)
-	if strings.HasSuffix(s, "%") {
-		return m.StrToFloat(s[:len(s)-1]) / 100.0
-	}
-	return m.StrToFloat(s)
+	return m.MustGetFloat(m.Arg(n))
 }
 
 // Number of args for the current instruction
