@@ -1,7 +1,9 @@
 package machine
 
-import "strings"
-import L "log"
+import (
+	"log"
+	"strings"
+)
 
 func init() {
 	InstructionHandlers["log"] = Log
@@ -13,5 +15,5 @@ func Log(m *Machine) {
 	for n := 0; n < m.ArgCount(); n++ {
 		buf[n] = m.ArgAsString(n)
 	}
-	L.Printf("LOG: %s", strings.Join(buf, " "))
+	log.Printf("LOG: %s", strings.Join(buf, " "))
 }
