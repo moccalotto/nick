@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/moccalotto/nick/exporters"
 	"github.com/moccalotto/nick/machine"
 	"time"
@@ -46,7 +47,9 @@ func createMachine() *machine.Machine {
 func main() {
 	m := createMachine()
 	m.Limits.MaxRuntime, _ = time.ParseDuration("5s")
+	start := time.Now()
 	err := m.Execute()
+	elapsed := time.Now().Sub(start).Seconds()
 
 	if err != nil {
 		panic(err)
@@ -55,4 +58,6 @@ func main() {
 	fallback := exporters.NewTextExporter()
 	e := exporters.NewSuggestionExporter(m.Vars, fallback)
 	e.Export(m.Field) // export an image.
+
+	fmt.Printf("Time elapsed: %f", elapsed)
 }
