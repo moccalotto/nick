@@ -11,7 +11,7 @@ func createMachine() *machine.Machine {
 	m := machine.MachineFromScript(`
 		suggest export.type      = iterm	# We would like to export an image
 		suggest export.format    = png		# in png
-		suggest export.width     = 1600		# with a fixed width
+		# suggest export.width     = 1600		# with a fixed width
 		suggest export.algorithm = Lanczos	# using the »box« scaling method
 
 		init 25 x 20		# New canvas. Small initial canvas yields simple caves
@@ -20,7 +20,7 @@ func createMachine() *machine.Machine {
 
 		loop 3
 			evolve B5678/S345678	# run standard escavator
-			egress random 8 x 2	# create an opening
+			egress random 8 x 3	# create an opening
 		endloop
 
 		loop 2
@@ -30,7 +30,7 @@ func createMachine() *machine.Machine {
 			endloop
 		endloop 
 
-		loop 8
+		loop 7
 			scale 1.5
 			loop 2
 				evolve B5678/S5678	# run edge smoother
