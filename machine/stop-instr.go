@@ -1,9 +1,9 @@
 package machine
 
 func init() {
-	InstructionHandlers["exit"] = Exit
+	InstructionHandlers["stop!"] = Stop
 }
 
-func Exit(m *Machine) {
+func Stop(m *Machine) {
 	m.State.PC = len(m.Tape)
 }
