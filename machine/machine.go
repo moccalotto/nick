@@ -1,6 +1,7 @@
 package machine
 
 import (
+	"fmt"
 	"github.com/golang-collections/collections/stack"
 	"github.com/moccalotto/nick/field"
 	"math/rand"
@@ -34,7 +35,11 @@ func (m *Machine) Assert(condition bool, msg interface{}, a ...interface{}) {
 		return
 	}
 
-	m.Exception(m, msg, a...)
+	m.Throw(msg, a...)
+}
+
+func (m *Machine) Throw(msg interface{}, a ...interface{}) {
+	m.Exception(m, fmt.Sprintf("Error on line %d: %s", m.CurrentInstruction().Line, msg), a...)
 }
 
 func (m *Machine) StrToInt(s string) int {
@@ -61,33 +66,89 @@ func (m *Machine) MustGetVar(id string) string {
 	return val
 }
 
-func (m *Machine) MustGetString(s string) string {
+func (m *Machine) MustGetString(a Arg) string {
+	switch a.T {
+	case StrArg, FloatArg, IntArg:
+		return a.StrVal
+	case CmdArg:
+		// TODO: @rand, @foo, etc. could be special value handlers, just like InstructionHandlers
+		// They could then be registered on runtime.
+		switch a.StrVal {
+		case "rand":
+			return strconv.FormatFloat(m.Rng.Float64(), 'E', -1, 64)
+		case "pc":
+			return strconv.Itoa(m.State.PC)
+		case "loop":
+			return strconv.Itoa(m.State.Loop)
+		default:
+			m.Throw("Unknown command special command @%s (%v)", a.StrVal, a)
+		}
+	case VarArg:
+		return m.MustGetVar(a.StrVal)
+	}
 
-	// TODO: @rand, @foo, etc. could be special value handlers, just like InstructionHandlers
-	// They could then be registered on runtime.
-	if s == "@rand" {
-		return strconv.FormatFloat(m.Rng.Float64(), 'E', -1, 64)
-	}
-	if s == "@pc" {
-		return strconv.Itoa(m.State.PC)
-	}
-	if s == "@loop" {
-		return strconv.Itoa(m.State.Loop)
-	}
+	m.Throw("This should never happen MustGetString(%v)", a)
 
-	if strings.HasPrefix(s, "$") {
-		return m.MustGetVar(s[1:])
-	}
-
-	return s
+	return ""
 }
 
-func (m *Machine) MustGetFloat(s string) float64 {
-	return m.StrToFloat(m.MustGetString(s))
+func (m *Machine) MustGetFloat(a Arg) float64 {
+	switch a.T {
+	case StrArg:
+		m.Throw("Could not convert argument %v into float", a)
+	case FloatArg:
+		return a.FloatVal
+	case IntArg:
+		return a.FloatVal
+	case CmdArg:
+		// TODO: @rand, @foo, etc. could be special value handlers, just like InstructionHandlers
+		// They could then be registered on runtime.
+		switch a.StrVal {
+		case "rand":
+			return m.Rng.Float64()
+		case "pc":
+			return float64(m.State.PC)
+		case "loop":
+			return float64(m.State.Loop)
+		default:
+			m.Throw("Unknown command special command @%s", a.StrVal)
+		}
+
+	case VarArg:
+		return m.StrToFloat(m.MustGetVar(a.StrVal))
+	}
+
+	m.Throw("This should never happen MustGetFloat(%v)", a)
+
+	return 0.0
 }
 
-func (m *Machine) MustGetInt(s string) int {
-	return m.StrToInt(m.MustGetString(s))
+func (m *Machine) MustGetInt(a Arg) int {
+	switch a.T {
+	case StrArg, FloatArg:
+		m.Throw("Could not convert argument %v into an integer", a)
+	case IntArg:
+		return a.IntVal
+	case CmdArg:
+		// TODO: @rand, @foo, etc. could be special value handlers, just like InstructionHandlers
+		// They could then be registered on runtime.
+		switch a.StrVal {
+		case "rand":
+			m.Throw("Cannot use @rand. Expecting an integer")
+		case "pc":
+			return m.State.PC
+		case "loop":
+			return m.State.Loop
+		default:
+			m.Throw("Unknown command special command @%s", a.StrVal)
+		}
+	case VarArg:
+		return m.StrToInt(m.MustGetVar(a.StrVal))
+	}
+
+	m.Throw("This should never happen MustGetInt(%v)", a)
+
+	return 0
 }
 
 func (m *Machine) CurrentInstruction() Instruction {
@@ -172,7 +233,7 @@ func (m *Machine) execCurrentInstruction() {
 	handler, ok := InstructionHandlers[i.Cmd]
 
 	if !ok {
-		m.Exception(m, "Unknown instruction: %s (%+v)", i.Cmd, i)
+		m.Throw("Unknown instruction '%s' on line %d (%+v)", i.Cmd, i.Line, i)
 		return
 	}
 

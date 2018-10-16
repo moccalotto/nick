@@ -19,7 +19,7 @@ func createMachine() *machine.Machine {
 
 		loop 3
 			evolve B5678/S345678	# run standard escavator
-			egress random @ 8 x 2	# create an opening
+			egress random 8 x 2	# create an opening
 		endloop
 
 		loop 2

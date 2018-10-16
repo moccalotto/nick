@@ -7,6 +7,7 @@ import (
 	"log"
 	"math/rand"
 	"regexp"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -89,7 +90,9 @@ func extractCodeAndComment(s string) (string, string) {
 	return code, comment
 }
 
-func lineToInstruction(l string) (*Instruction, error) {
+// lineToInstruction generates an Instruction
+// l is the line and i is the line number
+func lineToInstruction(l string, i int) (*Instruction, error) {
 	escaped, placeholders := escapeString(l)
 	code, comment := extractCodeAndComment(escaped)
 	if len(code) == 0 {
@@ -102,16 +105,65 @@ func lineToInstruction(l string) (*Instruction, error) {
 
 	return &Instruction{
 		Cmd:     words[0],
-		Args:    words[1:],
+		Args:    makeArgs(words[1:]),
 		Comment: comment,
+		Line:    i + 1,
 	}, nil
+}
+
+func makeArg(w string) Arg {
+	if strings.HasPrefix(w, "$") {
+		return Arg{
+			T:      VarArg, // this is a var-reference
+			StrVal: w[1:],  // remove the $ to get the name of the var
+		}
+	}
+
+	if strings.HasPrefix(w, "@") {
+		return Arg{
+			T:      CmdArg, // This is a "command" (i.e. a special system variable)
+			StrVal: w[1:],  // remove the @ to get the name of the var
+		}
+	}
+
+	if v, e := strconv.Atoi(w); e == nil {
+		return Arg{
+			T:        IntArg,
+			FloatVal: float64(v),
+			IntVal:   v,
+			StrVal:   w,
+		}
+	}
+
+	if v, e := strconv.ParseFloat(w, 64); e == nil {
+		return Arg{
+			T:        FloatArg,
+			FloatVal: v,
+			StrVal:   strconv.FormatFloat(v, 'f', -1, 64),
+		}
+	}
+
+	return Arg{
+		T:      StrArg,
+		StrVal: w,
+	}
+}
+
+func makeArgs(words []string) []Arg {
+	res := make([]Arg, len(words))
+
+	for i, w := range words {
+		res[i] = makeArg(w)
+	}
+
+	return res
 }
 
 func scriptToInstructions(p string) []Instruction {
 	res := []Instruction{}
 
-	for _, line := range scriptToLines(p) {
-		instr, _ := lineToInstruction(line)
+	for i, s := range scriptToLines(p) {
+		instr, _ := lineToInstruction(s, i)
 		if instr == nil {
 			continue
 		}
@@ -122,6 +174,6 @@ func scriptToInstructions(p string) []Instruction {
 	return res
 }
 
-func scriptToLines(p string) []string {
-	return regexp.MustCompile(`[\n\r]+`).Split(p, 65535)
+func scriptToLines(s string) []string {
+	return regexp.MustCompile(`[\n\r]+`).Split(s, 65535)
 }

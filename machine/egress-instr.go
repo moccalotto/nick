@@ -48,15 +48,14 @@ func Egress(m *Machine) {
 		)
 	}
 
-	errStr := "Invalid use of egress. Use one of: 'egress [direction]' or 'egress [direction] @ [length] x [thickness]'"
+	errStr := "Invalid use of egress. Use one of: 'egress [direction]' or 'egress [direction] [length] x [thickness]'"
 
-	m.Assert(m.ArgCount() == 1 || m.ArgCount() == 5, errStr)
+	m.Assert(m.ArgCount() == 1 || m.ArgCount() == 4, errStr)
 
 	if m.ArgCount() == 5 {
 		length = m.ArgAsInt(2)
-		thickness = m.ArgAsInt(4)
-		m.Assert(m.ArgAsString(1) == "@", errStr)
-		m.Assert(m.ArgAsString(3) == "x", errStr)
+		thickness = m.ArgAsInt(3)
+		m.Assert(m.ArgAsString(2) == "x", errStr)
 	} else {
 		// the default length if the egress is length / 4 squares
 		length := min(m.Field.Width(), m.Field.Height()) / 4

@@ -5,10 +5,28 @@ import (
 	"time"
 )
 
+const (
+	StrArg   = 0 // Arg is just a string
+	IntArg   = 1 // Arg is an integer (can of course also be a float)
+	FloatArg = 2 // Arg is a float
+	VarArg   = 4 // Arg is a var-reference (i.e. starts with $)
+	CmdArg   = 5 // Arg is a special command (i.e. starts with @)
+)
+
+type ArgType int
+
+type Arg struct {
+	T        ArgType
+	StrVal   string
+	FloatVal float64
+	IntVal   int
+}
+
 type Instruction struct {
 	Cmd     string
-	Args    []string
+	Args    []Arg
 	Comment string
+	Line    int
 }
 
 // This entire state is pushed whenever we enter a control structure

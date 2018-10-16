@@ -1,9 +1,5 @@
 package machine
 
-import (
-	"strings"
-)
-
 func init() {
 	InstructionHandlers["suggest"] = Suggest
 }
@@ -13,12 +9,7 @@ func init() {
 // This essentially tells post-processors what to do, but they
 // do not have to adhere to it.
 func Suggest(m *Machine) {
-	m.Assert(
-		m.ArgAsString(1) == "=",
-		"Usage: 'suggest [string] = [string]'. You did this: %s %s",
-		m.CurrentInstruction().Cmd,
-		strings.Join(m.CurrentInstruction().Args, " "),
-	)
+	m.Assert(m.ArgAsString(1) == "=", "Usage: 'suggest [string] = [string]'")
 
 	varName := "suggestion." + m.ArgAsString(0)
 
