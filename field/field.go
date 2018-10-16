@@ -1,13 +1,19 @@
 package field
 
+import "fmt"
+
 type Cell int
 
 func (c Cell) Alive() bool {
-	return c != 0
+	// Cells with value 1 or greater are considered to be alive
+	return c > 0
 }
 
 func (c Cell) Dead() bool {
-	return c == 0
+	// Cells with value 0 or lower are considered to be dead.
+	// This means that there are several "dead" states.
+	// It also means that you cannot use fields to denote negative heights.
+	return c <= 0
 }
 
 func LivingCell() Cell {
@@ -39,17 +45,34 @@ func (f *Field) Apply(m Modifier) {
 	m.ApplyToField(f)
 }
 
+func (f *Field) CoordsInRange(x, y int) bool {
+	return x < f.w &&
+		y < f.h &&
+		x >= 0 &&
+		y >= 0
+}
+
 // Set sets the state of the specified cell to the given value.
 func (f *Field) Set(x, y int, c Cell) {
+	if !f.CoordsInRange(x, y) {
+		panic(fmt.Sprintf(
+			"Coords [%d, %d] are out of range [0..%d, 0..%d]",
+			x,
+			y,
+			f.w-1,
+			f.h-1,
+		))
+	}
+
 	f.s[y*f.w+x] = c
 }
 
 // Set sets the state of the specified cell to the given value.
 func (f *Field) SetAlive(x, y int, b bool) {
 	if b {
-		f.s[y*f.w+x] = LivingCell()
+		f.Set(x, y, LivingCell())
 	} else {
-		f.s[y*f.w+x] = DeadCell()
+		f.Set(x, y, DeadCell())
 	}
 
 }
@@ -62,16 +85,7 @@ func (f *Field) Alive(x, y int) bool {
 }
 
 func (f *Field) robustGet(x, y int) Cell {
-	if x >= f.w {
-		return f.outside
-	}
-	if x < 0 {
-		return f.outside
-	}
-	if y >= f.h {
-		return f.outside
-	}
-	if y < 0 {
+	if !f.CoordsInRange(x, y) {
 		return f.outside
 	}
 
