@@ -52,8 +52,7 @@ func (f *Field) CoordsInRange(x, y int) bool {
 		y >= 0
 }
 
-// Set sets the state of the specified cell to the given value.
-func (f *Field) Set(x, y int, c Cell) {
+func (f *Field) CoordsMustBeInRange(x, y int) {
 	if !f.CoordsInRange(x, y) {
 		panic(fmt.Sprintf(
 			"Coords [%d, %d] are out of range [0..%d, 0..%d]",
@@ -63,6 +62,11 @@ func (f *Field) Set(x, y int, c Cell) {
 			f.h-1,
 		))
 	}
+}
+
+// Set sets the state of the specified cell to the given value.
+func (f *Field) Set(x, y int, c Cell) {
+	f.CoordsMustBeInRange(x, y)
 
 	f.s[y*f.w+x] = c
 }
@@ -81,6 +85,7 @@ func (f *Field) SetAlive(x, y int, b bool) {
 // If the x or y coordinates are outside the field boundaries they are wrapped
 // toroidally. For instance, an x value of -1 is treated as width-1.
 func (f *Field) Alive(x, y int) bool {
+	f.CoordsMustBeInRange(x, y)
 	return f.s[y*f.w+x].Alive()
 }
 
@@ -113,6 +118,9 @@ func (f *Field) Cells() []Cell {
 }
 
 func (f *Field) SetCells(w, h int, s []Cell) {
+	if len(s) != w*h {
+		panic("Invalid use of SetCells(). w*h must be len(s)")
+	}
 	f.s = s
 	f.h = h
 	f.w = w
