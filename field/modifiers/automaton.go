@@ -98,5 +98,5 @@ func (ca *Automaton) ApplyToField(f *field.Field) {
 		}
 	}
 
-	f.SetCells(tmp.Cells())
+	f.SetCells(f.Width(), f.Height(), tmp.Cells())
 }

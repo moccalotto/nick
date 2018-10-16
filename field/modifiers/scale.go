@@ -33,7 +33,7 @@ func (s *Scale) ApplyToField(f *field.Field) {
 		}
 	}
 
-	f.SetCells(tmp.Cells())
+	f.SetCells(nw, nh, tmp.Cells())
 }
 
 /* TODO
