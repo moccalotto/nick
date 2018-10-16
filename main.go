@@ -14,31 +14,35 @@ func createMachine() *machine.Machine {
 		# suggest export.width     = 1600		# with a fixed width
 		suggest export.algorithm = Lanczos	# using the »box« scaling method
 
+		# Small initial sizes often yield simple caves
+		# Large initial sizes yields multi-room or complex caves with stalactites/columns, etc.
 		init 25 x 20		# New canvas. Small initial canvas yields simple caves
-		snow 31%		# add 40% snow
-		border 1      		# Cover the border with snow at a 85% density
+		snow 31%		# Add random dots.
+		border 1 80%    	# Cover the border with snow at a 80 percent density
 
 		loop 3
-			evolve B5678/S345678	# run standard escavator
-			egress random 8 x 3	# create an opening
-		endloop
+			set-rand-int $width = 6 to 10	# determine the width of the egress
+			set-rand-int $depth  = 1 to 3	# determine the depth of the egress
+			egress random $width x $depth	# create an opening
 
-		loop 2
-			scale 2
-			loop 3
-				evolve B5678/S345678	# run standard escavator
-			endloop
-		endloop 
+			evolve B5678/S345678	# run standard escavator
+			evolve B5678/S345678	# run standard escavator
+
+			scale 1.75 x 1.5
+		endloop
 
 		loop 7
 			scale 1.5
-			loop 2
-				evolve B5678/S5678	# run edge smoother
-			endloop
+			evolve B5678/S5678	# run edge smoother
+			evolve B5678/S5678	# run edge smoother
 		endloop
 
-		# evolve B05678/S05678     # This automaton is good for strengthening edges.
-		# evolve B012345/S012345   # Running an "inverse" automaton inverses the map
+		# evolve B2345678/S0 		# Produce an outline. Living edge on dead background
+		# border 1 100% (dead)		# The outliner above will remove any egress. We revive it by killing the border.
+
+		# evolve B05678/S05678		# This automaton reduces the map to just the edges (but also reverses it).
+		# evolve B012345/S012345	# Running an "inverse" automaton re-inverses the map
+
 	`)
 
 	return m
@@ -59,5 +63,6 @@ func main() {
 	e := exporters.NewSuggestionExporter(m.Vars, fallback)
 	e.Export(m.Field) // export an image.
 
-	fmt.Printf("Time elapsed: %f", elapsed)
+	fmt.Printf("Seed: %d\n", m.Seed)
+	fmt.Printf("Time elapsed: %f\n", elapsed)
 }
