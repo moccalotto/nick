@@ -94,7 +94,7 @@ func (ca *Automaton) ApplyToField(f *field.Field) {
 
 	for x := 0; x < f.Width(); x++ {
 		for y := 0; y < f.Height(); y++ {
-			tmp.Set(x, y, ca.NextCellState(f, x, y))
+			tmp.SetAlive(x, y, ca.NextCellState(f, x, y))
 		}
 	}
 

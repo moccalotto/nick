@@ -31,7 +31,7 @@ func (b *BorderSnow) ApplyToField(f *field.Field) {
 				y > bh // south line
 
 			if inDrawArea && (b.Coverage == 1.0 || b.rng.Float64() < b.Coverage) {
-				f.Set(x, y, b.Alive)
+				f.SetAlive(x, y, b.Alive)
 			}
 		}
 	}

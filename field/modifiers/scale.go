@@ -28,7 +28,7 @@ func (s *Scale) ApplyToField(f *field.Field) {
 		for x := 0; x < nw; x++ {
 			_x := int(math.Floor(float64(x) / s.x))
 			if f.Alive(_x, _y) {
-				tmp.Set(x, y, true)
+				tmp.SetAlive(x, y, true)
 			}
 		}
 	}
