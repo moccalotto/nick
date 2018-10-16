@@ -6,27 +6,31 @@ import (
 )
 
 const (
-	StrArg   = 0 // Arg is just a string
-	IntArg   = 1 // Arg is an integer (can of course also be a float)
-	FloatArg = 2 // Arg is a float
-	VarArg   = 4 // Arg is a var-reference (i.e. starts with $)
-	CmdArg   = 5 // Arg is a special command (i.e. starts with @)
+	// The enum values of the ArgType
+	StrArg   ArgType = 1 // Arg is just a string
+	IntArg   ArgType = 2 // Arg is an integer (can of course also be a float)
+	FloatArg ArgType = 3 // Arg is a float
+	VarArg   ArgType = 4 // Arg is a var-reference (i.e. starts with $)
+	CmdArg   ArgType = 5 // Arg is a special command (i.e. starts with @)
 )
 
+// ArgType is an enum that is one of the StrArg, IntArg, FloatArg, CmdArg values
 type ArgType int
 
+// Arg is an argument for an instruction
 type Arg struct {
-	T        ArgType
-	StrVal   string
-	FloatVal float64
-	IntVal   int
+	T        ArgType // The inferred type of argument
+	StrVal   string  // The argument as a string
+	FloatVal float64 // Thi argument converted to float64
+	IntVal   int     // The argument converted to int
 }
 
+// Instruction is an instruction for a Machine to perform.
 type Instruction struct {
-	Cmd     string
-	Args    []Arg
-	Comment string
-	Line    int
+	Cmd     string // The name of this instruction (for instance "init")
+	Args    []Arg  // A list of arguments for the instruction
+	Comment string // The comment associated with this instruction (if any was given)
+	Line    int    // The line number in the script
 }
 
 // This entire state is pushed whenever we enter a control structure
