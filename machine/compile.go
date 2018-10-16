@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/golang-collections/collections/stack"
 	"log"
+	"math/bits"
 	"math/rand"
 	"regexp"
 	"strconv"
@@ -17,7 +18,7 @@ func DefaultExceptionHandler(m *Machine, msg interface{}, a ...interface{}) {
 }
 
 func MachineFromScript(p string) *Machine {
-	seed := time.Now().UnixNano()
+	seed := int64(bits.ReverseBytes64(uint64(time.Now().UnixNano())))
 	source := rand.NewSource(seed)
 	rng := rand.New(source)
 	return &Machine{
