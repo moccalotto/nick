@@ -4,7 +4,6 @@ import (
 	"github.com/golang-collections/collections/stack"
 	"github.com/moccalotto/nick/field"
 	"math/rand"
-	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -62,14 +61,6 @@ func (m *Machine) MustGetVar(id string) string {
 	return val
 }
 
-func (m *Machine) interpolatedValue(s string) string {
-	return regexp.MustCompile(`\{\$[^$}]+\}`).ReplaceAllStringFunc(s, func(v string) string {
-		var id string = v[2 : len(v)-1]
-
-		return m.MustGetVar(id)
-	})
-}
-
 func (m *Machine) MustGetString(s string) string {
 
 	// TODO: @rand, @foo, etc. could be special value handlers, just like InstructionHandlers
@@ -84,11 +75,11 @@ func (m *Machine) MustGetString(s string) string {
 		return strconv.Itoa(m.State.Loop)
 	}
 
-	if !strings.HasPrefix(s, "$") {
-		return m.interpolatedValue(s)
+	if strings.HasPrefix(s, "$") {
+		return m.MustGetVar(s[1:])
 	}
 
-	return m.MustGetVar(s[1:])
+	return s
 }
 
 func (m *Machine) MustGetFloat(s string) float64 {
