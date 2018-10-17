@@ -1,3 +1,5 @@
+seed 667
+
 suggest export.type      = iterm    # We would like to export an image
 suggest export.format    = png      # in png
 suggest export.algorithm = Lanczos  # using the »box« scaling method
