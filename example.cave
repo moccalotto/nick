@@ -1,4 +1,4 @@
-# seed 667
+seed 667
 
 suggest export.type      = iterm    # We would like to export an image
 suggest export.format    = png      # in png
@@ -40,6 +40,8 @@ loop 3
 
     scale 1.75
 endloop
+
+oddities 50
 
 loop 7
     scale 1.5
