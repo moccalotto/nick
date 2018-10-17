@@ -13,6 +13,12 @@ import (
 	"time"
 )
 
+// pre compile regular expressions.
+
+var stringEscaper *regexp.Regexp = regexp.MustCompile(`\[\[[^\]]+\]\]`)
+var stringUnescaper *regexp.Regexp = regexp.MustCompile(`___REP___\d{9}___PER___`)
+var lineExploder *regexp.Regexp = regexp.MustCompile(`[\n\r]+`)
+
 func DefaultExceptionHandler(m *Machine, msg interface{}, a ...interface{}) {
 	log.Fatalf("Exception: "+msg.(string), a...)
 }
@@ -34,11 +40,10 @@ func MachineFromScript(p string) *Machine {
 }
 
 func escapeString(s string) (string, []string) {
-	r := regexp.MustCompile(`\[\[[^\]]+\]\]`)
 	placeholders := []string{} // placeholders
 
 	// generate a temporary string where whitespace inside [[ ]] blocks is removed
-	escaped := r.ReplaceAllStringFunc(s, func(m string) string {
+	escaped := stringEscaper.ReplaceAllStringFunc(s, func(m string) string {
 		i := len(placeholders)
 		txt := m[2 : len(m)-2]
 
@@ -51,9 +56,7 @@ func escapeString(s string) (string, []string) {
 }
 
 func unescapeString(s string, placeholders []string) string {
-	r := regexp.MustCompile(`___REP___\d{9}___PER___`)
-
-	return r.ReplaceAllStringFunc(s, func(m string) string {
+	return stringUnescaper.ReplaceAllStringFunc(s, func(m string) string {
 		var i int
 		_, err := fmt.Sscanf(m, "___REP___%09d___PER___", &i)
 
@@ -199,5 +202,5 @@ func scriptToInstructions(p string) []Instruction {
 }
 
 func scriptToLines(s string) []string {
-	return regexp.MustCompile(`[\n\r]+`).Split(s, 65535)
+	return lineExploder.Split(s, 65535)
 }
