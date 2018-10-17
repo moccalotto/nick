@@ -30,7 +30,10 @@ func Set(m *Machine) {
 		fmin, fmax := sortArgs(m.ArgAsFloat(2), m.ArgAsFloat(4))
 		imin, imax := int(fmin), int(fmax)
 
-		if float64(imin) == fmin && float64(imax) == fmax {
+		// no real difference between the two args.
+		if fmin-fmax < 0.0000001 {
+			m.Vars[a.StrVal] = strconv.FormatFloat(fmin, 'f', -1, 64)
+		} else if float64(imin) == fmin && float64(imax) == fmax {
 			delta := imax - imin
 			m.Vars[a.StrVal] = strconv.Itoa(m.Rng.Intn(delta) + imin)
 		} else {
