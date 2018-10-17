@@ -1,33 +1,48 @@
-seed 667
+# seed 667
 
 suggest export.type      = iterm    # We would like to export an image
 suggest export.format    = png      # in png
 suggest export.algorithm = Lanczos  # using the »box« scaling method
 # suggest export.width   = 1600     # with a fixed width
 
-init 25 x 20                        # New, small, canvas.
+set $width  between 20 and 60
+set $height oneof   20 35 55
+
+init 35 x 20                        # New, small-ish, canvas.
                                     # Large initial sizes yields multi-room or
                                     # complex caves with stalactites/columns, etc.
                                     # Small initial sizes often yield simple caves
+                                    # Examples:
+                                    # 20x20: simple, one-room caves
+                                    # 60x20: complex one-to-two room caves
+                                    #        (depending on how much snow is added)
 
-snow 31%                            # Add random dots.
-border 1 80%                        # Cover the border with snow at a 80 percent density
+
+# Add random dots. 30% is relatively simple caves,
+# whereas 40% gives more complex caves
+set $snow between 30% and 40%
+snow $snow
+
+
+# Cover 65 to 85% of the border with dots.
+set $coverage  between 65% and 85%
+border 1 $coverage
 
 loop 3
-    set-rand-int $width = 6 to 10   # determine the width of the egress
-    set-rand-int $depth = 1 to 3    # determine the depth of the egress
+    set $width between 6 and 10
+    set $depth between 1 and 3
     egress random $width x $depth   # create an opening
 
     evolve B5678/S345678            # run standard escavator
-    evolve B5678/S345678            # twice
+    evolve B5678/S345678            # ...twice
 
-    scale 1.75 x 1.5
+    scale 1.75
 endloop
 
 loop 7
     scale 1.5
     evolve B5678/S5678              # run edge smoother
-    evolve B5678/S5678              # twice
+    evolve B5678/S5678              # ...twice
 endloop
 
 # evolve B2345678/S0                # Produce an outline. Living edge on dead background

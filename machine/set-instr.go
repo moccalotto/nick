@@ -6,53 +6,47 @@ import (
 
 func init() {
 	InstructionHandlers["set"] = Set
-	InstructionHandlers["set-rand-int"] = SetRandInt
-	InstructionHandlers["set-rand-float"] = SetRandFloat
 }
 
 // set $foo = [[this is a long string]]
 func Set(m *Machine) {
 	a := m.Arg(0)
-	errStr := "Invalid use of instruction. Correct use is: set $varname = [value]"
+	errStr := "Invalid use of 'set' instruction.\n" +
+		"correct use is one of the following:\n" +
+		"set $foo = some-value           - sets $foo = 'some-value'\n" +
+		"set $bar between 1 and 20       - sets $bar to a random number in the range [1, 20]\n" +
+		"set $baz oneof a b c d          - sets baz to either 'a', 'b', 'c' or 'd'"
+
 	m.Assert(a.T == VarArg, errStr)
 
-	m.Assert(m.ArgAsString(1) == "=", "Invalid use of instruction. Correct use is set $varname = [value]")
+	switch m.ArgAsString(1) {
+	case "=":
+		m.Vars[a.StrVal] = m.ArgAsString(2)
+	case "oneof":
+		m.Vars[a.StrVal] = m.ArgAsString(m.Rng.Intn(m.ArgCount()-2) + 2)
+		// do nothing
+	case "between":
+		m.Assert(m.ArgAsString(3) == "and", errStr)
+		fmin, fmax := sortArgs(m.ArgAsFloat(2), m.ArgAsFloat(4))
+		imin, imax := int(fmin), int(fmax)
 
-	m.Vars[a.StrVal] = m.ArgAsString(2)
+		if float64(imin) == fmin && float64(imax) == fmax {
+			delta := imax - imin
+			m.Vars[a.StrVal] = strconv.Itoa(m.Rng.Intn(delta) + imin)
+		} else {
+			delta := fmax - fmin
+			f := m.Rng.Float64()*delta + fmin
+			m.Vars[a.StrVal] = strconv.FormatFloat(f, 'f', -1, 64)
+		}
+	default:
+		m.Throw("Invalid use of instruction. Correct use is set $varname = [value]")
+	}
 }
 
-// set-rand-int $width  = 1 to 3
-// pattern: set-rand-int {varname:var} = {from:int} to {to:int}
-func SetRandInt(m *Machine) {
-	errStr := "Invalid use of instruction. Correct use is: set-rand-int $varname = [min] to [max]"
-	a := m.Arg(0)
-	m.Assert(a.T == VarArg, errStr)
-
-	m.Assert(m.ArgAsString(1) == "=", errStr)
-	m.Assert(m.ArgAsString(3) == "to", errStr)
-
-	min := m.ArgAsInt(2)
-	max := m.ArgAsInt(4)
-	delta := max - min
-
-	m.Vars[a.StrVal] = strconv.Itoa(m.Rng.Intn(delta) + min)
-}
-
-// set-rand-int $width  = 1 to 3
-// pattern: set-rand-int {varname:var} = {from:int} to {to:int}
-func SetRandFloat(m *Machine) {
-	errStr := "Invalid use of instruction. Correct use is: set-rand-float $varname = [min] to [max]"
-	a := m.Arg(0)
-	m.Assert(a.T == VarArg, errStr)
-
-	m.Assert(m.ArgAsString(1) == "=", errStr)
-	m.Assert(m.ArgAsString(3) == "to", errStr)
-
-	min := m.ArgAsFloat(2)
-	max := m.ArgAsFloat(4)
-	delta := max - min
-
-	f := m.Rng.Float64()*delta + min
-
-	m.Vars[a.StrVal] = strconv.FormatFloat(f, 'f', -1, 64)
+func sortArgs(a, b float64) (float64, float64) {
+	if a < b {
+		return a, b
+	} else {
+		return b, a
+	}
 }
