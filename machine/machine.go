@@ -212,17 +212,14 @@ func (m *Machine) PeekState() *MachineState {
 
 func (m *Machine) Execute() error {
 	m.StartedAt = time.Now()
-	_m := *m // run the script on a clone.
-	for _m.State.PC = 0; _m.State.PC < len(_m.Tape); _m.State.PC++ {
-		_m.execCurrentInstruction()
+	for m.State.PC = 0; m.State.PC < len(m.Tape); m.State.PC++ {
+		m.execCurrentInstruction()
 
 		if err := m.checkRestrictions(); err != nil {
 			return err
 		}
 	}
 
-	m.Field = _m.Field
-	m.Vars = _m.Vars
 	return nil
 }
 
