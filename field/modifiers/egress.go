@@ -20,20 +20,20 @@ const (
 )
 
 type Egress struct {
-	Length    int
-	Thickness int
-	Position  Direction
-	Alive     bool
-	rng       *rand.Rand
+	Width    int
+	Depth    int
+	Position Direction
+	Alive    bool
+	rng      *rand.Rand
 }
 
-func NewEgress(position Direction, length int, rng *rand.Rand) *Egress {
+func NewEgress(position Direction, width int, rng *rand.Rand) *Egress {
 	return &Egress{
-		Length:    length,
-		Thickness: 1,
-		Position:  position,
-		Alive:     false, // by default, an egress consists of empty/dead space.
-		rng:       rng,
+		Width:    width,
+		Depth:    1,
+		Position: position,
+		Alive:    false, // by default, an egress consists of empty/dead space.
+		rng:      rng,
 	}
 }
 
@@ -47,19 +47,19 @@ func (e *Egress) ApplyToField(f *field.Field) {
 	switch pos {
 	case North:
 		r := Rect{
-			StartX:   (f.Width() - e.Length) / 2,
+			StartX:   (f.Width() - e.Width) / 2,
 			StartY:   0,
-			EndX:     (f.Width() + e.Length) / 2,
-			EndY:     e.Thickness - 1,
+			EndX:     (f.Width() + e.Width) / 2,
+			EndY:     e.Depth - 1,
 			Coverage: 1.0,
 			Alive:    e.Alive,
 		}
 		r.ApplyToField(f)
 	case South:
 		r := Rect{
-			StartX:   (f.Width() - e.Length) / 2,
-			StartY:   f.Height() - e.Thickness,
-			EndX:     (f.Width() + e.Length) / 2,
+			StartX:   (f.Width() - e.Width) / 2,
+			StartY:   f.Height() - e.Depth,
+			EndX:     (f.Width() + e.Width) / 2,
 			EndY:     f.Height() - 1,
 			Coverage: 1.0,
 			Alive:    e.Alive,
@@ -67,10 +67,10 @@ func (e *Egress) ApplyToField(f *field.Field) {
 		r.ApplyToField(f)
 	case East:
 		r := Rect{
-			StartX:   f.Width() - e.Thickness,
-			StartY:   (f.Height() - e.Length) / 2,
+			StartX:   f.Width() - e.Depth,
+			StartY:   (f.Height() - e.Width) / 2,
 			EndX:     f.Width() - 1,
-			EndY:     (f.Height() + e.Length) / 2,
+			EndY:     (f.Height() + e.Width) / 2,
 			Coverage: 1.0,
 			Alive:    e.Alive,
 		}
@@ -78,26 +78,26 @@ func (e *Egress) ApplyToField(f *field.Field) {
 	case West:
 		r := Rect{
 			StartX:   0,
-			StartY:   (f.Height() - e.Length) / 2,
-			EndX:     e.Thickness - 1,
-			EndY:     (f.Height() + e.Length) / 2,
+			StartY:   (f.Height() - e.Width) / 2,
+			EndX:     e.Depth - 1,
+			EndY:     (f.Height() + e.Width) / 2,
 			Coverage: 1.0,
 			Alive:    e.Alive,
 		}
 		r.ApplyToField(f)
 	case NorthEast:
-		l := (e.Length + 1) / 2
+		l := (e.Width + 1) / 2
 		north := Rect{
 			StartX:   f.Width() - l,
 			StartY:   0,
 			EndX:     f.Width() - 1,
-			EndY:     e.Thickness - 1,
+			EndY:     e.Depth - 1,
 			Coverage: 1.0,
 			Alive:    e.Alive,
 		}
 		north.ApplyToField(f)
 		east := Rect{
-			StartX:   f.Width() - e.Thickness,
+			StartX:   f.Width() - e.Depth,
 			StartY:   0,
 			EndX:     f.Width() - 1,
 			EndY:     l - 1,
@@ -106,12 +106,12 @@ func (e *Egress) ApplyToField(f *field.Field) {
 		}
 		east.ApplyToField(f)
 	case NorthWest:
-		l := (e.Length + 1) / 2
+		l := (e.Width + 1) / 2
 		north := Rect{
 			StartX:   0,
 			StartY:   0,
 			EndX:     l - 1,
-			EndY:     e.Thickness - 1,
+			EndY:     e.Depth - 1,
 			Coverage: 1.0,
 			Alive:    e.Alive,
 		}
@@ -119,17 +119,17 @@ func (e *Egress) ApplyToField(f *field.Field) {
 		west := Rect{
 			StartX:   0,
 			StartY:   0,
-			EndX:     e.Thickness - 1,
+			EndX:     e.Depth - 1,
 			EndY:     l - 1,
 			Coverage: 1.0,
 			Alive:    e.Alive,
 		}
 		west.ApplyToField(f)
 	case SouthWest:
-		l := (e.Length + 1) / 2
+		l := (e.Width + 1) / 2
 		south := Rect{
 			StartX:   0,
-			StartY:   f.Height() - e.Thickness,
+			StartY:   f.Height() - e.Depth,
 			EndX:     l - 1,
 			EndY:     f.Height() - 1,
 			Coverage: 1.0,
@@ -139,17 +139,17 @@ func (e *Egress) ApplyToField(f *field.Field) {
 		west := Rect{
 			StartX:   0,
 			StartY:   f.Height() - l,
-			EndX:     e.Thickness - 1,
+			EndX:     e.Depth - 1,
 			EndY:     f.Height() - 1,
 			Coverage: 1.0,
 			Alive:    e.Alive,
 		}
 		west.ApplyToField(f)
 	case SouthEast:
-		l := (e.Length + 1) / 2
+		l := (e.Width + 1) / 2
 		south := Rect{
 			StartX:   f.Width() - l,
-			StartY:   f.Height() - e.Thickness,
+			StartY:   f.Height() - e.Depth,
 			EndX:     f.Width() - 1,
 			EndY:     f.Height() - 1,
 			Coverage: 1.0,
@@ -157,7 +157,7 @@ func (e *Egress) ApplyToField(f *field.Field) {
 		}
 		south.ApplyToField(f)
 		east := Rect{
-			StartX:   f.Width() - e.Thickness,
+			StartX:   f.Width() - e.Depth,
 			StartY:   f.Height() - l,
 			EndX:     f.Width() - 1,
 			EndY:     f.Height() - 1,
