@@ -13,9 +13,9 @@ func Set(m *Machine) {
 	a := m.Arg(0)
 	errStr := "Invalid use of 'set' instruction.\n" +
 		"correct use is one of the following:\n" +
-		"set $foo = some-value           - sets $foo = 'some-value'\n" +
-		"set $bar between 1 and 20       - sets $bar to a random number in the range [1, 20]\n" +
-		"set $baz oneof a b c d          - sets baz to either 'a', 'b', 'c' or 'd'"
+		"    set $foo = some-value       - sets $foo = 'some-value'\n" +
+		"    set $bar between 1 and 20   - sets $bar to a random number in the range [1, 20]\n" +
+		"    set $baz oneof a b c d      - sets $baz to either 'a', 'b', 'c' or 'd'"
 
 	m.Assert(a.T == VarArg, errStr)
 
