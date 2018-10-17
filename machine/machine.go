@@ -210,8 +210,12 @@ func (m *Machine) PeekState() *MachineState {
 	return &tmp
 }
 
+// Execute runs the script.
+// NOTE that this can modify all of the machine's properties, except for the tape.
+// If you want the machine to be pristine, you should clone the machine beforehand.
 func (m *Machine) Execute() error {
 	m.StartedAt = time.Now()
+
 	for m.State.PC = 0; m.State.PC < len(m.Tape); m.State.PC++ {
 		m.execCurrentInstruction()
 
