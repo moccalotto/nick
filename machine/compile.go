@@ -127,7 +127,10 @@ func makeArg(w string) Arg {
 		}
 	}
 
-	if v, e := strconv.Atoi(w); e == nil {
+	// Can we parse the word into a number that fits into an int?
+	// The number can be parsed a base-10 number (1234), a base-8 number (02322),
+	// or a hex-number (0x4d2).
+	if v, e := strconv.ParseInt(w, 0, 0); e == nil {
 		return Arg{
 			T:        IntArg,
 			FloatVal: float64(v),
