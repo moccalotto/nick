@@ -5,6 +5,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"sync"
 )
 
 // Automaton for evolving a field.
@@ -74,19 +75,18 @@ func (ca *Automaton) NextCellState(f *field.Field, x, y int) bool {
 // Apply a CA to the field
 func (ca *Automaton) ApplyToField(f *field.Field) {
 	tmp := field.NewField(f.Width(), f.Height())
-	done := make(chan bool)
+	var wg sync.WaitGroup
 	for y := 0; y < f.Height(); y++ {
+		wg.Add(1)
 		go func(_y int) {
+			defer wg.Done()
 			for x := 0; x < f.Width(); x++ {
 				tmp.SetAlive(x, _y, ca.NextCellState(f, x, _y))
 			}
-			done <- true
 		}(y)
 	}
 
-	for i := 0; i < f.Height(); i++ {
-		<-done
-	}
+	wg.Wait()
 
 	f.SetCells(f.Width(), f.Height(), tmp.Cells())
 }
