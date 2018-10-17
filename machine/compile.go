@@ -134,7 +134,7 @@ func makeArg(w string) Arg {
 		return Arg{
 			T:        IntArg,
 			FloatVal: float64(v),
-			IntVal:   v,
+			IntVal:   int(v),
 			StrVal:   w,
 		}
 	}
