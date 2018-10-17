@@ -39,7 +39,7 @@ func Set(m *Machine) {
 			m.Vars[a.StrVal] = strconv.FormatFloat(f, 'f', -1, 64)
 		}
 	default:
-		m.Throw("Invalid use of instruction. Correct use is set $varname = [value]")
+		m.Throw(errStr)
 	}
 }
 
