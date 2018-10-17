@@ -3,6 +3,7 @@ package modifiers
 import (
 	"github.com/moccalotto/nick/field"
 	"math"
+	"sync"
 )
 
 type Scale struct {
@@ -23,15 +24,23 @@ func (s *Scale) ApplyToField(f *field.Field) {
 	nh := int(math.Round(float64(f.Height()) * s.y))
 	tmp := field.NewField(nw, nh)
 
+	var wg sync.WaitGroup
+
 	for y := 0; y < nh; y++ {
 		_y := int(math.Floor(float64(y) / s.y))
-		for x := 0; x < nw; x++ {
-			_x := int(math.Floor(float64(x) / s.x))
-			if f.Alive(_x, _y) {
-				tmp.SetAlive(x, y, true)
+		wg.Add(1)
+		go func(y, _y int) {
+			defer wg.Done()
+			for x := 0; x < nw; x++ {
+				_x := int(math.Floor(float64(x) / s.x))
+				if f.Alive(_x, _y) {
+					tmp.SetAlive(x, y, true)
+				}
 			}
-		}
+		}(y, _y)
 	}
+
+	wg.Wait()
 
 	f.SetCells(nw, nh, tmp.Cells())
 }
