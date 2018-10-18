@@ -8,59 +8,65 @@ func init() {
 }
 
 func getCondition(m *Machine) bool {
-	condition := false
 	switch operator := m.ArgAsString(1); operator {
 	case "==":
-		condition = m.ArgAsString(0) == m.ArgAsString(2)
+		return m.ArgAsString(0) == m.ArgAsString(2)
 	case ">":
-		condition = m.ArgAsFloat(0) > m.ArgAsFloat(2)
+		return m.ArgAsFloat(0) > m.ArgAsFloat(2)
 	case "<":
-		condition = m.ArgAsFloat(0) < m.ArgAsFloat(2)
+		return m.ArgAsFloat(0) < m.ArgAsFloat(2)
 	case ">=":
-		condition = m.ArgAsFloat(0) >= m.ArgAsFloat(2)
+		return m.ArgAsFloat(0) >= m.ArgAsFloat(2)
 	case "<=":
-		condition = m.ArgAsFloat(0) <= m.ArgAsFloat(2)
+		return m.ArgAsFloat(0) <= m.ArgAsFloat(2)
 	case "!=":
-		condition = m.ArgAsFloat(0) != m.ArgAsFloat(2)
+		return m.ArgAsFloat(0) != m.ArgAsFloat(2)
 	default:
 		m.Throw("Unknown operator '%s', operator")
 	}
 
-	return condition
+	return false
 }
 
+// pattern:
+// if [value] [operator] [value]
 func If(m *Machine) {
-	// pattern:
-	// if [value] [operator] [value]
-
-	m.State.Cond = getCondition(m)
-
+	// we always push the current state when we reach an if-block
 	m.PushState()
-	if m.State.Cond == false {
-		// the condition failed, we skip until we reach endif, else or elsif
-		m.State.SkipUntil = map[string]bool{
-			"else":  true,
-			"endif": true,
-			"elsif": true,
-		}
 
+	// are we already inside a "failed" if-block?
+	// if so, we don't do anything.
+	// the previously pushed state will be
+	// popped when we reach the endif later.
+	if m.State.Cond == false {
 		return
 	}
 
-	// Allow the if-body to be executed.
-	m.State.SkipUntil = map[string]bool{}
+	m.State.Cond = getCondition(m)
+
+	if m.State.Cond == true {
+		// Allow the if-body to be executed.
+		m.State.SkipUntil = map[string]bool{}
+		return
+	}
+
+	// the condition failed, we skip until we reach endif, else or elsif
+	m.State.SkipUntil = map[string]bool{
+		"if":    true,
+		"else":  true,
+		"endif": true,
+		"elsif": true,
+	}
+
+	return
 }
 
 func Else(m *Machine) {
 
 	if m.State.Cond {
 		// we've just successfully executed an IF instruction.
-		// therefore we do not execute the elsif (nor an else for that matter)
-
+		// therefore we do not execute the else-instruction
 		m.State.Cond = false
-		m.State.SkipUntil = map[string]bool{
-			"endif": true,
-		}
 
 		return
 	}
@@ -73,29 +79,20 @@ func Else(m *Machine) {
 func Elsif(m *Machine) {
 	if m.State.Cond {
 		// we've just successfully executed an IF instruction.
-		// therefore we do not execute the elsif (nor an else for that matter)
+		// therefore we do not execute the elsif-instruction
 		m.State.Cond = false
-		m.State.SkipUntil = map[string]bool{
-			"endif": true,
-		}
+
 		return
 	}
+
+	m.PushState()
 
 	m.State.Cond = getCondition(m)
 
-	if m.State.Cond == false {
-		// the condition failed, we skip until we reach endif, else or elsif
-		m.State.SkipUntil = map[string]bool{
-			"else":  true,
-			"endif": true,
-			"elsif": true,
-		}
-
-		return
+	if m.State.Cond == true {
+		// Allow the elsif-body to be executed.
+		m.State.SkipUntil = map[string]bool{}
 	}
-
-	// Allow the elsif-body to be executed.
-	m.State.SkipUntil = map[string]bool{}
 }
 
 func Endif(m *Machine) {

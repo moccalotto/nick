@@ -79,6 +79,11 @@ func (m *Machine) MustGetString(a Arg) string {
 			return strconv.Itoa(m.State.PC)
 		case "loop":
 			return strconv.Itoa(m.State.Loop)
+		case "cond":
+			if m.State.Cond {
+				return "true"
+			}
+			return "false"
 		default:
 			m.Throw("Unknown command special command @%s (%v)", a.StrVal, a)
 		}
@@ -210,14 +215,20 @@ func (m *Machine) PeekState() *MachineState {
 	return &tmp
 }
 
+// ShouldSkip returns true if the given instruction should be skipped.
+// i.e. if we should proceed to the next instruction without executing it.
 func (m *Machine) ShouldSkip(i *Instruction) bool {
+	// Do we want to skip any instructions at all?
 	if len(m.State.SkipUntil) == 0 {
 		return false
 	}
 
-	t, ok := m.State.SkipUntil[i.Cmd]
+	// See if i is in the list of "accepted" commands.
+	t, _ := m.State.SkipUntil[i.Cmd]
 
-	return t && ok
+	// if, and only if, t is true, then the instruction is in the whitelist,
+	// and should not be skipped.
+	return t == false
 }
 
 // Execute runs the script.
@@ -225,6 +236,7 @@ func (m *Machine) ShouldSkip(i *Instruction) bool {
 // If you want the machine to be pristine, you should clone the machine beforehand.
 func (m *Machine) Execute() error {
 	m.StartedAt = time.Now()
+	m.State.Cond = true
 
 	for m.State.PC = 0; m.State.PC < len(m.Tape); m.State.PC++ {
 		m.execCurrentInstruction()

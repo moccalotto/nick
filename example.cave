@@ -1,4 +1,8 @@
-# seed 667
+seed -6909367382175621611
+
+if @rand == [[ this never happens ]]
+    stop!
+endif
 
 suggest export.type      = iterm    # We would like to export an image
 suggest export.format    = png      # in png
@@ -7,10 +11,6 @@ suggest export.width     = 2048     # with a fixed width
 
 set $width  between 20 and 60
 set $height oneof   20 35 55
-
-if @rand == 0.13
-    stop!
-endif
 
 init 35 x 20                        # New, small-ish, canvas.
                                     # Large initial sizes yields multi-room or
