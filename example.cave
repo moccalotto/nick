@@ -8,6 +8,10 @@ suggest export.width     = 2048     # with a fixed width
 set $width  between 20 and 60
 set $height oneof   20 35 55
 
+if @rand == 0.13
+    stop!
+endif
+
 init 35 x 20                        # New, small-ish, canvas.
                                     # Large initial sizes yields multi-room or
                                     # complex caves with stalactites/columns, etc.
@@ -39,8 +43,10 @@ loop 3
     evolve B5678/S345678            # ...twice
 
     # Remove areas smaller than 0-50 cells
-    set $prune-threshold between 0 and 50
-    prune-small-areas $prune-threshold 
+    if @loop == 0 
+        set $prune-threshold between 0 and 50
+        prune-small-areas $prune-threshold 
+    endif
 
     scale 1.75
 endloop

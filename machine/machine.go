@@ -210,6 +210,16 @@ func (m *Machine) PeekState() *MachineState {
 	return &tmp
 }
 
+func (m *Machine) ShouldSkip(i *Instruction) bool {
+	if len(m.State.SkipUntil) == 0 {
+		return false
+	}
+
+	t, ok := m.State.SkipUntil[i.Cmd]
+
+	return t && ok
+}
+
 // Execute runs the script.
 // NOTE that this can modify all of the machine's properties, except for the tape.
 // If you want the machine to be pristine, you should clone the machine beforehand.
@@ -229,6 +239,10 @@ func (m *Machine) Execute() error {
 
 func (m *Machine) execCurrentInstruction() {
 	i := m.Tape[m.State.PC]
+
+	if m.ShouldSkip(&i) {
+		return
+	}
 
 	handler, ok := InstructionHandlers[i.Cmd]
 

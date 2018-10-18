@@ -35,10 +35,11 @@ type Instruction struct {
 
 // This entire state is pushed whenever we enter a control structure
 type MachineState struct {
-	PC     int  // program counter
-	Return int  // Return address (to return to in loops, if-branches, etc.)
-	Loop   int  // Loop Counter (used to count iterations inside iterators)
-	Cond   bool // condition bit (did last comparison succeed)
+	PC        int  // program counter
+	Return    int  // Return address (to return to in loops, if-branches, etc.)
+	Loop      int  // Loop Counter (used to count iterations inside iterators)
+	Cond      bool // condition bit (did last comparison succeed)
+	SkipUntil map[string]bool
 }
 
 type Restrictions struct {
