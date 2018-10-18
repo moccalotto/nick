@@ -8,14 +8,14 @@ func init() {
 func Loop(m *Machine) {
 	repititions := m.ArgAsInt(0)
 
+	m.PushState()
 	if repititions == 0 {
 		m.State.SkipUntil = map[string]bool{
 			"endloop": true,
 		}
-	}
 
-	m.Assert(repititions > 0, "Number of repotitions must be > 0")
-	m.PushState()
+		return
+	}
 	m.State.Loop = repititions
 	m.State.Return = m.State.PC
 }

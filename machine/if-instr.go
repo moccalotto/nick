@@ -1,5 +1,12 @@
 package machine
 
+var skipUntilIf map[string]bool = map[string]bool{
+	"if":    true,
+	"else":  true,
+	"endif": true,
+	"elsif": true,
+}
+
 func init() {
 	InstructionHandlers["if"] = If
 	InstructionHandlers["elsif"] = Elsif
@@ -46,53 +53,52 @@ func If(m *Machine) {
 
 	if m.State.Cond == true {
 		// Allow the if-body to be executed.
-		m.State.SkipUntil = map[string]bool{}
+		m.State.SkipUntil = noSkip
 		return
 	}
 
 	// the condition failed, we skip until we reach endif, else or elsif
-	m.State.SkipUntil = map[string]bool{
-		"if":    true,
-		"else":  true,
-		"endif": true,
-		"elsif": true,
-	}
-
-	return
+	m.State.SkipUntil = skipUntilIf
 }
 
 func Else(m *Machine) {
-
 	if m.State.Cond {
 		// we've just successfully executed an IF instruction.
 		// therefore we do not execute the else-instruction
 		m.State.Cond = false
 
+		m.State.SkipUntil = skipUntilIf
+
 		return
 	}
 
-	// revert condition bit to where we were before the IF statement.
+	// Revert condition bit to where we were before the IF statement.
 	// and allow the else-body to be executed
 	m.State.Cond = m.PeekState().Cond
+	m.State.SkipUntil = m.PeekState().SkipUntil
 }
 
 func Elsif(m *Machine) {
 	if m.State.Cond {
-		// we've just successfully executed an IF instruction.
-		// therefore we do not execute the elsif-instruction
-		m.State.Cond = false
-
+		// we've just successfully executed an if- or elsif instruction.
+		// do not execute this elsif, nor any subsequent elsif
+		m.State.SkipUntil = skipUntilIf
 		return
 	}
 
-	m.PushState()
+	// the previously executed if (and any subsequent elsif) instruction did not pan out
+	// we should therefore evaluate the condition:
 
 	m.State.Cond = getCondition(m)
 
 	if m.State.Cond == true {
 		// Allow the elsif-body to be executed.
-		m.State.SkipUntil = map[string]bool{}
+		m.State.SkipUntil = noSkip
+		return
 	}
+
+	// the condition failed, we skip until we reach endif, else or elsif
+	m.State.SkipUntil = skipUntilIf
 }
 
 func Endif(m *Machine) {

@@ -74,7 +74,7 @@ func (m *Machine) MustGetString(a Arg) string {
 		// They could then be registered on runtime.
 		switch a.StrVal {
 		case "rand":
-			return strconv.FormatFloat(m.Rng.Float64(), 'E', -1, 64)
+			return strconv.FormatFloat(m.Rng.Float64(), 'f', -1, 64)
 		case "pc":
 			return strconv.Itoa(m.State.PC)
 		case "loop":
@@ -84,6 +84,8 @@ func (m *Machine) MustGetString(a Arg) string {
 				return "true"
 			}
 			return "false"
+		case "line":
+			return strconv.Itoa(m.CurrentInstruction().Line)
 		default:
 			m.Throw("Unknown command special command @%s (%v)", a.StrVal, a)
 		}
@@ -114,6 +116,13 @@ func (m *Machine) MustGetFloat(a Arg) float64 {
 			return float64(m.State.PC)
 		case "loop":
 			return float64(m.State.Loop)
+		case "cond":
+			if m.State.Cond {
+				return 1.0
+			}
+			return 0.0
+		case "line":
+			return float64(m.CurrentInstruction().Line)
 		default:
 			m.Throw("Unknown command special command @%s", a.StrVal)
 		}
@@ -143,6 +152,13 @@ func (m *Machine) MustGetInt(a Arg) int {
 			return m.State.PC
 		case "loop":
 			return m.State.Loop
+		case "cond":
+			if m.State.Cond {
+				return 1
+			}
+			return 0
+		case "line":
+			return m.CurrentInstruction().Line
 		default:
 			m.Throw("Unknown command special command @%s", a.StrVal)
 		}
@@ -201,7 +217,13 @@ func (m *Machine) HasArg(n int) bool {
 
 // Push the entire state into the stack
 func (m *Machine) PushState() {
-	tmp := *m.State
+	tmp := MachineState{
+		PC:        m.State.PC,
+		Return:    m.State.Return,
+		Loop:      m.State.Loop,
+		Cond:      m.State.Cond,
+		SkipUntil: m.State.SkipUntil,
+	}
 	m.Stack.Push(tmp)
 }
 

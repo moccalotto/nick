@@ -49,6 +49,8 @@ type Restrictions struct {
 	MaxHeight  int
 }
 
+var noSkip map[string]bool = map[string]bool{}
+
 // checkRestrictions returns an error if m.Limits is not adhered to
 func (m *Machine) checkRestrictions() error {
 	if err := m.timedOut(); err != nil {
