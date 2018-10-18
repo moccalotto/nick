@@ -38,7 +38,9 @@ loop 3
     evolve B5678/S345678            # run standard escavator
     evolve B5678/S345678            # ...twice
 
-    prune-small-areas 25            # Remove areas smaller than 25 cells
+    # Remove areas smaller than 0-50 cells
+    set $prune-threshold between 0 and 50
+    prune-small-areas $prune-threshold 
 
     scale 1.75
 endloop
