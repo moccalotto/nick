@@ -61,10 +61,10 @@ func NewImageExporter() *ImageExporter {
 		Scale:     1,
 		Algorithm: "Lanczos",
 		DeadColor: color.NRGBA{
-			R: 255,
-			G: 255,
-			B: 255,
-			A: 0,
+			R: 0,
+			G: 0,
+			B: 0,
+			A: 255,
 		}, // transparent
 		LiveColor: color.NRGBA{
 			R: 255,
