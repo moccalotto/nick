@@ -4,7 +4,7 @@ import (
 	"github.com/moccalotto/nick/field"
 )
 
-type OddityRemover struct {
+type SmallAreaCRemover struct {
 	Threshold int // remove rooms with fewer tiles than this
 }
 
@@ -23,17 +23,22 @@ func (p point) adjecent() []point {
 
 type area []point
 
-func NewOddityRemover(threshold int) *OddityRemover {
-	return &OddityRemover{threshold}
+func NewSmallAreaCRemover(threshold int) *SmallAreaCRemover {
+	return &SmallAreaCRemover{threshold}
 }
 
-func (m *OddityRemover) ApplyToField(f *field.Field) {
+func (m *SmallAreaCRemover) ApplyToField(f *field.Field) {
+
+	if m.Threshold <= 0 {
+		return
+	}
+
 	w, h := f.Width(), f.Height()
 	// buffer to keep track of all the fields we've looked at
 	inspected := field.NewField(w, h)
 
-	for x := 0; x < w; x++ {
-		for y := 0; y < w; y++ {
+	for y := 0; y < h; y = y + 1 {
+		for x := 0; x < w; x = x + 1 {
 			// ensure we don't look at the same cell twice
 			if inspected.Alive(x, y) {
 				continue
@@ -64,21 +69,21 @@ func (m *OddityRemover) ApplyToField(f *field.Field) {
 }
 
 func getAreaAround(f *field.Field, p point) area {
-	queue := make(chan point, 65535)
-	queue <- p
+	queue := []point{p}
 	areaType := f.Alive(p.x, p.y)
 	inspected := field.NewField(f.Width(), f.Height())
 
 	result := area{}
 
 	for len(queue) > 0 {
-		_p := <-queue
+		_p := queue[0]
+		queue = queue[1:]
 
 		// anything on the queue can be appended.
 		result = append(result, _p)
 		inspected.SetAlive(_p.x, _p.y, true)
 
-		for _, c := range p.adjecent() {
+		for _, c := range _p.adjecent() {
 			// outside the map?
 			if !f.CoordsInRange(c.x, c.y) {
 				continue
@@ -95,7 +100,7 @@ func getAreaAround(f *field.Field, p point) area {
 			}
 
 			// Point has not yet been looked at (or marked for inspection)
-			queue <- c                         // Add c to the queue
+			queue = append(queue, c)           // Add c to the queue
 			inspected.SetAlive(c.x, c.y, true) // Mark c as inspected.
 		}
 	}
