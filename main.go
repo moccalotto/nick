@@ -6,13 +6,14 @@ import (
 	"github.com/moccalotto/nick/exporters"
 	"github.com/moccalotto/nick/machine"
 	"io/ioutil"
+	"log"
 	"time"
 )
 
 func createMachine(filename string) *machine.Machine {
 	b, err := ioutil.ReadFile(filename)
 	if err != nil {
-		panic(err)
+		log.Fatalf("Could not read file: '%s'", filename)
 	}
 
 	script := string(b)
