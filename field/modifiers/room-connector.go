@@ -62,7 +62,9 @@ func (rc *RoomConnector) getAllRooms(f *field.Field) []room {
 				}
 			}
 
-			result = append(result, r)
+			if len(r) > 0 {
+				result = append(result, r)
+			}
 		}
 	}
 
