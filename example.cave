@@ -1,4 +1,4 @@
-# seed 35008006668639765
+seed 2884145919730671125
 
 suggest export.type      = iterm    # We would like to export an image
 suggest export.format    = png      # in png
@@ -38,13 +38,15 @@ loop 3
     evolve B5678/S345678            # run standard escavator
     evolve B5678/S345678            # ...twice
 
-    set $prune-threshold between 0 and 50
-    prune-small-areas $prune-threshold
+    if @loop == 2
+        set $prune-threshold between 0 and 50
+        prune-small-areas $prune-threshold
+
+        connect-rooms 2.5% 1 20
+    endif
 
     scale 1.75
 endloop
-
-connect-rooms 2.5% 1 20
 
 loop 7
     scale 1.5
