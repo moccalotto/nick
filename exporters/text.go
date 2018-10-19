@@ -9,15 +9,15 @@ import (
 )
 
 type TextExporter struct {
-	LiveRune rune
-	DeadRune rune
+	LiveStr  string
+	DeadStr  string
 	FileName string
 }
 
 func NewTextExporter() *TextExporter {
 	return &TextExporter{
-		LiveRune: '█',
-		DeadRune: ' ',
+		LiveStr:  "██",
+		DeadStr:  "  ",
 		FileName: "",
 	}
 }
@@ -27,9 +27,9 @@ func (t *TextExporter) String(f *field.Field) string {
 	for y := 0; y < f.Height(); y++ {
 		for x := 0; x < f.Width(); x++ {
 			if f.Alive(x, y) {
-				buf.WriteRune(t.LiveRune)
+				buf.WriteString(t.LiveStr)
 			} else {
-				buf.WriteRune(t.DeadRune)
+				buf.WriteString(t.DeadStr)
 			}
 		}
 		buf.WriteRune('\n')
