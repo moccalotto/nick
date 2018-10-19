@@ -1,4 +1,4 @@
-seed 35008006668639765
+# seed 35008006668639765
 
 suggest export.type      = iterm    # We would like to export an image
 suggest export.format    = png      # in png
@@ -8,7 +8,7 @@ suggest export.width     = 2048     # with a fixed width
 set $width  between 20 and 60
 set $height oneof   20 35 55
 
-init 35 x 20                        # New, small-ish, canvas.
+init $width x $height               # New, small-ish, canvas.
                                     # Large initial sizes yields multi-room or
                                     # complex caves with stalactites/columns, etc.
                                     # Small initial sizes often yield simple caves
@@ -44,11 +44,14 @@ loop 3
     scale 1.75
 endloop
 
+connect-rooms 2.5% 1 20
+
 loop 7
     scale 1.5
     evolve B5678/S5678              # run edge smoother
     evolve B5678/S5678              # ...twice
 endloop
+
 
 # evolve B2345678/S0                # Produce an outline. Living edge on dead background
 # border 1 100% (dead)              # The outliner above will remove any egress. We revive it by killing the border.

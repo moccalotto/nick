@@ -81,6 +81,33 @@ func (f *Field) SetAlive(x, y int, b bool) {
 
 }
 
+func (f *Field) SetAliveRadius(x, y int, r float64, b bool) {
+
+	r2 := r * r
+	for i := 0; float64(i) <= r; i++ {
+		for j := 0; j <= i; j++ {
+			d2 := i*i + j*j
+
+			// point outside radius
+			if float64(d2) > r2 {
+				continue
+			}
+
+			f.robustSetAlive(x, y, b)
+
+			f.robustSetAlive(x+i, y+j, b)
+			f.robustSetAlive(x+i, y-j, b)
+			f.robustSetAlive(x-i, y+j, b)
+			f.robustSetAlive(x-i, y-j, b)
+
+			f.robustSetAlive(x+j, y+i, b)
+			f.robustSetAlive(x+j, y-i, b)
+			f.robustSetAlive(x-j, y+i, b)
+			f.robustSetAlive(x-j, y-i, b)
+		}
+	}
+}
+
 // Alive reports whether the specified cell is alive.
 // If the x or y coordinates are outside the field boundaries they are wrapped
 // toroidally. For instance, an x value of -1 is treated as width-1.
@@ -95,6 +122,14 @@ func (f *Field) robustGet(x, y int) Cell {
 	}
 
 	return f.s[y*f.w+x]
+}
+
+func (f *Field) robustSetAlive(x, y int, b bool) {
+	if !f.CoordsInRange(x, y) {
+		return
+	}
+
+	f.SetAlive(x, y, b)
 }
 
 func (f *Field) robustAlive(x, y int) bool {
