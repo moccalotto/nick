@@ -25,6 +25,11 @@ func main() {
 	f := flag.String("script", "", "Path to script to execute")
 	flag.Parse()
 
+	if *f == "" {
+		flag.PrintDefaults()
+		return
+	}
+
 	m := createMachine(*f)
 
 	m.Limits.MaxRuntime, _ = time.ParseDuration("5s")
