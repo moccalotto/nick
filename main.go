@@ -23,7 +23,7 @@ func createMachine(filename string) *machine.Machine {
 }
 
 func main() {
-	f := flag.String("script", "", "Path to script to execute")
+	f := flag.String("script", "examples/empty.cave", "Path to script to execute")
 	flag.Parse()
 
 	if *f == "" {
