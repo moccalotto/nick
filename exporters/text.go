@@ -39,9 +39,11 @@ func (t *TextExporter) String(f *field.Field) string {
 }
 
 func (t *TextExporter) Export(f *field.Field) {
-	// Maybe just print to screen
-	if t.FileName == "" {
-		fmt.Println(t.String(f))
+	output := t.String(f)
+
+	// Print to screen if filename is empty
+	if t.FileName == "" || t.FileName == "-" {
+		fmt.Println(output)
 		return
 	}
 
@@ -53,7 +55,7 @@ func (t *TextExporter) Export(f *field.Field) {
 
 	defer file.Close()
 
-	if _, err := file.WriteString(t.String(f)); err != nil {
+	if _, err := file.WriteString(output); err != nil {
 		log.Fatalf("Could not write to file '%s': %s", t.FileName, err)
 	}
 }
