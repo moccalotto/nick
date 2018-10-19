@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"github.com/moccalotto/nick/exporters"
 	"github.com/moccalotto/nick/machine"
@@ -21,8 +22,11 @@ func createMachine(filename string) *machine.Machine {
 }
 
 func main() {
-	var m *machine.Machine
-	m = createMachine("example.cave")
+	f := flag.String("script", "", "Path to script to execute")
+	flag.Parse()
+
+	m := createMachine(*f)
+
 	m.Limits.MaxRuntime, _ = time.ParseDuration("5s")
 
 	if err := m.Execute(); err != nil {

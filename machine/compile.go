@@ -7,17 +7,10 @@ import (
 	"log"
 	"math/bits"
 	"math/rand"
-	"regexp"
 	"strconv"
 	"strings"
 	"time"
 )
-
-// pre compile regular expressions.
-
-var stringEscaper *regexp.Regexp = regexp.MustCompile(`\[\[[^\]]+\]\]`)
-var stringUnescaper *regexp.Regexp = regexp.MustCompile(`___REP___\d{9}___PER___`)
-var lineExploder *regexp.Regexp = regexp.MustCompile(`[\n\r]`)
 
 func DefaultExceptionHandler(m *Machine, msg interface{}, a ...interface{}) {
 	log.Fatalf("Exception: "+msg.(string), a...)
@@ -35,7 +28,7 @@ func MachineFromScript(p string) *Machine {
 		Tape:      scriptToInstructions(p),
 		Limits:    Restrictions{},
 		Exception: DefaultExceptionHandler,
-		Vars:      map[string]string{},
+		Vars:      make(VarBag),
 	}
 }
 

@@ -1,3 +1,5 @@
+# This seed generates a complex cave.
+# Other seeds may yield quite simple caves.
 seed 2884145919730671125
 
 suggest export.type      = iterm    # We would like to export an image

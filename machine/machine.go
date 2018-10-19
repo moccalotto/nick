@@ -2,32 +2,9 @@ package machine
 
 import (
 	"fmt"
-	"github.com/golang-collections/collections/stack"
-	"github.com/moccalotto/nick/field"
-	"math/rand"
 	"strconv"
 	"time"
 )
-
-type ExceptionHandler func(m *Machine, msg interface{}, a ...interface{})
-
-type InstructionHandler func(m *Machine)
-
-type Machine struct {
-	Rng       *rand.Rand        // Random Number Generator
-	Seed      int64             // Seed for the Rng
-	Field     *field.Field      // field to populate.
-	Stack     *stack.Stack      // Stack used for nesting and looping.
-	State     *MachineState     // The current state of the machine.
-	Tape      []Instruction     // the entire program.
-	Trace     []int             // trace of executed instructions.
-	Exception ExceptionHandler  // Exception Handler.
-	Vars      map[string]string // Map of variables set inside the program.
-	Limits    Restrictions      // Restrictions on runtime, cell count, etc.
-	StartedAt time.Time         // When did the execution start. If nil, it hasn't started yet.
-}
-
-var InstructionHandlers map[string]InstructionHandler = make(map[string]InstructionHandler)
 
 func (m *Machine) Assert(condition bool, msg interface{}, a ...interface{}) {
 	if condition {
@@ -65,37 +42,41 @@ func (m *Machine) MustGetVar(id string) string {
 	return val
 }
 
+func (m *Machine) MustGetCmd(id string) string {
+	switch id {
+	case "rand":
+		return strconv.FormatFloat(m.Rng.Float64(), 'f', -1, 64)
+	case "pc":
+		return strconv.Itoa(m.State.PC)
+	case "loop":
+		return strconv.Itoa(m.State.Loop)
+	case "cond":
+		if m.State.Cond {
+			return "1"
+		}
+		return "0"
+	case "line":
+		return strconv.Itoa(m.CurrentInstruction().Line)
+	default:
+		m.Throw("Unknown command special command @%s", id)
+	}
+
+	panic("Code never reached!")
+}
+
 func (m *Machine) MustGetString(a Arg) string {
 	switch a.T {
 	case StrArg, FloatArg, IntArg:
 		return a.StrVal
 	case CmdArg:
-		// TODO: @rand, @foo, etc. could be special value handlers, just like InstructionHandlers
-		// They could then be registered on runtime.
-		switch a.StrVal {
-		case "rand":
-			return strconv.FormatFloat(m.Rng.Float64(), 'f', -1, 64)
-		case "pc":
-			return strconv.Itoa(m.State.PC)
-		case "loop":
-			return strconv.Itoa(m.State.Loop)
-		case "cond":
-			if m.State.Cond {
-				return "true"
-			}
-			return "false"
-		case "line":
-			return strconv.Itoa(m.CurrentInstruction().Line)
-		default:
-			m.Throw("Unknown command special command @%s (%v)", a.StrVal, a)
-		}
+		return m.MustGetCmd(a.StrVal)
 	case VarArg:
 		return m.MustGetVar(a.StrVal)
 	}
 
 	m.Throw("This should never happen MustGetString(%v)", a)
 
-	return ""
+	panic("Code never reached!")
 }
 
 func (m *Machine) MustGetFloat(a Arg) float64 {
@@ -107,33 +88,14 @@ func (m *Machine) MustGetFloat(a Arg) float64 {
 	case IntArg:
 		return a.FloatVal
 	case CmdArg:
-		// TODO: @rand, @foo, etc. could be special value handlers, just like InstructionHandlers
-		// They could then be registered on runtime.
-		switch a.StrVal {
-		case "rand":
-			return m.Rng.Float64()
-		case "pc":
-			return float64(m.State.PC)
-		case "loop":
-			return float64(m.State.Loop)
-		case "cond":
-			if m.State.Cond {
-				return 1.0
-			}
-			return 0.0
-		case "line":
-			return float64(m.CurrentInstruction().Line)
-		default:
-			m.Throw("Unknown command special command @%s", a.StrVal)
-		}
-
+		return m.StrToFloat(m.MustGetCmd(a.StrVal))
 	case VarArg:
 		return m.StrToFloat(m.MustGetVar(a.StrVal))
 	}
 
 	m.Throw("This should never happen MustGetFloat(%v)", a)
 
-	return 0.0
+	panic("Code never reached!")
 }
 
 func (m *Machine) MustGetInt(a Arg) int {
@@ -143,32 +105,12 @@ func (m *Machine) MustGetInt(a Arg) int {
 	case IntArg:
 		return a.IntVal
 	case CmdArg:
-		// TODO: @rand, @foo, etc. could be special value handlers, just like InstructionHandlers
-		// They could then be registered on runtime.
-		switch a.StrVal {
-		case "rand":
-			m.Throw("Cannot use @rand. Expecting an integer")
-		case "pc":
-			return m.State.PC
-		case "loop":
-			return m.State.Loop
-		case "cond":
-			if m.State.Cond {
-				return 1
-			}
-			return 0
-		case "line":
-			return m.CurrentInstruction().Line
-		default:
-			m.Throw("Unknown command special command @%s", a.StrVal)
-		}
+		return m.StrToInt(m.MustGetCmd(a.StrVal))
 	case VarArg:
 		return m.StrToInt(m.MustGetVar(a.StrVal))
 	}
 
-	m.Throw("This should never happen MustGetInt(%v)", a)
-
-	return 0
+	panic("Code never reached!")
 }
 
 func (m *Machine) CurrentInstruction() Instruction {
@@ -254,7 +196,7 @@ func (m *Machine) ShouldSkip(i *Instruction) bool {
 }
 
 // Execute runs the script.
-// NOTE that this can modify all of the machine's properties, except for the tape.
+// NOTE that this will modify the machine's properties, except for the tape.
 // If you want the machine to be pristine, you should clone the machine beforehand.
 func (m *Machine) Execute() error {
 	m.StartedAt = time.Now()
@@ -286,4 +228,122 @@ func (m *Machine) execCurrentInstruction() {
 	}
 
 	handler(m)
+}
+
+// checkRestrictions returns an error if m.Limits is not adhered to
+func (m *Machine) checkRestrictions() error {
+	if err := m.timedOut(); err != nil {
+		return err
+	}
+
+	if err := m.tooManyCells(); err != nil {
+		return err
+	}
+
+	if err := m.tooWide(); err != nil {
+		return err
+	}
+
+	if err := m.tooTall(); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// timeOut returns an error if a machine's execution has taken too long.
+// the time Limits is given by Machine.MaxRunTime
+func (m *Machine) timedOut() error {
+	// no max time specified, i.e. we can go on forever.
+	if m.Limits.MaxRuntime == 0 {
+		return nil
+	}
+
+	runtime := time.Now().Sub(m.StartedAt)
+
+	if runtime > m.Limits.MaxRuntime {
+		return fmt.Errorf("Timed out after %f seconds", runtime.Seconds())
+	}
+
+	return nil
+}
+
+// tooManyCells returns an error if the field has too many cells
+// the Limits on cell count is given in Machine.MaxCells
+func (m *Machine) tooManyCells() error {
+	// we don't have a field yet, so it can't be too large
+	if m.Field == nil {
+		return nil
+	}
+
+	w := m.Field.Width()
+	h := m.Field.Height()
+	max := m.Limits.MaxCells
+
+	// there is no maximum number of cells
+	if max <= 0 {
+		return nil
+	}
+
+	if w*h > max {
+		return fmt.Errorf(
+			"Grid is too large. Max number of cells allowed is %d, but the current size is (%dx%d) %d",
+			max,
+			w,
+			h,
+			w*h,
+		)
+	}
+
+	return nil
+}
+
+func (m *Machine) tooWide() error {
+	// we don't have a field yet, so it can't be too large
+	if m.Field == nil {
+		return nil
+	}
+
+	w := m.Field.Width()
+	max := m.Limits.MaxWidth
+
+	// there is no maximum width
+	if max <= 0 {
+		return nil
+	}
+
+	if w > max {
+		return fmt.Errorf(
+			"Grid is too large. Max width is %d, but the current width is %d",
+			max,
+			w,
+		)
+	}
+
+	return nil
+}
+
+func (m *Machine) tooTall() error {
+	// we don't have a field yet, so it can't be too large
+	if m.Field == nil {
+		return nil
+	}
+
+	h := m.Field.Height()
+	max := m.Limits.MaxHeight
+
+	// there is no maximum height
+	if max <= 0 {
+		return nil
+	}
+
+	if h > max {
+		return fmt.Errorf(
+			"Grid is too tall. Max height is %d, but the current height is %d",
+			max,
+			h,
+		)
+	}
+
+	return nil
 }
