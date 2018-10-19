@@ -62,6 +62,22 @@ func (e *SuggestionExporter) iterm() *ItermExporter {
 	return NewItermExporter(e.image())
 }
 
+func (e *SuggestionExporter) text() *TextExporter {
+	te := NewTextExporter()
+
+	if fn, ok := e.Vars["suggestion.export.file"]; ok {
+		te.FileName = fn
+	}
+	if l, ok := e.Vars["suggestion.export.alive"]; ok {
+		te.LiveStr = l
+	}
+	if d, ok := e.Vars["suggestion.export.dead"]; ok {
+		te.DeadStr = d
+	}
+
+	return te
+}
+
 func (e *SuggestionExporter) Export(f *field.Field) {
 	ex, ok := e.Vars["suggestion.export.type"]
 
@@ -75,6 +91,8 @@ func (e *SuggestionExporter) Export(f *field.Field) {
 		e.image().Export(f)
 	case "iterm":
 		e.iterm().Export(f)
+	case "text":
+		e.text().Export(f)
 	default:
 		log.Fatalf("Unknown exporter: %s", ex)
 	}
