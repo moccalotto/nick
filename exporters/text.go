@@ -42,6 +42,7 @@ func (t *TextExporter) Export(f *field.Field) {
 	// Maybe just print to screen
 	if t.FileName == "" {
 		fmt.Println(t.String(f))
+		return
 	}
 
 	file, err := os.Create(t.FileName)
