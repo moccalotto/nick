@@ -1,8 +1,16 @@
 init 72 x 72
 
-suggest export.type  = iterm          # Export to text
+suggest export.type  = iterm
 
+# Print the pattern
 thile 71 0
+
+
+## If we're only exporting to raw text, we won't do any scaling.
+if $suggestion.export.type == text
+    stop!
+endif
+
 
 loop 4
     scale 2
