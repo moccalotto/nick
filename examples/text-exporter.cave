@@ -1,0 +1,32 @@
+# Make suggestions about how the cave is exporter.
+# Suggestions may or may not be adhered to.
+
+# In this example we generate a map and export it as plain text to the terminal screen.
+
+# Spaces and sharp/hash/number-signs (#) must be escaped. This is
+# done by encapsulating them in [[ ]]. Anything inside [[ ]] is stored verbatim.
+# So if you want to use the value "[[" you should use this string  "[[[[]]"
+# The empty string is denoted as "[[]]"
+
+# When exporting to text, it might be necessary to use two characters per cell because 
+# characters in the terminal are often about twice as tall as they are wide.
+# You can also mitigate this by scaling the map horizontally via the scale instruciton
+
+suggest export.type  = text          # Export to text
+
+suggest export.alive = [[██]]        # Characters used to denote living cells (i.e. wall areas)
+suggest export.dead  = [[  ]]        # Characters used to denote dead cells (i.e. clear areas)
+suggest export.file  = -             # name of file exported - if omitted, or if the value "-" is used, 
+                                     # the file will be printed to screen.
+
+
+init 31 x 31
+
+border 1
+
+line  0  0   30  30     # criss
+line  0  30  30   0     # cross
+line  0  15  30  15     # horizontal line
+line 15  0   15  30     # vertical line
+
+evolve B12345678/S3
