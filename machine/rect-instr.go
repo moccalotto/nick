@@ -20,13 +20,14 @@ func Rect(m *Machine) {
 		}
 
 	}
-	r := modifiers.Rect{
-		StartX:   m.ArgAsInt(0),
-		StartY:   m.ArgAsInt(1),
-		EndX:     m.ArgAsInt(2),
-		EndY:     m.ArgAsInt(3),
-		Coverage: coverage,
-		Alive:    alive,
-	}
+	r := modifiers.NewRect(
+		m.ArgAsInt(0),
+		m.ArgAsInt(1),
+		m.ArgAsInt(2),
+		m.ArgAsInt(3),
+		m.Rng,
+	)
+	r.Coverage = coverage
+	r.Alive = alive
 	r.ApplyToField(m.Field)
 }
