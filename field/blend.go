@@ -8,31 +8,22 @@ const ()
 
 type Blender func(x, y int, source, target Cell) Cell
 
-type AddField struct {
-	source      *Field  // Source field
-	livingCells Blender // Function for blending living cells
-	deadCells   Blender // Function for blending dead cells
-}
-
-func NewAddField(source *Field) *AddField {
-	return &AddField{
-		source:      source,
-		livingCells: BlenderCopy,
-		deadCells:   BlenderIgnore,
-	}
-}
-
+// Does nothing. Target cell is unchanged.
 func BlenderIgnore(x, y int, source, target Cell) Cell {
 	return target
 }
 
+// Value of target cell becomes value of source cell.
 func BlenderCopy(x, y int, source, target Cell) Cell {
 	return source
 }
 
+// Value of cell in source field is added to the value of the target cell.
 func BlenderAdd(x, y int, source, target Cell) Cell {
 	return source + target
 }
+
+// Value of source cell is subtracted from value of target cell.
 func BlenderSub(x, y int, source, target Cell) Cell {
 	return source - target
 }
@@ -114,6 +105,7 @@ func BlenderAddThenMin1(x, y int, source, target Cell) Cell {
 	return tmp
 }
 
+// BLend this field onto a target field.
 func (f *Field) BlendOnto(target *Field, alive, dead Blender) error {
 	if f.w != target.w || f.h != target.h {
 		return fmt.Errorf("Target field has invalid dimensions [%d x %d]. Expected [%d x %d]", target.w, target.h, f.w, f.h)
