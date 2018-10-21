@@ -3,7 +3,7 @@ init 72 x 72
 suggest export.type  = iterm
 
 # Print the pattern
-thile 71 0
+thiele 71 0
 
 
 ## If we're only exporting to raw text, we won't do any scaling.

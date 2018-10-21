@@ -5,17 +5,15 @@ import (
 )
 
 func init() {
-	InstructionHandlers["thile"] = Thile
+	InstructionHandlers["thiele"] = Thiele
 }
 
-func Thile(m *Machine) {
+func Thiele(m *Machine) {
 	a := m.ArgAsInt(0)
 	b := 0
 	if m.HasArg(1) {
 		b = m.ArgAsInt(1)
 	}
 
-	t := effects.NewThile(a, b)
-
-	t.ApplyToField(m.Field)
+	effects.NewThielePattern(a, b).ApplyToField(m.Field)
 }

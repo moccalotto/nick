@@ -10,7 +10,7 @@ type gauss struct {
 	y int
 }
 
-type Thile struct {
+type ThielePattern struct {
 	Base  complex128
 	Fill  bool // should we fill all of the map?
 	Alive bool
@@ -65,10 +65,10 @@ func normalizeIntoQuadrant1(a, b int) (int, int) {
 	return a, b
 }
 
-func NewThile(a, b int) *Thile {
+func NewThielePattern(a, b int) *ThielePattern {
 	a, b = normalizeIntoQuadrant1(a, b)
 
-	return &Thile{
+	return &ThielePattern{
 		complex(float64(a), float64(b)),
 		true,
 		true,
@@ -80,7 +80,7 @@ func NewThile(a, b int) *Thile {
 // Get the points we need to investigate
 // we iterate over the area covered by the base (as a vector)
 // and the transposed base (as a vector).
-func (t *Thile) pointsToInspect() <-chan complex128 {
+func (t *ThielePattern) pointsToInspect() <-chan complex128 {
 	ch := make(chan complex128)
 	go func() {
 		max := absInt(t.a) + absInt(t.b)
@@ -97,7 +97,7 @@ func (t *Thile) pointsToInspect() <-chan complex128 {
 	return ch
 }
 
-func (t *Thile) residueNumbers() []gauss {
+func (t *ThielePattern) residueNumbers() []gauss {
 	numbers := []gauss{}
 
 	for c := range t.pointsToInspect() {
@@ -122,7 +122,7 @@ func (t *Thile) residueNumbers() []gauss {
 	return numbers
 }
 
-func (t *Thile) mapper(f *field.Field, x, y int, c field.Cell) field.Cell {
+func (t *ThielePattern) mapper(f *field.Field, x, y int, c field.Cell) field.Cell {
 
 	numbers := t.residueNumbers()
 
@@ -139,7 +139,7 @@ func (t *Thile) mapper(f *field.Field, x, y int, c field.Cell) field.Cell {
 	return c
 }
 
-func (t *Thile) fillField(f *field.Field) {
+func (t *ThielePattern) fillField(f *field.Field) {
 	numbers := t.residueNumbers()
 
 	f.MapAsync(func(f *field.Field, x, y int, c field.Cell) field.Cell {
@@ -157,7 +157,7 @@ func (t *Thile) fillField(f *field.Field) {
 	})
 }
 
-func (t *Thile) ApplyToField(f *field.Field) {
+func (t *ThielePattern) ApplyToField(f *field.Field) {
 
 	if t.Fill {
 		t.fillField(f)
