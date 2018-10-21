@@ -15,5 +15,8 @@ func Thiele(m *Machine) {
 		b = m.ArgAsInt(1)
 	}
 
+	m.Assert(a > 0, "First argument must be an integer > 0")
+	m.Assert(b >= 0, "Second argument (if present) must be an integer ≥ 0")
+
 	effects.NewThielePattern(a, b).ApplyToField(m.Field)
 }
