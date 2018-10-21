@@ -1,9 +1,9 @@
 package field
 
-func (f *Field) GetAreaAround(p Point) (Area, error) {
-	queue := Area{p}
+func (f *Field) GetAreaAround(x, y int) (Area, error) {
+	queue := Area{Point{x, y}}
 	inspected := NewField(f.Width(), f.Height())
-	areaType, err := f.Alive(p.X, p.Y)
+	areaStatus, err := f.Alive(x, y)
 	if err != nil {
 		return Area{}, err
 	}
@@ -30,7 +30,7 @@ func (f *Field) GetAreaAround(p Point) (Area, error) {
 			}
 
 			// does this cell belong to another area?
-			if a, _ := f.Alive(c.X, c.Y); a != areaType {
+			if a, _ := f.Alive(c.X, c.Y); a != areaStatus {
 				continue
 			}
 

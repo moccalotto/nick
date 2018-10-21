@@ -34,7 +34,7 @@ func (m *SmallAreaCRemover) ApplyToField(f *field.Field) {
 			curState, _ := f.Alive(x, y)
 
 			// retrieve all cells in the given area.
-			a, err := f.GetAreaAround(field.Point{x, y})
+			a, err := f.GetAreaAround(x, y)
 
 			if err != nil {
 				panic(err)

@@ -34,7 +34,7 @@ func (rc *RoomConnector) getAllRooms(f *field.Field) []field.Area {
 				continue
 			}
 
-			_area, _ := f.GetAreaAround(field.Point{x, y})
+			_area, _ := f.GetAreaAround(x, y)
 
 			r := field.Area{}
 
