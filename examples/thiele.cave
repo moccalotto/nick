@@ -1,19 +1,18 @@
-init 72 x 72
+# This grid is twice the size of the thile pattern + 1 cell
+init 143 x 143
 
+# Let's output directly to the iterm
 suggest export.type  = iterm
 
 # Print the pattern
 thiele 71
-
 
 ## If we're only exporting to raw text, we won't do any scaling.
 if $suggestion.export.type == text
     stop!
 endif
 
-# Scale up, remove outliers, and make sure all
-# areas are accessible.
-scale 2
+# Remove outliers and make sure all areas are accessible.
 prune-small-areas 20
 connect-rooms 1
 
