@@ -86,8 +86,8 @@ func (t *Thile) pointsToInspect() <-chan complex128 {
 		max := absInt(t.a) + absInt(t.b)
 		// naive solution: iterate over a suitably large area,
 		// don't mind where the area is located.
-		for x := 0; x <= max; x++ {
-			for y := 0; y <= max; y++ {
+		for y := 0; y <= max; y++ {
+			for x := 0; x <= max; x++ {
 				ch <- complex(float64(x), float64(y))
 			}
 		}
