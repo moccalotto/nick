@@ -122,23 +122,39 @@ func (t *Thile) residueNumbers() []gauss {
 	return numbers
 }
 
-func (t *Thile) fillField(f *field.Field) {
+func (t *Thile) mapper(f *field.Field, x, y int, c field.Cell) field.Cell {
 
-	w, h := f.Width(), f.Height()
 	numbers := t.residueNumbers()
-	for y := 0; y < h; y++ {
-		for x := 0; x < w; x++ {
-			c0 := complex(float64(x), float64(y))
-			c1 := cRemaind(c0, t.Base)
 
-			for _, c := range numbers {
-				if c == c1 {
-					_ = f.SetAlive(x, y, t.Alive)
-					break
-				}
-			}
+	c0 := complex(float64(x), float64(y))
+	c1 := cRemaind(c0, t.Base)
+
+	for _, c := range numbers {
+		if c == c1 {
+			return field.LivingCell
+			break
 		}
 	}
+
+	return c
+}
+
+func (t *Thile) fillField(f *field.Field) {
+	numbers := t.residueNumbers()
+
+	f.MapAsync(func(f *field.Field, x, y int, c field.Cell) field.Cell {
+		p := complex(float64(x), float64(y))
+		remaind := cRemaind(p, t.Base)
+
+		for _, baseRemainder := range numbers {
+			if baseRemainder == remaind {
+				return field.LivingCell
+				break
+			}
+		}
+
+		return c
+	})
 }
 
 func (t *Thile) ApplyToField(f *field.Field) {

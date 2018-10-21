@@ -5,7 +5,6 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
-	"sync"
 )
 
 // Automaton for evolving a field.
@@ -63,9 +62,11 @@ func (ca *Automaton) Birth(neighbourCount int) field.Cell {
 }
 
 // Next returns the state of the specified cell at the next time step.
-func (ca *Automaton) NextCellState(f *field.Field, x, y int) field.Cell {
+func (ca *Automaton) NextCellState(f *field.Field, x, y int, cur field.Cell) field.Cell {
+
 	neighbourCount := f.NeighbourCount(x, y)
-	if a, _ := f.Alive(x, y); a {
+
+	if cur.Alive() {
 		return ca.Survival(neighbourCount)
 	}
 
@@ -74,21 +75,7 @@ func (ca *Automaton) NextCellState(f *field.Field, x, y int) field.Cell {
 
 // Apply a CA to the field
 func (ca *Automaton) ApplyToField(f *field.Field) {
-	tmp := field.NewField(f.Width(), f.Height())
-	var wg sync.WaitGroup
-	for y := 0; y < f.Height(); y++ {
-		wg.Add(1)
-		go func(_y int) {
-			defer wg.Done()
-			for x := 0; x < f.Width(); x++ {
-				_ = tmp.Set(x, _y, ca.NextCellState(f, x, _y))
-			}
-		}(y)
-	}
-
-	wg.Wait()
-
-	f.ReplaceCells(f.Width(), f.Height(), tmp.Cells())
+	f.MapAsync(ca.NextCellState)
 }
 
 func (ca *Automaton) String() string {

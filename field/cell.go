@@ -2,7 +2,7 @@ package field
 
 type Cell int
 
-type CellHandler func(p Point, c Cell) Cell
+type CellMapper func(f *Field, x, y int, c Cell) Cell
 
 func (c Cell) Alive() bool {
 	// Cells with value 1 or greater are considered to be alive

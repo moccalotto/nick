@@ -1,6 +1,9 @@
 package field
 
-import "fmt"
+import (
+	"fmt"
+	"sync"
+)
 
 // Field represents a two-dimensional field of cells.
 type Field struct {
@@ -150,4 +153,49 @@ func (f *Field) NeighbourCount(x, y int) int {
 	}
 
 	return neighbourCount
+}
+
+// Map each cell to another value
+func (f *Field) Map(m CellMapper) {
+	s := make([]Cell, len(f.s))
+
+	for y := 0; y < f.h; y++ {
+		for x := 0; x < f.w; x++ {
+			idx := y*f.w + x
+			s[idx] = m(
+				f,
+				x,
+				y,
+				f.s[idx],
+			)
+		}
+	}
+
+	f.s = s
+}
+
+// Map each cell to another value, but do it asynchornously
+func (f *Field) MapAsync(m CellMapper) {
+	s := make([]Cell, len(f.s))
+
+	var wg sync.WaitGroup
+	for y := 0; y < f.h; y++ {
+		wg.Add(1)
+		go func(y int) {
+			defer wg.Done()
+			for x := 0; x < f.Width(); x++ {
+				idx := y*f.w + x
+				s[idx] = m(
+					f,
+					x,
+					y,
+					f.s[idx],
+				)
+			}
+		}(y)
+	}
+
+	wg.Wait()
+
+	f.s = s
 }
