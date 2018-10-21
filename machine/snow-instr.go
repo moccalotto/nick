@@ -1,6 +1,7 @@
 package machine
 
 import "github.com/moccalotto/nick/effects"
+import "github.com/moccalotto/nick/field"
 
 func init() {
 	InstructionHandlers["snow"] = Snow
@@ -28,7 +29,7 @@ func Snow(m *Machine) {
 			"The only value allowed for the optional second argument is the string '(dead)'. The string '%s' was provided",
 			arg1,
 		)
-		snow.Alive = false
+		snow.Cell = field.DeadCell
 	}
 
 	snow.ApplyToField(m.Field)
