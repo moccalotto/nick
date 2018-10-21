@@ -1,6 +1,6 @@
 package machine
 
-import "github.com/moccalotto/nick/field/modifiers"
+import "github.com/moccalotto/nick/effects"
 
 func init() {
 	InstructionHandlers["rect"] = Rect
@@ -20,7 +20,7 @@ func Rect(m *Machine) {
 		}
 
 	}
-	r := modifiers.NewRect(
+	r := effects.NewRect(
 		m.ArgAsInt(0),
 		m.ArgAsInt(1),
 		m.ArgAsInt(2),

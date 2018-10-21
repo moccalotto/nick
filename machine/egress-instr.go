@@ -1,28 +1,28 @@
 package machine
 
 import (
-	"github.com/moccalotto/nick/field/modifiers"
+	"github.com/moccalotto/nick/effects"
 	"sort"
 )
 
-var dirs map[string]modifiers.Direction = map[string]modifiers.Direction{
-	"random":     modifiers.Random,
-	"north":      modifiers.North,
-	"N":          modifiers.North,
-	"north-east": modifiers.NorthEast,
-	"NE":         modifiers.NorthEast,
-	"east":       modifiers.East,
-	"E":          modifiers.East,
-	"south-east": modifiers.SouthEast,
-	"SE":         modifiers.SouthEast,
-	"south":      modifiers.South,
-	"S":          modifiers.South,
-	"south-west": modifiers.SouthWest,
-	"SW":         modifiers.SouthWest,
-	"west":       modifiers.West,
-	"W":          modifiers.West,
-	"north-west": modifiers.NorthWest,
-	"NW":         modifiers.NorthWest,
+var dirs map[string]effects.Direction = map[string]effects.Direction{
+	"random":     effects.Random,
+	"north":      effects.North,
+	"N":          effects.North,
+	"north-east": effects.NorthEast,
+	"NE":         effects.NorthEast,
+	"east":       effects.East,
+	"E":          effects.East,
+	"south-east": effects.SouthEast,
+	"SE":         effects.SouthEast,
+	"south":      effects.South,
+	"S":          effects.South,
+	"south-west": effects.SouthWest,
+	"SW":         effects.SouthWest,
+	"west":       effects.West,
+	"W":          effects.West,
+	"north-west": effects.NorthWest,
+	"NW":         effects.NorthWest,
 }
 
 func init() {
@@ -56,7 +56,7 @@ func Egress(m *Machine) {
 
 	direction := makeDirection(m)
 
-	egress := modifiers.NewEgress(direction, width, m.Rng)
+	egress := effects.NewEgress(direction, width, m.Rng)
 	egress.Depth = depth
 
 	m.Field.Apply(egress)
@@ -70,7 +70,7 @@ func min(a, b int) int {
 	return b
 }
 
-func makeDirection(m *Machine) modifiers.Direction {
+func makeDirection(m *Machine) effects.Direction {
 	direction, ok := dirs[m.ArgAsString(0)]
 
 	if !ok {

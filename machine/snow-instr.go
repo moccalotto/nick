@@ -1,6 +1,6 @@
 package machine
 
-import "github.com/moccalotto/nick/field/modifiers"
+import "github.com/moccalotto/nick/effects"
 
 func init() {
 	InstructionHandlers["snow"] = Snow
@@ -19,7 +19,7 @@ func Snow(m *Machine) {
 		probability,
 	)
 
-	snow := modifiers.NewSnow(probability, m.Rng)
+	snow := effects.NewSnow(probability, m.Rng)
 
 	if m.HasArg(1) {
 		arg1 := m.ArgAsString(1)

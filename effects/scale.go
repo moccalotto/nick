@@ -1,29 +1,48 @@
-package modifiers
+package effects
 
 import (
 	"github.com/moccalotto/nick/field"
-	"math/rand"
+	"math"
+	"sync"
 )
 
-// Randomly bring cells to life.
-// Each cell has »Coverage« chance to be born.
-// NOTE: cells do not die via this method, they are only brought to Coverage.
-type Snow struct {
-	Coverage float64
-	Alive    bool
-	rng      *rand.Rand
+type Scale struct {
+	x, y float64
 }
 
-func NewSnow(p float64, rng *rand.Rand) *Snow {
-	return &Snow{p, true, rng}
+func NewScale(f float64) *Scale {
+	return &Scale{f, f}
+}
+
+func NewScaleXY(x, y float64) *Scale {
+	return &Scale{x, y}
 }
 
 // Rain living or dead snow onto the given field.
-func (s *Snow) ApplyToField(f *field.Field) {
-	r := NewRect(0, 0, f.Width()-1, f.Height()-1, s.rng)
-	r.Coverage = s.Coverage
-	r.Alive = s.Alive
-	r.ApplyToField(f)
+func (s *Scale) ApplyToField(f *field.Field) {
+	nw := int(math.Round(float64(f.Width()) * s.x))
+	nh := int(math.Round(float64(f.Height()) * s.y))
+	tmp := field.NewField(nw, nh)
+
+	var wg sync.WaitGroup
+
+	for y := 0; y < nh; y++ {
+		_y := int(math.Floor(float64(y) / s.y))
+		wg.Add(1)
+		go func(y, _y int) {
+			defer wg.Done()
+			for x := 0; x < nw; x++ {
+				_x := int(math.Floor(float64(x) / s.x))
+				if f.Alive(_x, _y) {
+					tmp.SetAlive(x, y, true)
+				}
+			}
+		}(y, _y)
+	}
+
+	wg.Wait()
+
+	f.SetCells(nw, nh, tmp.Cells())
 }
 
 /* TODO

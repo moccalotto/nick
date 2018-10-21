@@ -1,4 +1,4 @@
-package modifiers
+package effects
 
 import "github.com/moccalotto/nick/field"
 

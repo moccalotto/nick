@@ -1,4 +1,4 @@
-package modifiers
+package effects
 
 import (
 	"math/rand"

@@ -1,7 +1,7 @@
 package machine
 
 import (
-	"github.com/moccalotto/nick/field/modifiers"
+	"github.com/moccalotto/nick/effects"
 )
 
 func init() {
@@ -17,5 +17,5 @@ func Scale(m *Machine) {
 		m.Assert(m.ArgAsString(1) == "x", "Second arg to scale must be an 'x', but '%s' was given")
 
 	}
-	m.Field.Apply(modifiers.NewScaleXY(x, y))
+	m.Field.Apply(effects.NewScaleXY(x, y))
 }

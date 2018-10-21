@@ -1,6 +1,6 @@
 package machine
 
-import "github.com/moccalotto/nick/field/modifiers"
+import "github.com/moccalotto/nick/effects"
 
 func init() {
 	InstructionHandlers["line"] = Line
@@ -25,7 +25,7 @@ func Line(m *Machine) {
 		}
 
 	}
-	l := modifiers.NewLine(
+	l := effects.NewLine(
 		m.ArgAsInt(0),
 		m.ArgAsInt(1),
 		m.ArgAsInt(2),

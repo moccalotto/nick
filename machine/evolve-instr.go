@@ -1,7 +1,7 @@
 package machine
 
 import (
-	"github.com/moccalotto/nick/field/modifiers"
+	"github.com/moccalotto/nick/effects"
 	"regexp"
 )
 
@@ -22,5 +22,5 @@ func Evolve(m *Machine) {
 		"https://en.wikipedia.org/wiki/Life-like_cellular_automaton#Notation_for_rules",
 	)
 
-	m.Field.Apply(modifiers.NewAutomaton(arg0))
+	m.Field.Apply(effects.NewAutomaton(arg0))
 }

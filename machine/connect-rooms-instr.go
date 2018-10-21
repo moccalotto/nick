@@ -1,7 +1,7 @@
 package machine
 
 import (
-	"github.com/moccalotto/nick/field/modifiers"
+	"github.com/moccalotto/nick/effects"
 )
 
 func init() {
@@ -32,7 +32,7 @@ func ConnectRooms(m *Machine) {
 		maxIterations = m.ArgAsInt(2)
 	}
 
-	rc := modifiers.NewRoomConnector(
+	rc := effects.NewRoomConnector(
 		radius,
 		maxRooms,
 		maxIterations,

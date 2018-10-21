@@ -1,6 +1,6 @@
 package machine
 
-import "github.com/moccalotto/nick/field/modifiers"
+import "github.com/moccalotto/nick/effects"
 
 func init() {
 	InstructionHandlers["border"] = Border
@@ -9,7 +9,7 @@ func init() {
 func Border(m *Machine) {
 	m.Assert(m.Field != nil, "Cannot snow a non-initialized field!")
 
-	border := modifiers.NewBorderSnow(1.0, m.Rng)
+	border := effects.NewBorderSnow(1.0, m.Rng)
 	border.Thickness = m.ArgAsInt(0)
 	m.Assert(border.Thickness > 0, "Thickness must be > 0")
 

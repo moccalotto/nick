@@ -1,7 +1,7 @@
 package machine
 
 import (
-	"github.com/moccalotto/nick/field/modifiers"
+	"github.com/moccalotto/nick/effects"
 )
 
 func init() {
@@ -15,7 +15,7 @@ func Thile(m *Machine) {
 		b = m.ArgAsInt(1)
 	}
 
-	t := modifiers.NewThile(a, b)
+	t := effects.NewThile(a, b)
 
 	t.ApplyToField(m.Field)
 }

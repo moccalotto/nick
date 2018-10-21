@@ -4,6 +4,13 @@ import "fmt"
 
 type Cell int
 
+type Point struct {
+	x int
+	y int
+}
+
+type CellHandler func(x, y int, c Cell) Cell
+
 func (c Cell) Alive() bool {
 	// Cells with value 1 or greater are considered to be alive
 	return c > 0
