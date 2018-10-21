@@ -4,6 +4,8 @@ type Cell int
 
 type CellMapper func(f *Field, x, y int, c Cell) Cell
 
+type CellWalker func(x, y int, c Cell)
+
 func (c Cell) Alive() bool {
 	// Cells with value 1 or greater are considered to be alive
 	return c != DeadCell

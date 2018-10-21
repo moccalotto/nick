@@ -65,6 +65,15 @@ func (f *Field) Set(x, y int, c Cell) error {
 }
 
 // Set sets the state of the specified cell to the given value.
+func (f *Field) Get(x, y int) (Cell, error) {
+	if err := f.errCoordsInRange(x, y); err != nil {
+		return f.outside, err
+	}
+
+	return f.s[y*f.w+x], nil
+}
+
+// Set sets the state of the specified cell to the given value.
 func (f *Field) SetAlive(x, y int, b bool) error {
 	if b {
 		return f.Set(x, y, LivingCell)
@@ -176,6 +185,11 @@ func (f *Field) Map(m CellMapper) {
 
 // Map each cell to another value, but do it asynchornously
 func (f *Field) MapAsync(m CellMapper) {
+	f.s = f.MapAsyncToNewField(m).s
+}
+
+// Map each cell to a cell in a new field with same properties.
+func (f *Field) MapAsyncToNewField(m CellMapper) *Field {
 	s := make([]Cell, len(f.s))
 
 	var wg sync.WaitGroup
@@ -197,5 +211,10 @@ func (f *Field) MapAsync(m CellMapper) {
 
 	wg.Wait()
 
-	f.s = s
+	return &Field{
+		s:       s,
+		w:       f.w,
+		h:       f.h,
+		outside: f.outside,
+	}
 }
