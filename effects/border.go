@@ -28,7 +28,7 @@ func (b *Border) ApplyToField(f *field.Field) {
 				y > bh // south line
 
 			if draw {
-				f.SetAlive(x, y, b.Alive)
+				_ = f.SetAlive(x, y, b.Alive)
 			}
 		}
 	}

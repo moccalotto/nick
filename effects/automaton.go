@@ -11,18 +11,18 @@ import (
 // Automaton for evolving a field.
 type Automaton struct {
 	// lookup tables
-	B [9]bool // if B[X] is true, it means that a cell will be born if it has X neighbours
-	S [9]bool // if S[X] is true, it means that a cell will survive if it has X neighbours
+	B [9]field.Cell // if B[X] is true, it means that a cell will be born if it has X neighbours
+	S [9]field.Cell // if S[X] is true, it means that a cell will survive if it has X neighbours
 }
 
 // Create new Automaton
-func NewAutomatonBool(b, s [9]bool) *Automaton {
+func NewAutomatonBool(b, s [9]field.Cell) *Automaton {
 	return &Automaton{b, s}
 }
 
 func NewAutomaton(str string) *Automaton {
-	_s := [9]bool{}
-	_b := [9]bool{}
+	_s := [9]field.Cell{}
+	_b := [9]field.Cell{}
 
 	re := regexp.MustCompile("^B([0-9]*)/S([0-9]*)$")
 	matches := re.FindStringSubmatch(str)
@@ -39,31 +39,31 @@ func NewAutomaton(str string) *Automaton {
 		if e != nil {
 			panic(e)
 		}
-		_b[v] = true
+		_b[v] = field.LivingCell
 	}
 	for _, digit := range sDigits {
 		v, e := strconv.Atoi(digit)
 		if e != nil {
 			panic(e)
 		}
-		_s[v] = true
+		_s[v] = field.LivingCell
 	}
 
 	return &Automaton{_b, _s}
 }
 
 // Do the rules allow survival for the given neighbour count?
-func (ca *Automaton) Survival(neighbourCount int) bool {
+func (ca *Automaton) Survival(neighbourCount int) field.Cell {
 	return ca.S[neighbourCount]
 }
 
 // Do the rules allow giving birth for the given neighbour count?
-func (ca *Automaton) Birth(neighbourCount int) bool {
+func (ca *Automaton) Birth(neighbourCount int) field.Cell {
 	return ca.B[neighbourCount]
 }
 
 // Next returns the state of the specified cell at the next time step.
-func (ca *Automaton) NextCellState(f *field.Field, x, y int) bool {
+func (ca *Automaton) NextCellState(f *field.Field, x, y int) field.Cell {
 	neighbourCount := f.NeighbourCount(x, y)
 	if a, _ := f.Alive(x, y); a {
 		return ca.Survival(neighbourCount)
@@ -81,7 +81,7 @@ func (ca *Automaton) ApplyToField(f *field.Field) {
 		go func(_y int) {
 			defer wg.Done()
 			for x := 0; x < f.Width(); x++ {
-				tmp.SetAlive(x, _y, ca.NextCellState(f, x, _y))
+				_ = tmp.Set(x, _y, ca.NextCellState(f, x, _y))
 			}
 		}(y)
 	}
@@ -95,13 +95,13 @@ func (ca *Automaton) String() string {
 	var buf strings.Builder
 	buf.WriteString("B")
 	for i := 0; i <= 8; i++ {
-		if ca.B[i] {
+		if ca.B[i].Alive() {
 			buf.WriteString(strconv.Itoa(i))
 		}
 	}
 	buf.WriteString("/S")
 	for i := 0; i <= 8; i++ {
-		if ca.S[i] {
+		if ca.S[i].Alive() {
 			buf.WriteString(strconv.Itoa(i))
 		}
 	}

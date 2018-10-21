@@ -133,7 +133,7 @@ func (t *Thile) fillField(f *field.Field) {
 
 			for _, c := range numbers {
 				if c == c1 {
-					f.SetAlive(x, y, t.Alive)
+					_ = f.SetAlive(x, y, t.Alive)
 					break
 				}
 			}
@@ -151,8 +151,6 @@ func (t *Thile) ApplyToField(f *field.Field) {
 	for _, c := range t.residueNumbers() {
 		x := c.x + f.Width()/2
 		y := c.y + f.Height()/2
-		if f.CoordsInRange(x, y) {
-			f.SetAlive(x, y, t.Alive)
-		}
+		_ = f.SetAlive(x, y, t.Alive)
 	}
 }

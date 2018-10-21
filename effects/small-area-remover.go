@@ -44,14 +44,14 @@ func (m *SmallAreaCRemover) ApplyToField(f *field.Field) {
 				// the area was too small. Remove it,
 				// and mark its cells as inspected
 				for _, p := range a {
-					inspected.SetAlive(p.X, p.Y, true)
-					f.SetAlive(p.X, p.Y, !curState)
+					_ = inspected.SetAlive(p.X, p.Y, true)
+					_ = f.SetAlive(p.X, p.Y, !curState)
 				}
 			} else {
 				// the area was large enough to keep,
 				// but we still mark the area as inspected.
 				for _, p := range a {
-					inspected.SetAlive(p.X, p.Y, true)
+					_ = inspected.SetAlive(p.X, p.Y, true)
 				}
 			}
 		}

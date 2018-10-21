@@ -37,7 +37,7 @@ func (b *Line) Inverted(dead bool) *Line {
 
 func (l *Line) plot(f *field.Field, x, y int) {
 	if f.CoordsInRange(x, y) && l.rng.Float64() < l.Coverage {
-		f.SetAlive(x, y, l.Alive)
+		_ = f.SetAlive(x, y, l.Alive)
 	}
 }
 

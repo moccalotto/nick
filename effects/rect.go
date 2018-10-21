@@ -35,7 +35,7 @@ func (r *Rect) ApplyToField(f *field.Field) {
 	if r.Coverage == 1.0 {
 		for y := r.StartY; y <= r.EndY; y++ {
 			for x := r.StartX; x <= r.EndX; x++ {
-				f.SetAlive(x, y, r.Alive)
+				_ = f.SetAlive(x, y, r.Alive)
 			}
 		}
 		return
@@ -45,7 +45,7 @@ func (r *Rect) ApplyToField(f *field.Field) {
 		for x := r.StartX; x <= r.EndX; x++ {
 			// TODO - this statement could be optimized if coverage is 1.0
 			if r.rng.Float64() < r.Coverage {
-				f.SetAlive(x, y, r.Alive)
+				_ = f.SetAlive(x, y, r.Alive)
 			}
 		}
 	}

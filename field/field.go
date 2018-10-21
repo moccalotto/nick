@@ -4,8 +4,9 @@ import "fmt"
 
 // Field represents a two-dimensional field of cells.
 type Field struct {
-	s       []Cell // cells
-	w, h    int
+	s    []Cell // cells
+	w, h int
+	// should we allow "circular overflow?"
 	outside Cell // if trying to access a cell outside the area, is it alive or dead?
 }
 
@@ -72,31 +73,14 @@ func (f *Field) SetAlive(x, y int, b bool) error {
 
 // Set all cells in the area to be alive.
 func (f *Field) SetAliveRadius(x, y int, r float64, b bool) {
+	points := (Point{x, y}).WithinRadius(r)
+	cell := DeadCell
+	if b {
+		cell = LivingCell
+	}
 
-	r2 := r * r
-
-	// iterate over a quarter of the area.
-	for i := 0; float64(i) <= r; i++ {
-		for j := 0; j <= i; j++ {
-			d2 := i*i + j*j
-
-			// point outside radius
-			if float64(d2) > r2 {
-				continue
-			}
-
-			_ = f.SetAlive(x, y, b)
-
-			_ = f.SetAlive(x+i, y+j, b)
-			_ = f.SetAlive(x+i, y-j, b)
-			_ = f.SetAlive(x-i, y+j, b)
-			_ = f.SetAlive(x-i, y-j, b)
-
-			_ = f.SetAlive(x+j, y+i, b)
-			_ = f.SetAlive(x+j, y-i, b)
-			_ = f.SetAlive(x-j, y+i, b)
-			_ = f.SetAlive(x-j, y-i, b)
-		}
+	for _, p := range points {
+		_ = f.Set(p.X, p.Y, cell)
 	}
 }
 
