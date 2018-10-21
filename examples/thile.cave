@@ -12,7 +12,11 @@ if $suggestion.export.type == text
 endif
 
 
-loop 4
+scale 2
+prune-small-areas 20
+connect-rooms 1
+
+loop 3
     scale 2
     evolve B5678/S5678
 endloop
