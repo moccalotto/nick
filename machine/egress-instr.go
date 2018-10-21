@@ -59,7 +59,7 @@ func Egress(m *Machine) {
 	egress := effects.NewEgress(direction, width, m.Rng)
 	egress.Depth = depth
 
-	m.Field.Apply(egress)
+	egress.ApplyToField(m.Field)
 }
 
 func min(a, b int) int {

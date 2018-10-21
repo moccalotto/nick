@@ -31,5 +31,5 @@ func Snow(m *Machine) {
 		snow.Alive = false
 	}
 
-	m.Field.Apply(snow)
+	snow.ApplyToField(m.Field)
 }

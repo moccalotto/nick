@@ -30,5 +30,5 @@ func Border(m *Machine) {
 		border.Alive = false
 	}
 
-	m.Field.Apply(border)
+	border.ApplyToField(m.Field)
 }

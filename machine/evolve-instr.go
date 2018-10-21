@@ -22,5 +22,5 @@ func Evolve(m *Machine) {
 		"https://en.wikipedia.org/wiki/Life-like_cellular_automaton#Notation_for_rules",
 	)
 
-	m.Field.Apply(effects.NewAutomaton(arg0))
+	effects.NewAutomaton(arg0).ApplyToField(m.Field)
 }

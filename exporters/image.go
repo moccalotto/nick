@@ -144,7 +144,9 @@ func (e *ImageExporter) GetImage(f *field.Field) *image.NRGBA {
 
 	for y := 0; y < fh; y++ {
 		for x := 0; x < fw; x++ {
-			if f.Alive(x, y) {
+			if a, err := f.Alive(x, y); err != nil {
+				panic(err)
+			} else if a {
 				img.Set(x, y, e.LiveColor)
 			} else {
 				img.Set(x, y, e.DeadColor)
@@ -166,7 +168,9 @@ func (e *ImageExporter) Export(f *field.Field) {
 		log.Fatalf("Could not open file '%s': %s", e.FileName, err)
 	}
 
-	defer file.Close()
+	defer func() {
+		_ = file.Close()
+	}()
 
 	format, err := e.detectFormat()
 	if err != nil {

@@ -26,7 +26,9 @@ func (t *TextExporter) String(f *field.Field) string {
 	var buf strings.Builder
 	for y := 0; y < f.Height(); y++ {
 		for x := 0; x < f.Width(); x++ {
-			if f.Alive(x, y) {
+			if a, err := f.Alive(x, y); err != nil {
+				panic(err)
+			} else if a {
 				buf.WriteString(t.LiveStr)
 			} else {
 				buf.WriteString(t.DeadStr)

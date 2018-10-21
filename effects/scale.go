@@ -33,7 +33,7 @@ func (s *Scale) ApplyToField(f *field.Field) {
 			defer wg.Done()
 			for x := 0; x < nw; x++ {
 				_x := int(math.Floor(float64(x) / s.x))
-				if f.Alive(_x, _y) {
+				if a, _ := f.Alive(_x, _y); a {
 					tmp.SetAlive(x, y, true)
 				}
 			}
@@ -42,7 +42,7 @@ func (s *Scale) ApplyToField(f *field.Field) {
 
 	wg.Wait()
 
-	f.SetCells(nw, nh, tmp.Cells())
+	f.ReplaceCells(nw, nh, tmp.Cells())
 }
 
 /* TODO

@@ -17,5 +17,5 @@ func Scale(m *Machine) {
 		m.Assert(m.ArgAsString(1) == "x", "Second arg to scale must be an 'x', but '%s' was given")
 
 	}
-	m.Field.Apply(effects.NewScaleXY(x, y))
+	effects.NewScaleXY(x, y).ApplyToField(m.Field)
 }

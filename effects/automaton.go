@@ -65,7 +65,7 @@ func (ca *Automaton) Birth(neighbourCount int) bool {
 // Next returns the state of the specified cell at the next time step.
 func (ca *Automaton) NextCellState(f *field.Field, x, y int) bool {
 	neighbourCount := f.NeighbourCount(x, y)
-	if f.Alive(x, y) {
+	if a, _ := f.Alive(x, y); a {
 		return ca.Survival(neighbourCount)
 	}
 
@@ -88,7 +88,7 @@ func (ca *Automaton) ApplyToField(f *field.Field) {
 
 	wg.Wait()
 
-	f.SetCells(f.Width(), f.Height(), tmp.Cells())
+	f.ReplaceCells(f.Width(), f.Height(), tmp.Cells())
 }
 
 func (ca *Automaton) String() string {
