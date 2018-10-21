@@ -1,7 +1,6 @@
 package machine
 
 import (
-	"github.com/golang-collections/collections/stack"
 	"github.com/moccalotto/nick/field"
 	"math/rand"
 	"time"
@@ -21,7 +20,7 @@ type Machine struct {
 	Rng       *rand.Rand       // Random Number Generator
 	Seed      int64            // Seed for the Rng
 	Field     *field.Field     // field to populate.
-	Stack     *stack.Stack     // Stack used for nesting and looping.
+	Stack     *Stack           // Stack used for nesting and looping.
 	State     *MachineState    // The current state of the machine.
 	Tape      []Instruction    // the entire program.
 	Trace     []int            // trace of executed instructions.

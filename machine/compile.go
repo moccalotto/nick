@@ -3,7 +3,6 @@ package machine
 import (
 	"errors"
 	"fmt"
-	"github.com/golang-collections/collections/stack"
 	"log"
 	"math/bits"
 	"math/rand"
@@ -23,7 +22,7 @@ func MachineFromScript(p string) *Machine {
 	return &Machine{
 		Rng:       rng,
 		Seed:      seed,
-		Stack:     stack.New(),
+		Stack:     NewStack(),
 		State:     &MachineState{},
 		Tape:      scriptToInstructions(p),
 		Limits:    Restrictions{},
