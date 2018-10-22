@@ -28,10 +28,10 @@ func ScaleTo(m *Machine) {
 	m.Assert(m.ArgAsString(1) == "x", "Second arg to scale must be an 'x', but '%s' was given", m.ArgAsString(1))
 	newH := m.ArgAsInt(2)
 
-	return effects.NewScaleTo(
+	effects.NewScaleTo(
 		m.Field.Width(),
 		newW,
 		m.Field.Height(),
 		newH,
-	)
+	).ApplyToField(m.Field)
 }
