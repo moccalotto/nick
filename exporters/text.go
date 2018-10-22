@@ -50,12 +50,13 @@ func (t *TextExporter) Export(f *field.Field) {
 	}
 
 	file, err := os.Create(t.FileName)
-
 	if err != nil {
 		log.Fatalf("Could not open file '%s': %s", t.FileName, err)
 	}
 
-	defer file.Close()
+	defer func() {
+		_ = file.Close()
+	}()
 
 	if _, err := file.WriteString(output); err != nil {
 		log.Fatalf("Could not write to file '%s': %s", t.FileName, err)
