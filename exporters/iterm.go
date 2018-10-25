@@ -27,14 +27,14 @@ func NewItermExporter(i *ImageExporter) *ItermExporter {
 func (p *ItermExporter) Export(f *field.Field) {
 	img := p.ImageExporter.GetImage(f)
 	buf := new(bytes.Buffer)
-	png.Encode(buf, img)
+	_ = png.Encode(buf, img)
 
 	if p.ClearScreen {
 		goterm.Clear()
 		goterm.MoveCursor(1, 1)
 	}
 
-	goterm.Print(
+	_, _ = goterm.Print(
 		fmt.Sprintf(
 			"\033]1337;File=inline=1:%s\a",
 			base64.StdEncoding.EncodeToString(buf.Bytes()),
