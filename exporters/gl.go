@@ -21,6 +21,7 @@ I want to map the width of my field to the X-axis, so no issue there either
 I want to map the height of my field to the Y-axis. I need to flip the Y coordinate so that Y_new := Height - Y_original
 
 Use this example: https://github.com/go-gl/example/blob/master/gl41core-cube/cube.go
+Also: http://www.opengl-tutorial.org/beginners-tutorials/tutorial-3-matrices/
 */
 
 // ImageExporter exports images to files
