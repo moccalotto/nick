@@ -1,11 +1,10 @@
 package exporters
 
 import (
-	"github.com/go-gl/gl/v4.1-core/gl"
+	// "github.com/go-gl/gl/v4.1-core/gl"
 	"github.com/go-gl/glfw/v3.2/glfw"
-	mgl "github.com/go-gl/mathgl/mgl32"
-	"github.com/moccalotto/nick/field"
-	"log"
+	// mgl "github.com/go-gl/mathgl/mgl32"
+	// "github.com/moccalotto/nick/field"
 )
 
 /**
