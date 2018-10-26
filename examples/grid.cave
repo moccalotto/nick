@@ -1,0 +1,29 @@
+suggest export.type      = iterm    # We would like to export an image
+suggest export.format    = gif      # in gif
+suggest export.algorithm = Lanczos  # using the »box« scaling method
+# suggest export.width     = 2048     # with a fixed width
+
+set $width  between 30  and 40
+set $height between 20  and 25
+set $snow   between 10% and 50%
+set $funkyScale oneof yes no
+
+init $width x $height
+snow $snow
+
+
+if $funkyScale == yes
+
+    # scale by 1.23 17 times
+    # due to scaling and rounding, this is not the same as scaling 1.23^17 a single time.
+    # You will see that the dots have moved around in very odd ways when funkyscale is enabled.
+    loop 17
+        # every time we scale by a non-even number, rounding errors crop up.
+        # doing so 17 times yields interesting results.
+        scale 1.23
+    endloop
+else
+    scale 50
+endif
+
+gridn $width x $height
