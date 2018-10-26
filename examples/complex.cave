@@ -1,11 +1,15 @@
-# This seed generates a complex cave.
-# Other seeds may yield quite simple caves.
-seed 2884145919730671125
+# seed 2884145919730671125 Large cave with interesting details:
+# seed -4029406377519914731 tall one-room cave that is great for encounters.
+# seed -8585954361547726571 a very simple cave
+# seed -8600179748397948651 Oddly shaped cavern
+# seed -7489315882007830251 Fairly detailed cave system
+# seed -5761356538770136811 two rooms - lots of detail.
+# seed -6877898940050874091 very detailed - almost confusing
 
 suggest export.type      = iterm    # We would like to export an image
-suggest export.format    = png      # in png
+suggest export.format    = gif      # in gif
 suggest export.algorithm = Lanczos  # using the »box« scaling method
-suggest export.width     = 2048     # with a fixed width
+# suggest export.width     = 2048     # with a fixed width
 
 set $width  between 20 and 60
 set $height oneof   20 35 55
@@ -25,7 +29,6 @@ init $width x $height               # New, small-ish, canvas.
 set $snow between 30% and 40%
 snow $snow
 
-
 # Cover 65 to 85% of the border with dots.
 set $coverage  between 65% and 85%
 border 1 $coverage
@@ -33,9 +36,9 @@ border 1 $coverage
 loop 3
     # create an opening 6-10 cells wide, 1-3 cells deep,
     # in a random location on the periphery of the cave.
-    set $width between 6 and 10
-    set $depth between 1 and 3
-    egress random $width x $depth   # create an opening
+    set $_width between 6 and 10
+    set $_depth between 1 and 3
+    egress random $_width x $_depth   # create an opening
 
     evolve B5678/S345678            # run standard escavator
     evolve B5678/S345678            # ...twice
@@ -50,12 +53,13 @@ loop 3
     scale 1.75
 endloop
 
-loop 7
+loop 5
     scale 1.5
     evolve B5678/S5678              # run edge smoother
     evolve B5678/S5678              # ...twice
 endloop
 
+gridn $width x $height
 
 # evolve B2345678/S0                # Produce an outline. Living edge on dead background
 # border 1 100% (dead)              # The outliner above will remove any egress. We revive it by killing the border.
