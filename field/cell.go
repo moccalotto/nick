@@ -1,6 +1,6 @@
 package field
 
-type Cell int
+type Cell uint8
 
 type CellMapper func(f *Field, x, y int, c Cell) Cell
 
