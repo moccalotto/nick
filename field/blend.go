@@ -4,8 +4,6 @@ import (
 	"fmt"
 )
 
-const ()
-
 type Blender func(x, y int, source, target Cell) Cell
 
 // Does nothing. Target cell is unchanged.
