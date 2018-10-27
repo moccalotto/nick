@@ -1,0 +1,9 @@
+init 100 x 100
+
+loop 25
+    border 1
+    scale 100
+    scale-to 100 x 100
+endloop
+
+scale-to 10 x 10
