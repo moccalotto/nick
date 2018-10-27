@@ -33,7 +33,7 @@ func main() {
 
 	m := createMachine(*f)
 
-	m.Limits.MaxRuntime, _ = time.ParseDuration("5s")
+	m.Limits.MaxRuntime, _ = time.ParseDuration("10s")
 
 	if err := m.Execute(); err != nil {
 		panic(err)
