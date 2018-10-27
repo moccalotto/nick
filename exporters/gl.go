@@ -1,10 +1,10 @@
 package exporters
 
 import (
-	// "github.com/go-gl/gl/v4.1-core/gl"
-	"github.com/go-gl/glfw/v3.2/glfw"
-	// mgl "github.com/go-gl/mathgl/mgl32"
-	// "github.com/moccalotto/nick/field"
+// "github.com/go-gl/gl/v4.1-core/gl"
+// "github.com/go-gl/glfw/v3.2/glfw"
+// mgl "github.com/go-gl/mathgl/mgl32"
+// "github.com/moccalotto/nick/field"
 )
 
 /**
@@ -22,6 +22,8 @@ I want to map the height of my field to the Y-axis. I need to flip the Y coordin
 Use this example: https://github.com/go-gl/example/blob/master/gl41core-cube/cube.go
 Also: http://www.opengl-tutorial.org/beginners-tutorials/tutorial-3-matrices/
 */
+
+/*
 
 // ImageExporter exports images to files
 type GlExporter struct {
@@ -74,3 +76,4 @@ func NewGlExporter(w, h int) *GlExporter {
 			` + "\x00",
 	}
 }
+*/
