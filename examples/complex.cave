@@ -5,6 +5,7 @@
 # seed -7489315882007830251 # Fairly detailed cave system
 # seed -5761356538770136811 # two rooms - lots of detail.
 # seed -6877898940050874091 # very detailed - almost confusing
+# seed 5256007666904097045  # nice details, several sub-caverns
 
 suggest export.type      = iterm    # We would like to export an image
 suggest export.format    = gif      # in gif
@@ -61,8 +62,4 @@ endloop
 
 gridn $width x $height
 
-# evolve B2345678/S0                # Produce an outline. Living edge on dead background
-# border 1 100% (dead)              # The outliner above will remove any egress. We revive it by killing the border.
-
-# evolve B05678/S05678              # This automaton reduces the map to just the edges (but also reverses it).
-# evolve B012345/S012345            # Running an "inverse" automaton re-inverses the map
+# evolve B8/S1234567 Turn the map into an outline
