@@ -1,10 +1,10 @@
-# seed 2884145919730671125 Large cave with interesting details:
-# seed -4029406377519914731 tall one-room cave that is great for encounters.
-# seed -8585954361547726571 a very simple cave
-# seed -8600179748397948651 Oddly shaped cavern
-# seed -7489315882007830251 Fairly detailed cave system
-# seed -5761356538770136811 two rooms - lots of detail.
-# seed -6877898940050874091 very detailed - almost confusing
+# seed 2884145919730671125  # Large cave with interesting details:
+# seed -4029406377519914731 # tall one-room cave that is great for encounters.
+# seed -8585954361547726571 # a very simple cave
+# seed -8600179748397948651 # Oddly shaped cavern
+# seed -7489315882007830251 # Fairly detailed cave system
+# seed -5761356538770136811 # two rooms - lots of detail.
+# seed -6877898940050874091 # very detailed - almost confusing
 
 suggest export.type      = iterm    # We would like to export an image
 suggest export.format    = gif      # in gif
