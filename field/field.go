@@ -164,6 +164,33 @@ func (f *Field) NeighbourCount(x, y int) int {
 	return neighbourCount
 }
 
+// Call a function on each cell
+func (f *Field) Walk(w CellWalker) {
+	for y := 0; y < f.h; y++ {
+		for x := 0; x < f.w; x++ {
+			idx := y*f.w + x
+			w(x, y, f.s[idx])
+		}
+	}
+}
+
+// Call a function on each cell (async)
+func (f *Field) WalkAsync(w CellWalker) {
+	var wg sync.WaitGroup
+	for y := 0; y < f.h; y++ {
+		wg.Add(1)
+		go func(y int) {
+			defer wg.Done()
+			for x := 0; x < f.Width(); x++ {
+				idx := y*f.w + x
+				w(x, y, f.s[idx])
+			}
+		}(y)
+	}
+
+	wg.Wait()
+}
+
 // Map each cell to another value
 func (f *Field) Map(m CellMapper) {
 	s := make([]Cell, len(f.s))
@@ -181,16 +208,6 @@ func (f *Field) Map(m CellMapper) {
 	}
 
 	f.s = s
-}
-
-// Map each cell to another value
-func (f *Field) Walk(w CellWalker) {
-	for y := 0; y < f.h; y++ {
-		for x := 0; x < f.w; x++ {
-			idx := y*f.w + x
-			w(x, y, f.s[idx])
-		}
-	}
 }
 
 // Map each cell to another value, but do it asynchornously
