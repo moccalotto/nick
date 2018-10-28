@@ -7,6 +7,8 @@ import (
 	"strings"
 )
 
+var automatonParser *regexp.Regexp = regexp.MustCompile("^B([0-9]*)/S([0-9]*)$")
+
 // Automaton for evolving a field.
 type Automaton struct {
 	// lookup tables
@@ -23,8 +25,8 @@ func NewAutomaton(str string) *Automaton {
 	_s := [9]field.Cell{}
 	_b := [9]field.Cell{}
 
-	re := regexp.MustCompile("^B([0-9]*)/S([0-9]*)$")
-	matches := re.FindStringSubmatch(str)
+	automatonParser := regexp.MustCompile("^B([0-9]*)/S([0-9]*)$")
+	matches := automatonParser.FindStringSubmatch(str)
 	if len(matches) != 3 {
 		// TODO: correct error handling.
 		panic("Bad Rule-String")
