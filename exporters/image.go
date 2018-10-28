@@ -140,19 +140,15 @@ func (e *ImageExporter) GetImage(f *field.Field) *image.NRGBA {
 	fh := f.Height()
 
 	// create an image the size of the field, it will be scaled later
-	img := image.NewNRGBA(image.Rect(0, 0, fw, fh))
+	img := image.NewRGBA(image.Rect(0, 0, fw, fh))
 
-	for y := 0; y < fh; y++ {
-		for x := 0; x < fw; x++ {
-			if a, err := f.Alive(x, y); err != nil {
-				panic(err)
-			} else if a {
-				img.Set(x, y, e.LiveColor)
-			} else {
-				img.Set(x, y, e.DeadColor)
-			}
+	f.WalkAsync(func(x, y int, c field.Cell) {
+		if c.Alive() {
+			img.Set(x, y, e.LiveColor)
+		} else {
+			img.Set(x, y, e.DeadColor)
 		}
-	}
+	})
 
 	imgW, imgH := e.dimensions(f)
 
