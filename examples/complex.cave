@@ -63,3 +63,14 @@ endloop
 gridn $width x $height
 
 # evolve B8/S1234567 Turn the map into an outline
+
+
+## PLANNED FEATURES:
+# I want the grid to be gray.
+# I want the background of the inaccessible areas to have look like rock or similar.
+# I want the background of the accessible areas to look like a cave for (repeated tile with some randomness thrown in?)
+# I want the walls of the cave to be outlined in a thick black color
+#
+## LAAAATER: ISO-3D
+# I want the inaccessible areas to have a height of 1 and the accessible areas to have a height of 0 by default.
+# We can then use layered noise to generate heights, etc.
