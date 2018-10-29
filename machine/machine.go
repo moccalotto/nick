@@ -57,6 +57,10 @@ func (m *Machine) MustGetCmd(id string) string {
 		return "0"
 	case "line":
 		return strconv.Itoa(m.CurrentInstruction().Line)
+	case "width":
+		return strconv.Itoa(m.Field.Width())
+	case "height":
+		return strconv.Itoa(m.Field.Height())
 	default:
 		m.Throw("Unknown command special command @%s", id)
 	}
