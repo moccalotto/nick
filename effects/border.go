@@ -6,7 +6,7 @@ import (
 
 type Border struct {
 	Thickness int
-	Alive     bool
+	On        bool
 }
 
 func NewBorder() *Border {
@@ -28,7 +28,7 @@ func (b *Border) ApplyToField(f *field.Field) {
 				y > bh // south line
 
 			if draw {
-				_ = f.SetAlive(x, y, b.Alive)
+				_ = f.SetOn(x, y, b.On)
 			}
 		}
 	}

@@ -11,7 +11,7 @@ type VLine struct {
 	Length    int
 	Coverage  float64
 	Thickness int
-	Alive     bool
+	On        bool
 	rng       *rand.Rand
 }
 
@@ -22,7 +22,7 @@ func NewVLine(startX, startY, length int, rng *rand.Rand) *VLine {
 		Length:    length,
 		Coverage:  1.0,
 		Thickness: 1,
-		Alive:     true,
+		On:        true,
 		rng:       rng,
 	}
 }
@@ -36,7 +36,7 @@ func (b *VLine) ToRect() *Rect {
 		b.rng,
 	)
 
-	r.Alive = b.Alive
+	r.On = b.On
 	r.Coverage = b.Coverage
 
 	return r

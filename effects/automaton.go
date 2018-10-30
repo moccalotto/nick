@@ -68,7 +68,7 @@ func (ca *Automaton) NextCellState(f *field.Field, x, y int, cur field.Cell) fie
 
 	neighbourCount := f.NeighbourCount(x, y)
 
-	if cur.Alive() {
+	if cur.On() {
 		return ca.Survival(neighbourCount)
 	}
 
@@ -84,13 +84,13 @@ func (ca *Automaton) String() string {
 	var buf strings.Builder
 	buf.WriteString("B")
 	for i := 0; i <= 8; i++ {
-		if ca.B[i].Alive() {
+		if ca.B[i].On() {
 			buf.WriteString(strconv.Itoa(i))
 		}
 	}
 	buf.WriteString("/S")
 	for i := 0; i <= 8; i++ {
-		if ca.S[i].Alive() {
+		if ca.S[i].On() {
 			buf.WriteString(strconv.Itoa(i))
 		}
 	}

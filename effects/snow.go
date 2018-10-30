@@ -18,7 +18,7 @@ func NewSnow(p float64, rng *rand.Rand) *Snow {
 	return &Snow{p, field.LivingCell, rng}
 }
 
-// Rain living or dead snow onto the given field.
+// Turn on cells randomly throughout the field.
 func (s *Snow) ApplyToField(f *field.Field) {
 	// We cannot generate snow asynchronously because it would intorduce
 	// actual randomness due to race conditions.

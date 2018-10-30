@@ -11,7 +11,7 @@ type Rect struct {
 	EndX     int
 	EndY     int
 	Coverage float64
-	Alive    bool
+	On       bool
 	rng      *rand.Rand
 }
 
@@ -22,7 +22,7 @@ func NewRect(startX, startY, endX, endY int, rng *rand.Rand) *Rect {
 		EndX:     endX,
 		EndY:     endY,
 		Coverage: 1.0,
-		Alive:    true,
+		On:       true,
 		rng:      rng,
 	}
 }
@@ -35,7 +35,7 @@ func (r *Rect) ApplyToField(f *field.Field) {
 	if r.Coverage == 1.0 {
 		for y := r.StartY; y <= r.EndY; y++ {
 			for x := r.StartX; x <= r.EndX; x++ {
-				_ = f.SetAlive(x, y, r.Alive)
+				_ = f.SetOn(x, y, r.On)
 			}
 		}
 		return
@@ -45,7 +45,7 @@ func (r *Rect) ApplyToField(f *field.Field) {
 		for x := r.StartX; x <= r.EndX; x++ {
 			// TODO - this statement could be optimized if coverage is 1.0
 			if r.rng.Float64() < r.Coverage {
-				_ = f.SetAlive(x, y, r.Alive)
+				_ = f.SetOn(x, y, r.On)
 			}
 		}
 	}

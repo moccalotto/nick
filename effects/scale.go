@@ -25,7 +25,6 @@ func NewScaleTo(startW, newW, startH, newH int) *Scale {
 	return &Scale{x, y}
 }
 
-// Rain living or dead snow onto the given field.
 func (s *Scale) ApplyToField(f *field.Field) {
 	nw := int(math.Round(float64(f.Width()) * s.x))
 	nh := int(math.Round(float64(f.Height()) * s.y))
@@ -40,8 +39,8 @@ func (s *Scale) ApplyToField(f *field.Field) {
 			defer wg.Done()
 			for x := 0; x < nw; x++ {
 				_x := int(math.Floor(float64(x) / s.x))
-				if a, _ := f.Alive(_x, _y); a {
-					_ = tmp.SetAlive(x, y, true)
+				if a, _ := f.On(_x, _y); a {
+					_ = tmp.SetOn(x, y, true)
 				}
 			}
 		}(y, _y)

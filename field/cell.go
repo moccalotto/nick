@@ -6,13 +6,13 @@ type CellMapper func(f *Field, x, y int, c Cell) Cell
 
 type CellWalker func(x, y int, c Cell)
 
-func (c Cell) Alive() bool {
+func (c Cell) On() bool {
 	return c == LivingCell
 }
 
-func (c Cell) Dead() bool {
-	return c == DeadCell
+func (c Cell) Off() bool {
+	return c == OffCell
 }
 
-const DeadCell Cell = false
+const OffCell Cell = false
 const LivingCell Cell = true

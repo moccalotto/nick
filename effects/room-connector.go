@@ -24,13 +24,13 @@ func (rc *RoomConnector) getAllRooms(f *field.Field) []field.Area {
 
 	for y := 0; y < h; y++ {
 		for x := 0; x < w; x++ {
-			// Alive cells are walls
-			if a, _ := f.Alive(x, y); a {
+			// On cells are walls
+			if a, _ := f.On(x, y); a {
 				continue
 			}
 
 			// Don't look at a cell twice
-			if a, _ := inspected.Alive(x, y); a {
+			if a, _ := inspected.On(x, y); a {
 				continue
 			}
 
@@ -41,7 +41,7 @@ func (rc *RoomConnector) getAllRooms(f *field.Field) []field.Area {
 			// For each point in the area, check if the given cell is on the edge.
 			for _, p := range _area {
 				// Mark all cells in the room as inspected
-				_ = inspected.SetAlive(p.X, p.Y, true)
+				_ = inspected.SetOn(p.X, p.Y, true)
 
 				// check if all adjacent cells are also in the room
 				// if not, then it's a point on the edge, and therefore
@@ -53,9 +53,9 @@ func (rc *RoomConnector) getAllRooms(f *field.Field) []field.Area {
 						continue
 					}
 
-					// If at least one adjacent cell is dead (i.e. outside the room)
+					// If at least one adjacent cell is off (i.e. outside the room)
 					// The current cell must be on the edge of the room
-					if d, err := f.Dead(ap.X, ap.Y); err != nil {
+					if d, err := f.Off(ap.X, ap.Y); err != nil {
 						panic(err)
 					} else if d {
 						r = append(r, p)
@@ -97,8 +97,8 @@ func (rc *RoomConnector) findClosestPoints(r1, r2 field.Area) (field.Point, fiel
 func (rc *RoomConnector) startTunnel(f *field.Field, r1, r2 field.Area) {
 	p1, p2 := r1.FindClosestPoints(r2)
 
-	f.SetAliveRadius(p1.X, p1.Y, rc.TunnelRadius, false)
-	f.SetAliveRadius(p2.X, p2.Y, rc.TunnelRadius, false)
+	f.SetOnRadius(p1.X, p1.Y, rc.TunnelRadius, false)
+	f.SetOnRadius(p2.X, p2.Y, rc.TunnelRadius, false)
 }
 
 // Connect all rooms in field

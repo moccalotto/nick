@@ -68,11 +68,11 @@ func (e *SuggestionExporter) text() *TextExporter {
 	if fn, ok := e.Vars["suggestion.export.file"]; ok {
 		te.FileName = fn
 	}
-	if l, ok := e.Vars["suggestion.export.alive"]; ok {
+	if l, ok := e.Vars["suggestion.export.on"]; ok {
 		te.LiveStr = l
 	}
-	if d, ok := e.Vars["suggestion.export.dead"]; ok {
-		te.DeadStr = d
+	if d, ok := e.Vars["suggestion.export.off"]; ok {
+		te.OffStr = d
 	}
 
 	return te

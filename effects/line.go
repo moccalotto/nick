@@ -11,7 +11,7 @@ type Line struct {
 	X1       int
 	Y1       int
 	Coverage float64
-	Alive    bool
+	On       bool
 	rng      *rand.Rand
 }
 
@@ -22,22 +22,22 @@ func NewLine(startX, startY, endX, endY int, rng *rand.Rand) *Line {
 		X1:       endX,
 		Y1:       endY,
 		Coverage: 1.0,
-		Alive:    true,
+		On:       true,
 		rng:      rng,
 	}
 }
 
-// The snow will now add dead cells instead of living cells
-func (b *Line) Inverted(dead bool) *Line {
+// The snow will turn cells off instead of on
+func (b *Line) Inverted(off bool) *Line {
 	tmp := *b
-	tmp.Alive = !dead
+	tmp.On = !off
 
 	return &tmp
 }
 
 func (l *Line) plot(f *field.Field, x, y int) {
 	if f.CoordsInRange(x, y) && l.rng.Float64() < l.Coverage {
-		_ = f.SetAlive(x, y, l.Alive)
+		_ = f.SetOn(x, y, l.On)
 	}
 }
 

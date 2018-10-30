@@ -10,14 +10,14 @@ import (
 
 type TextExporter struct {
 	LiveStr  string
-	DeadStr  string
+	OffStr   string
 	FileName string
 }
 
 func NewTextExporter() *TextExporter {
 	return &TextExporter{
 		LiveStr:  "██",
-		DeadStr:  "  ",
+		OffStr:   "  ",
 		FileName: "",
 	}
 }
@@ -26,12 +26,12 @@ func (t *TextExporter) String(f *field.Field) string {
 	var buf strings.Builder
 	for y := 0; y < f.Height(); y++ {
 		for x := 0; x < f.Width(); x++ {
-			if a, err := f.Alive(x, y); err != nil {
+			if a, err := f.On(x, y); err != nil {
 				panic(err)
 			} else if a {
 				buf.WriteString(t.LiveStr)
 			} else {
-				buf.WriteString(t.DeadStr)
+				buf.WriteString(t.OffStr)
 			}
 		}
 		buf.WriteRune('\n')

@@ -23,7 +23,7 @@ type Egress struct {
 	Width    int
 	Depth    int
 	Position Direction
-	Alive    bool
+	On       bool
 	rng      *rand.Rand
 }
 
@@ -32,7 +32,7 @@ func NewEgress(position Direction, width int, rng *rand.Rand) *Egress {
 		Width:    width,
 		Depth:    1,
 		Position: position,
-		Alive:    false, // by default, an egress consists of empty/dead space.
+		On:       false, // by default, an egress consists of empty pace.
 		rng:      rng,
 	}
 }
@@ -52,7 +52,7 @@ func (e *Egress) ApplyToField(f *field.Field) {
 			EndX:     (f.Width() + e.Width) / 2,
 			EndY:     e.Depth - 1,
 			Coverage: 1.0,
-			Alive:    e.Alive,
+			On:       e.On,
 		}
 		r.ApplyToField(f)
 	case South:
@@ -62,7 +62,7 @@ func (e *Egress) ApplyToField(f *field.Field) {
 			EndX:     (f.Width() + e.Width) / 2,
 			EndY:     f.Height() - 1,
 			Coverage: 1.0,
-			Alive:    e.Alive,
+			On:       e.On,
 		}
 		r.ApplyToField(f)
 	case East:
@@ -72,7 +72,7 @@ func (e *Egress) ApplyToField(f *field.Field) {
 			EndX:     f.Width() - 1,
 			EndY:     (f.Height() + e.Width) / 2,
 			Coverage: 1.0,
-			Alive:    e.Alive,
+			On:       e.On,
 		}
 		r.ApplyToField(f)
 	case West:
@@ -82,7 +82,7 @@ func (e *Egress) ApplyToField(f *field.Field) {
 			EndX:     e.Depth - 1,
 			EndY:     (f.Height() + e.Width) / 2,
 			Coverage: 1.0,
-			Alive:    e.Alive,
+			On:       e.On,
 		}
 		r.ApplyToField(f)
 	case NorthEast:
@@ -93,7 +93,7 @@ func (e *Egress) ApplyToField(f *field.Field) {
 			EndX:     f.Width() - 1,
 			EndY:     e.Depth - 1,
 			Coverage: 1.0,
-			Alive:    e.Alive,
+			On:       e.On,
 		}
 		north.ApplyToField(f)
 		east := Rect{
@@ -102,7 +102,7 @@ func (e *Egress) ApplyToField(f *field.Field) {
 			EndX:     f.Width() - 1,
 			EndY:     l - 1,
 			Coverage: 1.0,
-			Alive:    e.Alive,
+			On:       e.On,
 		}
 		east.ApplyToField(f)
 	case NorthWest:
@@ -113,7 +113,7 @@ func (e *Egress) ApplyToField(f *field.Field) {
 			EndX:     l - 1,
 			EndY:     e.Depth - 1,
 			Coverage: 1.0,
-			Alive:    e.Alive,
+			On:       e.On,
 		}
 		north.ApplyToField(f)
 		west := Rect{
@@ -122,7 +122,7 @@ func (e *Egress) ApplyToField(f *field.Field) {
 			EndX:     e.Depth - 1,
 			EndY:     l - 1,
 			Coverage: 1.0,
-			Alive:    e.Alive,
+			On:       e.On,
 		}
 		west.ApplyToField(f)
 	case SouthWest:
@@ -133,7 +133,7 @@ func (e *Egress) ApplyToField(f *field.Field) {
 			EndX:     l - 1,
 			EndY:     f.Height() - 1,
 			Coverage: 1.0,
-			Alive:    e.Alive,
+			On:       e.On,
 		}
 		south.ApplyToField(f)
 		west := Rect{
@@ -142,7 +142,7 @@ func (e *Egress) ApplyToField(f *field.Field) {
 			EndX:     e.Depth - 1,
 			EndY:     f.Height() - 1,
 			Coverage: 1.0,
-			Alive:    e.Alive,
+			On:       e.On,
 		}
 		west.ApplyToField(f)
 	case SouthEast:
@@ -153,7 +153,7 @@ func (e *Egress) ApplyToField(f *field.Field) {
 			EndX:     f.Width() - 1,
 			EndY:     f.Height() - 1,
 			Coverage: 1.0,
-			Alive:    e.Alive,
+			On:       e.On,
 		}
 		south.ApplyToField(f)
 		east := Rect{
@@ -162,7 +162,7 @@ func (e *Egress) ApplyToField(f *field.Field) {
 			EndX:     f.Width() - 1,
 			EndY:     f.Height() - 1,
 			Coverage: 1.0,
-			Alive:    e.Alive,
+			On:       e.On,
 		}
 		east.ApplyToField(f)
 	}

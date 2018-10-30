@@ -23,11 +23,11 @@ func Border(m *Machine) {
 
 	if m.HasArg(2) {
 		m.Assert(
-			m.ArgAsString(2) == "(dead)",
-			"Only allowed value to this instruction is the string '(dead)'",
+			m.ArgAsString(2) == "(off)",
+			"Only allowed value to this instruction is the string '(off)'",
 		)
 
-		border.Alive = false
+		border.On = false
 	}
 
 	border.ApplyToField(m.Field)

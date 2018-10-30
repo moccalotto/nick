@@ -8,7 +8,7 @@ import (
 type BorderSnow struct {
 	Coverage  float64
 	Thickness int
-	Alive     bool
+	On        bool
 	rng       *rand.Rand
 }
 
@@ -31,7 +31,7 @@ func (b *BorderSnow) ApplyToField(f *field.Field) {
 				y > bh // south line
 
 			if inDrawArea && (b.Coverage == 1.0 || b.rng.Float64() < b.Coverage) {
-				_ = f.SetAlive(x, y, b.Alive)
+				_ = f.SetOn(x, y, b.On)
 			}
 		}
 	}

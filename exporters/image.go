@@ -12,7 +12,7 @@ Considerations:
 	Do we draw a grid?
 		Do we scale the grid?
 		Do we use instructions for that?
-	Image behind dead pixels
+	Image behind off-cells?
 		Do we use instructions for that?
 	Image behind live pixels (possibly drawing a grid on top of that image too)
 		Do we use instructions for that?
@@ -47,7 +47,7 @@ type ImageExporter struct {
 
 	Algorithm string // algorithm for scaling
 
-	DeadColor color.NRGBA
+	OffColor  color.NRGBA
 	LiveColor color.NRGBA
 }
 
@@ -60,7 +60,7 @@ func NewImageExporter() *ImageExporter {
 		Height:    0,
 		Scale:     1,
 		Algorithm: "Lanczos",
-		DeadColor: color.NRGBA{
+		OffColor: color.NRGBA{
 			R: 0,
 			G: 0,
 			B: 0,
@@ -143,10 +143,10 @@ func (e *ImageExporter) GetImage(f *field.Field) *image.NRGBA {
 	img := image.NewRGBA(image.Rect(0, 0, fw, fh))
 
 	f.WalkAsync(func(x, y int, c field.Cell) {
-		if c.Alive() {
+		if c.On() {
 			img.Set(x, y, e.LiveColor)
 		} else {
-			img.Set(x, y, e.DeadColor)
+			img.Set(x, y, e.OffColor)
 		}
 	})
 

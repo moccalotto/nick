@@ -10,7 +10,7 @@ type Field struct {
 	s    []Cell // cells
 	w, h int
 	// should we allow "circular overflow?"
-	outside Cell // if trying to access a cell outside the area, is it alive or dead?
+	outside Cell // if trying to access a cell outside the area, is it on or off?
 }
 
 // NewField returns an empty field of the specified width and height.
@@ -74,19 +74,19 @@ func (f *Field) Get(x, y int) (Cell, error) {
 }
 
 // Set sets the state of the specified cell to the given value.
-func (f *Field) SetAlive(x, y int, b bool) error {
+func (f *Field) SetOn(x, y int, b bool) error {
 	if b {
 		return f.Set(x, y, LivingCell)
 	} else {
-		return f.Set(x, y, DeadCell)
+		return f.Set(x, y, OffCell)
 	}
 
 }
 
-// Set all cells in the area to be alive.
-func (f *Field) SetAliveRadius(x, y int, r float64, b bool) {
+// Turn on all cells in the area
+func (f *Field) SetOnRadius(x, y int, r float64, b bool) {
 	points := (Point{x, y}).WithinRadius(r)
-	cell := DeadCell
+	cell := OffCell
 	if b {
 		cell = LivingCell
 	}
@@ -96,19 +96,19 @@ func (f *Field) SetAliveRadius(x, y int, r float64, b bool) {
 	}
 }
 
-// Alive reports whether the specified cell is alive.
+// On reports whether the specified cell is on.
 // If the x or y coordinates are outside the field boundaries they are wrapped
 // toroidally. For instance, an x value of -1 is treated as width-1.
-func (f *Field) Alive(x, y int) (bool, error) {
+func (f *Field) On(x, y int) (bool, error) {
 	if err := f.errCoordsInRange(x, y); err != nil {
-		return f.outside.Alive(), err
+		return f.outside.On(), err
 	}
 
-	return f.s[y*f.w+x].Alive(), nil
+	return f.s[y*f.w+x].On(), nil
 }
 
-func (f *Field) Dead(x, y int) (bool, error) {
-	a, err := f.Alive(x, y)
+func (f *Field) Off(x, y int) (bool, error) {
+	a, err := f.On(x, y)
 
 	return !a, err
 }
@@ -140,24 +140,24 @@ func (f *Field) NeighbourCount(x, y int) int {
 
 	// Check neighbours above
 	for _x := x - 1; _x <= x+1; _x++ {
-		if a, _ := f.Alive(_x, y-1); a {
+		if a, _ := f.On(_x, y-1); a {
 			neighbourCount++
 		}
 	}
 	// Check neighbours on the line below
 	for _x := x - 1; _x <= x+1; _x++ {
-		if a, _ := f.Alive(_x, y+1); a {
+		if a, _ := f.On(_x, y+1); a {
 			neighbourCount++
 		}
 	}
 
 	// Check neighbour to the left
-	if a, _ := f.Alive(x-1, y); a {
+	if a, _ := f.On(x-1, y); a {
 		neighbourCount++
 	}
 
 	// Check neighbourCount to the right
-	if a, _ := f.Alive(x+1, y); a {
+	if a, _ := f.On(x+1, y); a {
 		neighbourCount++
 	}
 

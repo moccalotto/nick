@@ -15,13 +15,13 @@ func Line(m *Machine) {
 		m.ArgAsFloat(4)
 	}
 
-	alive := true
+	on := true
 
 	if m.HasArg(5) {
-		if m.ArgAsString(5) == "(dead)" {
-			alive = false
+		if m.ArgAsString(5) == "(off)" {
+			on = false
 		} else {
-			m.Throw("The only allowed value for the fifth argument is the string '(dead)'")
+			m.Throw("The only allowed value for the fifth argument is the string '(off)'")
 		}
 
 	}
@@ -32,7 +32,7 @@ func Line(m *Machine) {
 		m.ArgAsInt(3),
 		m.Rng,
 	)
-	l.Alive = alive
+	l.On = on
 	l.Coverage = coverage
 
 	l.ApplyToField(m.Field)

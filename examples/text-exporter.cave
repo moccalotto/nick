@@ -14,9 +14,9 @@
 
 suggest export.type  = text          # Export to text
 
-suggest export.alive = [[██]]        # Characters used to denote living cells (i.e. wall areas)
-suggest export.dead  = [[  ]]        # Characters used to denote dead cells (i.e. clear areas)
-suggest export.file  = -             # name of file exported - if omitted, or if the value "-" is used, 
+suggest export.on   = [[██]]        # Characters used to denote cells that are on (i.e. wall areas)
+suggest export.off  = [[  ]]        # Characters used to denote cells that are off (i.e. clear areas)
+suggest export.file = -             # name of file exported - if omitted, or if the value "-" is used, 
                                      # the file will be printed to screen.
 
 

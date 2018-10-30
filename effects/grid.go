@@ -20,7 +20,7 @@ func NewGrid(tileWidth, tileHeight int) *Grid {
 func (grid *Grid) ApplyToField(f *field.Field) {
 
 	f.MapAsync(func(f *field.Field, x, y int, c field.Cell) field.Cell {
-		if c.Alive() {
+		if c.On() {
 			return c
 		}
 

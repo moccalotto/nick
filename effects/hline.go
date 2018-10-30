@@ -11,7 +11,7 @@ type HLine struct {
 	Length    int
 	Coverage  float64
 	Thickness int
-	Alive     bool
+	On        bool
 	rng       *rand.Rand
 }
 
@@ -22,15 +22,14 @@ func NewHLine(startX, startY, length int, rng *rand.Rand) *HLine {
 		Length:    length,
 		Coverage:  1.0,
 		Thickness: 1,
-		Alive:     true,
+		On:        true,
 		rng:       rng,
 	}
 }
 
-// The snow will now add dead cells instead of living cells
-func (b *HLine) Inverted(dead bool) *HLine {
+func (b *HLine) Inverted(off bool) *HLine {
 	tmp := *b
-	tmp.Alive = !dead
+	tmp.On = !off
 
 	return &tmp
 }
@@ -44,7 +43,7 @@ func (b *HLine) ToRect() *Rect {
 		b.rng,
 	)
 
-	r.Alive = b.Alive
+	r.On = b.On
 	r.Coverage = b.Coverage
 
 	return r

@@ -10,7 +10,7 @@ func init() {
 func Snow(m *Machine) {
 	m.Assert(m.Field != nil, "Cannot snow a non-initialized field!")
 
-	// TODO: allow a "negative" or "dead" modifier to the snow command.
+	// TODO: allow a "negative" or "off" modifier to the snow command.
 
 	probability := m.ArgAsFloat(0)
 
@@ -25,11 +25,11 @@ func Snow(m *Machine) {
 	if m.HasArg(1) {
 		arg1 := m.ArgAsString(1)
 		m.Assert(
-			arg1 == "(dead)",
-			"The only value allowed for the optional second argument is the string '(dead)'. The string '%s' was provided",
+			arg1 == "(off)",
+			"The only value allowed for the optional second argument is the string '(off)'. The string '%s' was provided",
 			arg1,
 		)
-		snow.Cell = field.DeadCell
+		snow.Cell = field.OffCell
 	}
 
 	snow.ApplyToField(m.Field)

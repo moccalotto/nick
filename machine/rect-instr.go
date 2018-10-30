@@ -11,12 +11,12 @@ func Rect(m *Machine) {
 	if m.HasArg(4) {
 		m.ArgAsFloat(4)
 	}
-	alive := true
+	on := true
 	if m.HasArg(5) {
-		if m.ArgAsString(5) == "(dead)" {
-			alive = false
+		if m.ArgAsString(5) == "(off)" {
+			on = false
 		} else {
-			m.Throw("The only allowed value for the fifth argument is the string '(dead)'")
+			m.Throw("The only allowed value for the fifth argument is the string '(off)'")
 		}
 
 	}
@@ -28,6 +28,6 @@ func Rect(m *Machine) {
 		m.Rng,
 	)
 	r.Coverage = coverage
-	r.Alive = alive
+	r.On = on
 	r.ApplyToField(m.Field)
 }

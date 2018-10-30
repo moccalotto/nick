@@ -50,7 +50,7 @@ func (grid *GridNM) ApplyToField(f *field.Field) {
 	f.Map(func(f *field.Field, x, y int, c field.Cell) field.Cell {
 
 		// we don't draw grids on top of living cells.
-		if c.Alive() {
+		if c.On() {
 			return c
 		}
 

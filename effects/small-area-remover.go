@@ -25,13 +25,13 @@ func (m *SmallAreaCRemover) ApplyToField(f *field.Field) {
 	for y := 0; y < h; y = y + 1 {
 		for x := 0; x < w; x = x + 1 {
 			// ensure we don't look at the same cell twice
-			if a, err := inspected.Alive(x, y); err != nil {
+			if a, err := inspected.On(x, y); err != nil {
 				panic(err)
 			} else if a {
 				continue
 			}
 
-			curState, _ := f.Alive(x, y)
+			curState, _ := f.On(x, y)
 
 			// retrieve all cells in the given area.
 			a, err := f.GetAreaAround(x, y)
@@ -44,14 +44,14 @@ func (m *SmallAreaCRemover) ApplyToField(f *field.Field) {
 				// the area was too small. Remove it,
 				// and mark its cells as inspected
 				for _, p := range a {
-					_ = inspected.SetAlive(p.X, p.Y, true)
-					_ = f.SetAlive(p.X, p.Y, !curState)
+					_ = inspected.SetOn(p.X, p.Y, true)
+					_ = f.SetOn(p.X, p.Y, !curState)
 				}
 			} else {
 				// the area was large enough to keep,
 				// but we still mark the area as inspected.
 				for _, p := range a {
-					_ = inspected.SetAlive(p.X, p.Y, true)
+					_ = inspected.SetOn(p.X, p.Y, true)
 				}
 			}
 		}
