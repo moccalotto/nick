@@ -1,20 +1,12 @@
-# seed 2884145919730671125  # Large cave with interesting details:
-# seed -4029406377519914731 # tall one-room cave that is great for encounters.
-# seed -8585954361547726571 # a very simple cave
 # seed -8600179748397948651 # Oddly shaped cavern
-# seed -7489315882007830251 # Fairly detailed cave system
-# seed -5761356538770136811 # two rooms - lots of detail.
 # seed -6877898940050874091 # very detailed - almost confusing
-# seed 5256007666904097045  # nice details, several sub-caverns
-# seed 1194388964278034965  # Very interesting.
+# seed 1194388964278034965  # Very interesting, including sub-caves.
 
-suggest export.type      = iterm    # We would like to export an image
-suggest export.format    = gif      # in gif
-suggest export.algorithm = Lanczos  # using the »box« scaling method
-# suggest export.width     = 2048     # with a fixed width
+suggest export.type      = iterm              # We would like to export an image
+suggest export.format    = gif                # in gif
 
 set $width  between 20 and 60
-set $height oneof   20 35 55
+set $height between 20 and $width
 
 init $width x $height               # New, small-ish, canvas.
                                     # Large initial sizes yields multi-room or
@@ -39,20 +31,26 @@ evolve B5678/S345678            # run standard escavator
 evolve B5678/S345678            # ...twice
 egress random # create an opening in a random with a random width
 
-set $prune-threshold between 0 and 50
+set $prune-threshold between 1 and $height
 prune-small-areas $prune-threshold
-connect-rooms 2.5% 1 10
+connect-rooms 1
+
 
 loop 3
-    scale 1.75
+    scale 1.5
     evolve B5678/S345678            # run standard escavator
 endloop
 
 
-loop 5
-    scale 1.5
+loop 1000
     evolve B5678/S5678              # run edge smoother
+    if @height > 934
+        break-loop
+    endif
+
+    scale 1.5
     evolve B5678/S5678              # ...twice
+
 endloop
 
 gridnm $width x $height
@@ -67,7 +65,7 @@ gridnm $width x $height
 # I want to be able to randomly place artifacts (treasure, etc.)
 # I want the walls of the cave to be outlined in a thick black color.
 #
-# I want to be able to export all of this in an editable format á la photoshop. 
+# I want to be able to export all of this in an editable format á la photoshop.
 # Alternately, I want to be able to export a set of layers (background, foreground, grid, artifacts, outlines, etc.) as
 # separate PNGs that have already been masked such that they can be layered on top of each other without any modification.
 # I could also export a (huge) html where all the images separate are embedded. That file could then also contain javascript
