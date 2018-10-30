@@ -60,7 +60,7 @@ loop 5
     evolve B5678/S5678              # ...twice
 endloop
 
-gridn $width x $height
+gridnm $width x $height
 
 # evolve B8/S1234567 Turn the map into an outline
 

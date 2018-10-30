@@ -1,43 +1,61 @@
 package machine
 
-import "github.com/moccalotto/nick/effects"
+import (
+	"strconv"
+)
 
 func init() {
-	InstructionHandlers["gridn"] = GridN
+	InstructionHandlers["gridnm"] = GridNM
 	InstructionHandlers["grid"] = Grid
 }
 
 // pattern:
-// gridn [cols] x [rows]
+// gridnm [cols] x [rows]
 // OR
-// gridn [n]
-func GridN(m *Machine) {
-	cols := m.ArgAsInt(0)
+// gridnm [n]
+func GridNM(m *Machine) {
+	errorMsg := "Invalid arguments. Usage: 'gridnm [int]' or 'gridnm [cols] x [rows]'"
+
+	cols := m.ArgAsString(0)
 	rows := cols
-	errorMsg := "Invalid arguments. Usage: 'grid [int]' or 'grid [cols] x [rows]'"
 	if m.ArgCount() == 3 {
 		m.Assert(m.ArgAsString(1) == "x", errorMsg)
-		rows = m.ArgAsInt(2)
+		rows = m.ArgAsString(2)
 	}
 
-	grid := effects.NewGridNM(cols, rows)
+	if _, err := strconv.Atoi(cols); err != nil {
+		m.Throw(errorMsg)
+	}
+	if _, err := strconv.Atoi(rows); err != nil {
+		m.Throw(errorMsg)
+	}
 
-	grid.ApplyToField(m.Field)
+	m.Vars["suggestion.grid.cols"] = cols
+	m.Vars["suggestion.grid.rows"] = rows
 }
 
 // pattern:
-// gridn [width] x [height]
+// grid [width] x [height]
 // OR
-// gridn [n]
+// grid [n]
 func Grid(m *Machine) {
-	width := m.ArgAsInt(0)
-	height := width
 	errorMsg := "Invalid arguments. Usage: 'grid [int]' or 'grid [width] x [height]'"
+
+	width := m.ArgAsString(0)
+	height := width
+
 	if m.ArgCount() == 3 {
 		m.Assert(m.ArgAsString(1) == "x", errorMsg)
-		height = m.ArgAsInt(2)
+		height = m.ArgAsString(2)
 	}
-	grid := effects.NewGrid(width, height)
 
-	grid.ApplyToField(m.Field)
+	if _, err := strconv.Atoi(width); err != nil {
+		m.Throw(errorMsg)
+	}
+	if _, err := strconv.Atoi(height); err != nil {
+		m.Throw(errorMsg)
+	}
+
+	m.Vars["suggestion.grid.width"] = width
+	m.Vars["suggestion.grid.height"] = height
 }
