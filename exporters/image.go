@@ -19,11 +19,13 @@ Considerations:
 */
 
 import (
+	"bufio"
 	"fmt"
 	"github.com/disintegration/imaging"
 	"github.com/moccalotto/nick/field"
 	"image"
 	"image/color"
+	"image/draw"
 	"image/gif"
 	"image/jpeg"
 	"image/png"
@@ -47,8 +49,8 @@ type ImageExporter struct {
 
 	Algorithm string // algorithm for scaling
 
-	OffColor  color.NRGBA
-	LiveColor color.NRGBA
+	OffColor color.Color
+	OnColor  color.Color
 }
 
 // NewImageExporter creates a new ImageExporter
@@ -58,38 +60,27 @@ func NewImageExporter() *ImageExporter {
 		Format:    "",
 		Width:     0,
 		Height:    0,
-		Scale:     1,
 		Algorithm: "Lanczos",
-		OffColor: color.NRGBA{
-			R: 0,
-			G: 0,
-			B: 0,
-			A: 255,
-		}, // transparent
-		LiveColor: color.NRGBA{
-			R: 255,
-			G: 255,
-			B: 255,
-			A: 255,
-		}, // white opaque
+		OnColor:   color.Alpha{0x99},
+		OffColor:  color.Alpha{0xff},
 	}
 }
 
 // Calculate the output dimensions of the image
-func (e *ImageExporter) dimensions(f *field.Field) (int, int) {
-	if e.Width == 0 && e.Height == 0 {
-		return int(float64(f.Width()) * e.Scale), int(float64(f.Height()) * e.Scale)
+func (this *ImageExporter) targetDimensions(f *field.Field) image.Rectangle {
+	if this.Width == 0 && this.Height == 0 {
+		return image.Rect(0, 0, f.Width(), f.Height())
 	}
 
-	return e.Width, e.Height
+	return image.Rect(0, 0, this.Width, this.Height)
 }
 
-func (e *ImageExporter) detectFormat() (string, error) {
-	if e.Format != "" {
-		return e.Format, nil
+func (this *ImageExporter) detectFormat() (string, error) {
+	if this.Format != "" {
+		return this.Format, nil
 	}
 
-	parts := strings.Split(e.FileName, ".")
+	parts := strings.Split(this.FileName, ".")
 	suffix := parts[len(parts)-1]
 
 	switch suffix {
@@ -106,8 +97,8 @@ func (e *ImageExporter) detectFormat() (string, error) {
 	return "", fmt.Errorf("Could not determine file type from suffix: %s", suffix)
 }
 
-func (e *ImageExporter) filter() imaging.ResampleFilter {
-	switch e.Algorithm {
+func (this *ImageExporter) filter() imaging.ResampleFilter {
+	switch this.Algorithm {
 	case "NearestNeighbor":
 		// NearestNeighbor is a nearest-neighbor filter (no anti-aliasing).
 		return imaging.NearestNeighbor
@@ -128,60 +119,95 @@ func (e *ImageExporter) filter() imaging.ResampleFilter {
 		// When upscaling it's similar to NearestNeighbor.
 		return imaging.Box
 	default:
-		log.Fatalf("Unknown image scaling algorithm: %s", e.Algorithm)
+		log.Fatalf("Unknown image scaling algorithm: %s", this.Algorithm)
 	}
 
 	panic("Should never be reached!")
 }
 
-// GetImage returns a raw NRGBA image (for use in other exporters, etc.)
-func (e *ImageExporter) GetImage(f *field.Field) *image.NRGBA {
+// GetMask returns a raw NRGBA image (for use in other exporters, etc.)
+func (this *ImageExporter) GetMask(f *field.Field) image.Image {
 	fw := f.Width()
 	fh := f.Height()
 
 	// create an image the size of the field, it will be scaled later
-	img := image.NewRGBA(image.Rect(0, 0, fw, fh))
+	img := image.NewAlpha(image.Rect(0, 0, fw, fh))
 
-	f.WalkAsync(func(x, y int, c field.Cell) {
+	f.Walk(func(x, y int, c field.Cell) {
 		if c.On() {
-			img.Set(x, y, e.LiveColor)
+			img.Set(x, y, this.OnColor)
 		} else {
-			img.Set(x, y, e.OffColor)
+			img.Set(x, y, this.OffColor)
 		}
 	})
 
-	imgW, imgH := e.dimensions(f)
+	rect := this.targetDimensions(f)
 
-	return imaging.Resize(img, imgW, imgH, e.filter())
+	return imaging.Resize(img, rect.Max.X, rect.Max.Y, this.filter())
+}
+
+func (this *ImageExporter) LoadBackgroundImage(r image.Rectangle) image.Image {
+
+	// THIS IS A TEMP HACK
+	f, err := os.Open("/Users/krh/Desktop/Nick/_backgrounds/paper_by_darkwood67/brown_ice_by_darkwood67.jpg")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if img, _, err := image.Decode(bufio.NewReader(f)); err == nil {
+		return imaging.Resize(img, r.Max.X, r.Max.Y, this.filter())
+	}
+
+	panic(err)
+}
+
+func (this *ImageExporter) GetImage(f *field.Field) image.Image {
+	mask := this.GetMask(f)
+	rect := this.targetDimensions(f)
+	bg := this.LoadBackgroundImage(rect)
+
+	img := image.NewRGBA(rect)
+
+	draw.DrawMask(
+		img,
+		rect,
+		bg,
+		rect.Min,
+		mask,
+		rect.Min,
+		draw.Over,
+	)
+
+	return img
 }
 
 // Export the image to a file
-func (e *ImageExporter) Export(f *field.Field) {
-	img := e.GetImage(f)
-
-	file, err := os.Create(e.FileName)
+func (this *ImageExporter) Export(f *field.Field) {
+	file, err := os.Create(this.FileName)
 	if err != nil {
-		log.Fatalf("Could not open file '%s': %s", e.FileName, err)
+		log.Fatalf("Could not open file '%s': %s", this.FileName, err)
 	}
 
 	defer func() {
 		_ = file.Close()
 	}()
 
-	format, err := e.detectFormat()
+	format, err := this.detectFormat()
 	if err != nil {
 		log.Fatal("Could not auto-detect image format")
 	}
 
+	out := this.GetImage(f)
+
 	switch format {
 	case "png":
-		err = png.Encode(file, img)
+		err = png.Encode(file, out)
 	case "gif":
-		err = gif.Encode(file, img, &gif.Options{NumColors: 2})
+		err = gif.Encode(file, out, &gif.Options{NumColors: 2})
 	case "jpeg":
-		err = jpeg.Encode(file, img, &jpeg.Options{Quality: 90})
+		err = jpeg.Encode(file, out, &jpeg.Options{Quality: 90})
 	default:
-		log.Fatalf("Unknown file format: %s", e.Format)
+		log.Fatalf("Unknown file format: %s", this.Format)
 	}
 
 	if err != nil {
