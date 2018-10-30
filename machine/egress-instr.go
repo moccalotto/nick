@@ -40,8 +40,7 @@ func Egress(m *Machine) {
 	if m.ArgCount() == 2 {
 		radius = m.ArgAsFloat(1)
 	} else {
-		// the default width of the egress is width / 4 squares
-		radius = minAsFloat(m.Field.Width(), m.Field.Height()) / 5
+		radius = minAsFloat(m.Field.Width(), m.Field.Height()) / 6
 	}
 
 	direction := makeDirection(m)
