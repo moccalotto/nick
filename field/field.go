@@ -121,6 +121,10 @@ func (f *Field) Height() int {
 	return f.h
 }
 
+func (f *Field) AspectRatio() float64 {
+	return float64(f.w) / float64(f.h)
+}
+
 func (f *Field) Cells() []Cell {
 	return f.s
 }
