@@ -64,8 +64,6 @@ func (m *Machine) MustGetVar(id string) string {
 
 func (m *Machine) MustGetCmd(id string) string {
 	switch id {
-	case "rand":
-		return strconv.FormatFloat(m.Rng.Float64(), 'f', -1, 64)
 	case "pc":
 		return strconv.Itoa(m.State.PC)
 	case "loop":
