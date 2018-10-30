@@ -8,15 +8,15 @@ import (
 type Direction int
 
 const (
-	Random    Direction = 0
-	North     Direction = 1
-	NorthEast Direction = 2
-	East      Direction = 3
-	SouthEast Direction = 4
-	South     Direction = 5
-	SouthWest Direction = 6
-	West      Direction = 7
-	NorthWest Direction = 8
+	Random Direction = iota + 1
+	North
+	NorthEast
+	East
+	SouthEast
+	South
+	SouthWest
+	West
+	NorthWest
 )
 
 type Egress struct {
