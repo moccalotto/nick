@@ -1,9 +1,5 @@
 package machine
 
-import (
-	"time"
-)
-
 const (
 	// The enum values of the ArgType
 	StrArg   ArgType = iota + 1 // Arg is just a string
@@ -24,7 +20,7 @@ type Arg struct {
 	IntVal   int     // The argument converted to int
 }
 
-// Instruction is an instruction for a Machine to perform.
+// Instruction as it is stored on the machine's tape.
 type Instruction struct {
 	Cmd     string // The name of this instruction (for instance "init")
 	Args    []Arg  // A list of arguments for the instruction
@@ -39,13 +35,6 @@ type MachineState struct {
 	Loop      int  // Loop Counter (used to count iterations inside iterators)
 	Cond      bool // condition bit (did last comparison succeed)
 	SkipUntil InstructionFilter
-}
-
-type Restrictions struct {
-	MaxRuntime time.Duration
-	MaxCells   int
-	MaxWidth   int
-	MaxHeight  int
 }
 
 type ExceptionHandler func(m *Machine, msg interface{}, a ...interface{})

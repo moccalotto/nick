@@ -25,7 +25,6 @@ func MachineFromScript(p string) *Machine {
 		Stack:     NewStack(),
 		State:     &MachineState{},
 		Tape:      scriptToInstructions(p),
-		Limits:    Restrictions{},
 		Exception: DefaultExceptionHandler,
 		Vars:      make(VarBag),
 	}
