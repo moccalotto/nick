@@ -3,6 +3,7 @@ init 143 x 143
 
 # Let's output directly to the iterm
 suggest export.type  = iterm
+suggest export.format  = gif
 
 # Print the pattern
 thiele 71
@@ -17,7 +18,13 @@ prune-small-areas 20
 connect-rooms 1
 
 # Scale up with edge smoothing
-loop 5
-    scale 1.5
+# We initiate a very long loop, but we break out of it as soon as we have reached our target height
+loop 100
+    scale 1.25
     evolve B5678/S5678
+
+    # We want to stop just before the height reaches 1400
+    if @height > 1120 # 1120 * 1.25 ≈ 1400
+        break-loop
+    endif
 endloop
