@@ -2,9 +2,26 @@ package machine
 
 import (
 	"fmt"
+	"github.com/moccalotto/nick/field"
+	"math/rand"
 	"strconv"
 	"time"
 )
+
+// This is the machine, that executes cave-scripts
+type Machine struct {
+	Rng       *rand.Rand       // Random Number Generator
+	Seed      int64            // Seed for the Rng
+	Field     *field.Field     // field to populate.
+	Stack     *Stack           // Stack used for nesting and looping.
+	State     *MachineState    // The current state of the machine.
+	Tape      []Instruction    // the entire program.
+	Trace     []int            // trace of executed instructions.
+	Exception ExceptionHandler // Exception Handler.
+	Vars      VarBag           // Map of variables set inside the program.
+	Limits    Restrictions     // Restrictions on runtime, cell count, etc.
+	StartedAt time.Time        // When did the execution start. If nil, it hasn't started yet.
+}
 
 func (m *Machine) Assert(condition bool, msg interface{}, a ...interface{}) {
 	if condition {
