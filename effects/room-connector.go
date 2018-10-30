@@ -97,8 +97,8 @@ func (rc *RoomConnector) findClosestPoints(r1, r2 field.Area) (field.Point, fiel
 func (rc *RoomConnector) startTunnel(f *field.Field, r1, r2 field.Area) {
 	p1, p2 := r1.FindClosestPoints(r2)
 
-	f.SetOnRadius(p1.X, p1.Y, rc.TunnelRadius, false)
-	f.SetOnRadius(p2.X, p2.Y, rc.TunnelRadius, false)
+	f.SetRadius(p1.X, p1.Y, rc.TunnelRadius, field.OffCell)
+	f.SetRadius(p2.X, p2.Y, rc.TunnelRadius, field.OffCell)
 }
 
 // Connect all rooms in field

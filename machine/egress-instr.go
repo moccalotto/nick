@@ -32,42 +32,31 @@ func init() {
 func Egress(m *Machine) {
 	m.Assert(m.Field != nil, "Cannot snow a non-initialized field!")
 
-	var depth, width int
+	errStr := "Invalid use of egress. Use one of: 'egress [direction]' or 'egress [direction] [size]'"
 
-	errStr := "Invalid use of egress. Use one of: 'egress [direction]' or 'egress [direction] [width] x [depth]'"
+	m.Assert(m.ArgCount() == 1 || m.ArgCount() == 2, errStr)
 
-	m.Assert(m.ArgCount() == 1 || m.ArgCount() == 4, errStr)
-
-	if m.ArgCount() == 4 {
-		width = m.ArgAsInt(1)
-		depth = m.ArgAsInt(3)
-		m.Assert(m.ArgAsString(2) == "x", errStr)
+	radius := 1.0
+	if m.ArgCount() == 2 {
+		radius = m.ArgAsFloat(1)
 	} else {
 		// the default width of the egress is width / 4 squares
-		width := min(m.Field.Width(), m.Field.Height()) / 4
-		depth := min(m.Field.Width(), m.Field.Height()) / 10
-		if depth == 0 {
-			depth = 1
-		}
-		if width == 0 {
-			width = 1
-		}
+		radius = minAsFloat(m.Field.Width(), m.Field.Height()) / 5
 	}
 
 	direction := makeDirection(m)
 
-	egress := effects.NewEgress(direction, width, m.Rng)
-	egress.Depth = depth
+	egress := effects.NewEgress(direction, radius, m.Rng)
 
 	egress.ApplyToField(m.Field)
 }
 
-func min(a, b int) int {
+func minAsFloat(a, b int) float64 {
 	if a < b {
-		return a
+		return float64(a)
 	}
 
-	return b
+	return float64(b)
 }
 
 func makeDirection(m *Machine) effects.Direction {

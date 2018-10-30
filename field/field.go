@@ -84,15 +84,11 @@ func (f *Field) SetOn(x, y int, b bool) error {
 }
 
 // Turn on all cells in the area
-func (f *Field) SetOnRadius(x, y int, r float64, b bool) {
+func (f *Field) SetRadius(x, y int, r float64, c Cell) {
 	points := (Point{x, y}).WithinRadius(r)
-	cell := OffCell
-	if b {
-		cell = LivingCell
-	}
 
 	for _, p := range points {
-		_ = f.Set(p.X, p.Y, cell)
+		_ = f.Set(p.X, p.Y, c)
 	}
 }
 
