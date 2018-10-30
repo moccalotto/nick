@@ -68,11 +68,21 @@ func NewImageExporter() *ImageExporter {
 
 // Calculate the output dimensions of the image
 func (this *ImageExporter) targetDimensions(f *field.Field) image.Rectangle {
-	if this.Width == 0 && this.Height == 0 {
-		return image.Rect(0, 0, f.Width(), f.Height())
+	w := this.Width
+	h := this.Height
+
+	if h == 0 && w == 0 {
+		h = f.Height()
+		w = f.Width()
+	} else if w == 0 {
+		ratio := f.AspectRatio()
+		w = int(float64(this.Height) * ratio)
+	} else if h == 0 {
+		ratio := f.AspectRatio()
+		h = int(float64(this.Width) / ratio)
 	}
 
-	return image.Rect(0, 0, this.Width, this.Height)
+	return image.Rect(0, 0, w, h)
 }
 
 func (this *ImageExporter) detectFormat() (string, error) {
