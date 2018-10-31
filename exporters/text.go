@@ -26,17 +26,17 @@ func NewTextExporter(m *machine.Machine) *TextExporter {
 func (this *TextExporter) String() string {
 	f := this.Machine.Field
 	var buf strings.Builder
-	for y := 0; y < f.Height(); y++ {
-		for x := 0; x < f.Width(); x++ {
-			if a, err := f.On(x, y); err != nil {
-				panic(err)
-			} else if a {
-				buf.WriteString(this.LiveStr)
-			} else {
-				buf.WriteString(this.OffStr)
-			}
+	w := f.Width()
+
+	for i, c := range f.Cells() {
+		if i > 0 && i%w == 0 {
+			buf.WriteRune('\n')
 		}
-		buf.WriteRune('\n')
+		if c.On() {
+			buf.WriteString(this.LiveStr)
+		} else {
+			buf.WriteString(this.OffStr)
+		}
 	}
 
 	return buf.String()
