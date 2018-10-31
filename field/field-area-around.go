@@ -3,10 +3,11 @@ package field
 func (f *Field) GetAreaAround(x, y int) (Area, error) {
 	w := f.Width()
 	h := f.Height()
-	queue := Area{Point{x, y}}
+	queue := make(Area, 1, 100)
+	queue[0] = Point{x, y}
 	inspected := make([]bool, w*h)
 
-	areaStatus, err := f.On(x, y)
+	areaType, err := f.Get(x, y)
 	if err != nil {
 		return Area{}, err
 	}
@@ -33,7 +34,7 @@ func (f *Field) GetAreaAround(x, y int) (Area, error) {
 			}
 
 			// does this cell belong to another area?
-			if a, _ := f.On(c.X, c.Y); a != areaStatus {
+			if f.s[c.X+c.Y*f.w] != areaType {
 				continue
 			}
 
