@@ -13,7 +13,7 @@ type BorderSnow struct {
 }
 
 func NewBorderSnow(Coverage float64, rng *rand.Rand) *BorderSnow {
-	return &BorderSnow{Coverage, 1, true, rng}
+	return &BorderSnow{Coverage, 1, field.LivingCell, rng}
 }
 
 func (this *BorderSnow) ApplyToField(f *field.Field) {
