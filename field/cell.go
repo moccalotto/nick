@@ -14,5 +14,9 @@ func (c Cell) Off() bool {
 	return c == OffCell
 }
 
+func (c Cell) Toggled() Cell {
+	return !c
+}
+
 const OffCell Cell = false
 const LivingCell Cell = true
