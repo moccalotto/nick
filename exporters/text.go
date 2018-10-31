@@ -16,23 +16,24 @@ type TextExporter struct {
 
 func NewTextExporter(m *machine.Machine) *TextExporter {
 	return &TextExporter{
+		Machine:  m,
 		LiveStr:  "██",
 		OffStr:   "  ",
 		FileName: "",
 	}
 }
 
-func (t *TextExporter) String() string {
-	f := t.Machine.Field
+func (this *TextExporter) String() string {
+	f := this.Machine.Field
 	var buf strings.Builder
 	for y := 0; y < f.Height(); y++ {
 		for x := 0; x < f.Width(); x++ {
 			if a, err := f.On(x, y); err != nil {
 				panic(err)
 			} else if a {
-				buf.WriteString(t.LiveStr)
+				buf.WriteString(this.LiveStr)
 			} else {
-				buf.WriteString(t.OffStr)
+				buf.WriteString(this.OffStr)
 			}
 		}
 		buf.WriteRune('\n')
@@ -41,16 +42,16 @@ func (t *TextExporter) String() string {
 	return buf.String()
 }
 
-func (t *TextExporter) Export() error {
-	output := t.String()
+func (this *TextExporter) Export() error {
+	output := this.String()
 
 	// Print to screen if filename is empty
-	if t.FileName == "" || t.FileName == "-" {
+	if this.FileName == "" || this.FileName == "-" {
 		fmt.Println(output)
 		return nil
 	}
 
-	file, err := os.Create(t.FileName)
+	file, err := os.Create(this.FileName)
 	if err != nil {
 		return err
 	}
