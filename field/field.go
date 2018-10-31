@@ -129,27 +129,26 @@ func (f *Field) NeighbourCount(x, y int) int {
 	neighbourCount := 0
 
 	// Check neighbours above
+	_y := y - 1
 	for _x := x - 1; _x <= x+1; _x++ {
-		if a, _ := f.On(_x, y-1); a {
-			neighbourCount++
-		}
+		c, _ := f.Get(_x, _y)
+		neighbourCount += int(c)
 	}
+
 	// Check neighbours on the line below
+	_y = y + 1
 	for _x := x - 1; _x <= x+1; _x++ {
-		if a, _ := f.On(_x, y+1); a {
-			neighbourCount++
-		}
+		c, _ := f.Get(_x, _y)
+		neighbourCount += int(c)
 	}
 
 	// Check neighbour to the left
-	if a, _ := f.On(x-1, y); a {
-		neighbourCount++
-	}
+	c, _ := f.Get(x-1, y)
+	neighbourCount += int(c)
 
-	// Check neighbourCount to the right
-	if a, _ := f.On(x+1, y); a {
-		neighbourCount++
-	}
+	// Check neighbour to the right
+	c, _ = f.Get(x+1, y)
+	neighbourCount += int(c)
 
 	return neighbourCount
 }
