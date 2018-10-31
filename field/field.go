@@ -99,12 +99,6 @@ func (f *Field) On(x, y int) (bool, error) {
 	return f.s[y*f.w+x].On(), nil
 }
 
-func (f *Field) Off(x, y int) (bool, error) {
-	a, err := f.On(x, y)
-
-	return !a, err
-}
-
 func (f *Field) Width() int {
 	return f.w
 }
