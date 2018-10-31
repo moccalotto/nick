@@ -2,8 +2,8 @@
 # seed -6877898940050874091 # very detailed - almost confusing
 # seed 1194388964278034965  # Very interesting, including sub-caves.
 
-suggest export.type      = iterm              # We would like to export an image
-suggest export.format    = gif                # in gif
+suggest export.type      = iterm
+suggest export.format    = jpeg
 
 set $width  between 20 and 60
 set $height between 20 and $width
