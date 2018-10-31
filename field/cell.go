@@ -14,5 +14,9 @@ func (c Cell) Toggled() Cell {
 	return c ^ 1
 }
 
+func (c Cell) AsInt() int {
+	return int(c)
+}
+
 const OffCell Cell = 0
 const LivingCell Cell = 1
