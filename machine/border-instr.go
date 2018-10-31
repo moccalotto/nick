@@ -1,6 +1,9 @@
 package machine
 
-import "github.com/moccalotto/nick/effects"
+import (
+	"github.com/moccalotto/nick/effects"
+	"github.com/moccalotto/nick/field"
+)
 
 func init() {
 	InstructionHandlers["border"] = Border
@@ -27,7 +30,7 @@ func Border(m *Machine) {
 			"Only allowed value to this instruction is the string '(off)'",
 		)
 
-		border.On = false
+		border.Cell = field.OffCell
 	}
 
 	border.ApplyToField(m.Field)

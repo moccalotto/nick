@@ -8,7 +8,7 @@ import (
 type BorderSnow struct {
 	Coverage  float64
 	Thickness int
-	On        bool
+	Cell      field.Cell
 	rng       *rand.Rand
 }
 
@@ -16,23 +16,23 @@ func NewBorderSnow(Coverage float64, rng *rand.Rand) *BorderSnow {
 	return &BorderSnow{Coverage, 1, true, rng}
 }
 
-func (b *BorderSnow) ApplyToField(f *field.Field) {
+func (this *BorderSnow) ApplyToField(f *field.Field) {
 	w := f.Width()
 	h := f.Height()
 
-	bw := w - b.Thickness - 1 // x-position of the east line
-	bh := h - b.Thickness - 1 // y-position of the south line
+	bw := w - this.Thickness - 1 // x-position of the east line
+	bh := h - this.Thickness - 1 // y-position of the south line
 
-	for y := 0; y < h; y++ {
-		for x := 0; x < w; x++ {
-			inDrawArea := x < b.Thickness || // west line
-				y < b.Thickness || // north line
-				x > bw || // east line
-				y > bh // south line
+	f.Map(func(f *field.Field, x, y int, c field.Cell) field.Cell {
+		draw := x < this.Thickness || // west line
+			y < this.Thickness || // north line
+			x > bw || // east line
+			y > bh // south line
 
-			if inDrawArea && (b.Coverage == 1.0 || b.rng.Float64() < b.Coverage) {
-				_ = f.SetOn(x, y, b.On)
-			}
+		if draw && (this.Coverage == 1.0 || this.rng.Float64() < this.Coverage) {
+			return this.Cell
 		}
-	}
+
+		return c
+	})
 }
