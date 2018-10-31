@@ -1,6 +1,6 @@
 package field
 
-type Cell bool
+type Cell uint8
 
 type CellMapper func(f *Field, x, y int, c Cell) Cell
 
@@ -10,13 +10,9 @@ func (c Cell) On() bool {
 	return c == LivingCell
 }
 
-func (c Cell) Off() bool {
-	return c == OffCell
-}
-
 func (c Cell) Toggled() Cell {
-	return !c
+	return c ^ 1
 }
 
-const OffCell Cell = false
-const LivingCell Cell = true
+const OffCell Cell = 0
+const LivingCell Cell = 1
