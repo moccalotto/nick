@@ -22,10 +22,11 @@ func NewSnow(p float64, rng *rand.Rand) *Snow {
 func (s *Snow) ApplyToField(f *field.Field) {
 	// We cannot generate snow asynchronously because it would intorduce
 	// actual randomness due to race conditions.
-	f.Map(func(f *field.Field, x, y int, c field.Cell) field.Cell {
+	cells := f.Cells()
+
+	for i := range cells {
 		if s.rng.Float64() < s.Coverage {
-			return s.Cell
+			cells[i] = s.Cell
 		}
-		return c
-	})
+	}
 }
