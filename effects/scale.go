@@ -25,8 +25,10 @@ func NewScaleTo(startW, newW, startH, newH int) *Scale {
 }
 
 func (s *Scale) ApplyToField(f *field.Field) {
-	newW := int(float64(f.Width()) * s.x)
-	newH := int(float64(f.Height()) * s.y)
+	oldW := f.Width()
+	oldH := f.Height()
+	newW := int(float64(oldW) * s.x)
+	newH := int(float64(oldH) * s.y)
 	offsets := make([]int, newW)
 	tmp := make([]field.Cell, newH*newW)
 
@@ -37,13 +39,15 @@ func (s *Scale) ApplyToField(f *field.Field) {
 
 	var wg sync.WaitGroup
 
+	rawCells := f.Cells()
+
 	for newY := 0; newY < newH; newY++ {
 		oldY := int(float64(newY) / s.y)
 		wg.Add(1)
 		go func(newY, oldY int) {
 			defer wg.Done()
 			for newX, oldX := range offsets {
-				tmp[newX+newY*newW], _ = f.Get(oldX, oldY)
+				tmp[newX+newY*newW] = rawCells[oldX+oldY*oldW]
 			}
 		}(newY, oldY)
 	}
