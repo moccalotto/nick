@@ -131,31 +131,38 @@ func (this *ImageExporter) filter() imaging.ResampleFilter {
 	panic("Should never be reached!")
 }
 
-// GetMask returns a raw NRGBA image (for use in other exporters, etc.)
-func (this *ImageExporter) GetMask() image.Image {
+func (this *ImageExporter) mask() image.Image {
 	rect := this.targetDimensions()
 	return imaging.Resize(this.Machine.Field, rect.Max.X, rect.Max.Y, this.filter())
 }
 
-func (this *ImageExporter) LoadBackgroundImage(r image.Rectangle) image.Image {
+func (this *ImageExporter) backgroundImage() (image.Image, error) {
 
 	// THIS IS A TEMP HACK
 	file, err := os.Open("/Users/krh/Desktop/Nick/_backgrounds/paper_by_darkwood67/brown_ice_by_darkwood67.jpg")
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 
-	if img, _, err := image.Decode(bufio.NewReader(file)); err == nil {
-		return imaging.Resize(img, r.Max.X, r.Max.Y, this.filter())
+	img, _, err := image.Decode(bufio.NewReader(file))
+
+	if err != nil {
+		return nil, err
 	}
 
-	panic(err)
+	rect := this.targetDimensions()
+
+	return imaging.Resize(img, rect.Max.X, rect.Max.Y, this.filter()), nil
 }
 
-func (this *ImageExporter) GetImage() image.Image {
-	mask := this.GetMask()
+func (this *ImageExporter) GetImage() (image.Image, error) {
+	mask := this.mask()
+	bg, err := this.backgroundImage()
+	if err != nil {
+		return nil, err
+	}
+
 	rect := this.targetDimensions()
-	bg := this.LoadBackgroundImage(rect)
 
 	img := image.NewRGBA(rect)
 
@@ -169,7 +176,7 @@ func (this *ImageExporter) GetImage() image.Image {
 		draw.Over,
 	)
 
-	return img
+	return img, nil
 }
 
 // Export the image to a file
@@ -188,7 +195,11 @@ func (this *ImageExporter) Export() error {
 		return err
 	}
 
-	out := this.GetImage()
+	out, err := this.GetImage()
+
+	if err != nil {
+		return err
+	}
 
 	switch format {
 	case "png":

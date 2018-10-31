@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/base64"
 	"fmt"
-	"github.com/buger/goterm"
 	"image/png"
 )
 
@@ -24,23 +23,25 @@ func NewItermExporter(i *ImageExporter) *ItermExporter {
 
 // Export a field directly to iTerm screen
 func (p *ItermExporter) Export() error {
-	img := p.ImageExporter.GetImage()
-	buf := new(bytes.Buffer)
-	_ = png.Encode(buf, img)
+	img, err := p.ImageExporter.GetImage()
 
-	if p.ClearScreen {
-		goterm.Clear()
-		goterm.MoveCursor(1, 1)
+	if err != nil {
+		return err
 	}
 
-	_, _ = goterm.Print(
-		fmt.Sprintf(
-			"\033]1337;File=inline=1:%s\a",
-			base64.StdEncoding.EncodeToString(buf.Bytes()),
-		),
-	)
+	buf := new(bytes.Buffer)
+	if err := png.Encode(buf, img); err != nil {
+		return err
+	}
 
-	goterm.Flush()
+	if p.ClearScreen {
+		fmt.Print("\033[2J")
+	}
+
+	fmt.Printf(
+		"\033]1337;File=inline=1:%s\a\n",
+		base64.StdEncoding.EncodeToString(buf.Bytes()),
+	)
 
 	return nil
 }
