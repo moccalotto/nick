@@ -2,7 +2,6 @@ package effects
 
 import (
 	"github.com/moccalotto/nick/field"
-	"math"
 	"sync"
 )
 
@@ -26,27 +25,30 @@ func NewScaleTo(startW, newW, startH, newH int) *Scale {
 }
 
 func (s *Scale) ApplyToField(f *field.Field) {
-	nw := int(math.Round(float64(f.Width()) * s.x))
-	nh := int(math.Round(float64(f.Height()) * s.y))
-	tmp := field.NewField(nw, nh)
+	newW := int(float64(f.Width()) * s.x)
+	newH := int(float64(f.Height()) * s.y)
+	offsets := make([]int, newW)
+	tmp := make([]field.Cell, newH*newW)
+
+	// pre-calculate a map between new x-values and old x-values
+	for x := range offsets {
+		offsets[x] = int(float64(x) / s.x)
+	}
 
 	var wg sync.WaitGroup
 
-	for y := 0; y < nh; y++ {
-		_y := int(math.Floor(float64(y) / s.y))
+	for newY := 0; newY < newH; newY++ {
+		oldY := int(float64(newY) / s.y)
 		wg.Add(1)
-		go func(y, _y int) {
+		go func(newY, oldY int) {
 			defer wg.Done()
-			for x := 0; x < nw; x++ {
-				_x := int(math.Floor(float64(x) / s.x))
-				if a, _ := f.On(_x, _y); a {
-					_ = tmp.SetOn(x, y, true)
-				}
+			for newX, oldX := range offsets {
+				tmp[newX+newY*newW], _ = f.Get(oldX, oldY)
 			}
-		}(y, _y)
+		}(newY, oldY)
 	}
 
 	wg.Wait()
 
-	f.ReplaceCells(nw, nh, tmp.Cells())
+	f.ReplaceCells(newW, newH, tmp)
 }
