@@ -1,6 +1,7 @@
 package machine
 
 import "github.com/moccalotto/nick/effects"
+import "github.com/moccalotto/nick/field"
 
 func init() {
 	InstructionHandlers["line"] = Line
@@ -9,22 +10,10 @@ func init() {
 // Line:
 // usage: line x0 y0 x1 y1
 func Line(m *Machine) {
-	coverage := 1.0
-
 	if m.HasArg(4) {
 		m.ArgAsFloat(4)
 	}
 
-	on := true
-
-	if m.HasArg(5) {
-		if m.ArgAsString(5) == "(off)" {
-			on = false
-		} else {
-			m.Throw("The only allowed value for the fifth argument is the string '(off)'")
-		}
-
-	}
 	l := effects.NewLine(
 		m.ArgAsInt(0),
 		m.ArgAsInt(1),
@@ -32,8 +21,14 @@ func Line(m *Machine) {
 		m.ArgAsInt(3),
 		m.Rng,
 	)
-	l.On = on
-	l.Coverage = coverage
+	if m.HasArg(5) {
+		if m.ArgAsString(5) == "(off)" {
+			l.Cell = field.OffCell
+		} else {
+			m.Throw("The only allowed value for the fifth argument is the string '(off)'")
+		}
+
+	}
 
 	l.ApplyToField(m.Field)
 }
