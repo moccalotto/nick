@@ -1,8 +1,11 @@
 package field
 
 func (f *Field) GetAreaAround(x, y int) (Area, error) {
+	w := f.Width()
+	h := f.Height()
 	queue := Area{Point{x, y}}
-	inspected := NewField(f.Width(), f.Height())
+	inspected := make([]bool, w*h)
+
 	areaStatus, err := f.On(x, y)
 	if err != nil {
 		return Area{}, err
@@ -16,7 +19,7 @@ func (f *Field) GetAreaAround(x, y int) (Area, error) {
 
 		// anything on the queue can be appended.
 		result = append(result, _p)
-		_ = inspected.SetOn(_p.X, _p.Y, true)
+		inspected[_p.X+_p.Y*w] = true
 
 		for _, c := range _p.Adjacent() {
 			// outside the map?
@@ -25,7 +28,7 @@ func (f *Field) GetAreaAround(x, y int) (Area, error) {
 			}
 
 			// already inspected?
-			if a, _ := inspected.On(c.X, c.Y); a {
+			if inspected[c.X+c.Y*w] {
 				continue
 			}
 
@@ -35,8 +38,8 @@ func (f *Field) GetAreaAround(x, y int) (Area, error) {
 			}
 
 			// Point has not yet been looked at (or marked for inspection)
-			queue = append(queue, c)            // Add c to the queue
-			_ = inspected.SetOn(c.X, c.Y, true) // Mark c as inspected.
+			queue = append(queue, c) // Add c to the queue
+			inspected[c.X+c.Y*w] = true
 		}
 	}
 
