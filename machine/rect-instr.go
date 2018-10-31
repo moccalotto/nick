@@ -8,9 +8,6 @@ func init() {
 }
 
 func Rect(m *Machine) {
-	if m.HasArg(4) {
-		m.ArgAsFloat(4)
-	}
 	r := effects.NewRect(
 		m.ArgAsInt(0),
 		m.ArgAsInt(1),
@@ -18,8 +15,8 @@ func Rect(m *Machine) {
 		m.ArgAsInt(3),
 		m.Rng,
 	)
-	if m.HasArg(5) {
-		if m.ArgAsString(5) == "(off)" {
+	if m.HasArg(4) {
+		if m.ArgAsString(4) == "(off)" {
 			r.Cell = field.OffCell
 		} else {
 			m.Throw("The only allowed value for the fifth argument is the string '(off)'")
