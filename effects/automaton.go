@@ -69,10 +69,10 @@ func (ca *Automaton) NextCellState(f *field.Field, x, y int, cur field.Cell) fie
 	neighbourCount := f.NeighbourCount(x, y)
 
 	if cur.On() {
-		return ca.Survival(neighbourCount)
+		return ca.S[neighbourCount]
 	}
 
-	return ca.Birth(neighbourCount)
+	return ca.B[neighbourCount]
 }
 
 // Apply a CA to the field
