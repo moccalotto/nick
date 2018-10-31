@@ -79,16 +79,6 @@ func (f *Field) Get(x, y int) (Cell, error) {
 	return f.s[y*f.w+x], nil
 }
 
-// Set sets the state of the specified cell to the given value.
-func (f *Field) SetOn(x, y int, b bool) error {
-	if b {
-		return f.Set(x, y, LivingCell)
-	} else {
-		return f.Set(x, y, OffCell)
-	}
-
-}
-
 // Turn on all cells in the area
 func (f *Field) SetRadius(x, y int, r float64, c Cell) {
 	points := (Point{x, y}).WithinRadius(r)
