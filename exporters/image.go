@@ -22,7 +22,7 @@ import (
 	"bufio"
 	"fmt"
 	"github.com/disintegration/imaging"
-	"github.com/moccalotto/nick/field"
+	"github.com/moccalotto/nick/machine"
 	"image"
 	"image/draw"
 	"image/gif"
@@ -35,6 +35,7 @@ import (
 
 // ImageExporter exports images to files
 type ImageExporter struct {
+	Machine  *machine.Machine
 	FileName string
 	Format   string
 
@@ -50,8 +51,9 @@ type ImageExporter struct {
 }
 
 // NewImageExporter creates a new ImageExporter
-func NewImageExporter() *ImageExporter {
+func NewImageExporter(m *machine.Machine) *ImageExporter {
 	return &ImageExporter{
+		Machine:   m,
 		FileName:  "map.png",
 		Format:    "",
 		Width:     0,
@@ -61,18 +63,18 @@ func NewImageExporter() *ImageExporter {
 }
 
 // Calculate the output dimensions of the image
-func (this *ImageExporter) targetDimensions(f *field.Field) image.Rectangle {
+func (this *ImageExporter) targetDimensions() image.Rectangle {
 	w := this.Width
 	h := this.Height
 
 	if h == 0 && w == 0 {
-		h = f.Height()
-		w = f.Width()
+		h = this.Machine.Field.Height()
+		w = this.Machine.Field.Width()
 	} else if w == 0 {
-		ratio := f.AspectRatio()
+		ratio := this.Machine.Field.AspectRatio()
 		w = int(float64(this.Height) * ratio)
 	} else if h == 0 {
-		ratio := f.AspectRatio()
+		ratio := this.Machine.Field.AspectRatio()
 		h = int(float64(this.Width) / ratio)
 	}
 
@@ -130,29 +132,29 @@ func (this *ImageExporter) filter() imaging.ResampleFilter {
 }
 
 // GetMask returns a raw NRGBA image (for use in other exporters, etc.)
-func (this *ImageExporter) GetMask(f *field.Field) image.Image {
-	rect := this.targetDimensions(f)
-	return imaging.Resize(f, rect.Max.X, rect.Max.Y, this.filter())
+func (this *ImageExporter) GetMask() image.Image {
+	rect := this.targetDimensions()
+	return imaging.Resize(this.Machine.Field, rect.Max.X, rect.Max.Y, this.filter())
 }
 
 func (this *ImageExporter) LoadBackgroundImage(r image.Rectangle) image.Image {
 
 	// THIS IS A TEMP HACK
-	f, err := os.Open("/Users/krh/Desktop/Nick/_backgrounds/paper_by_darkwood67/brown_ice_by_darkwood67.jpg")
+	file, err := os.Open("/Users/krh/Desktop/Nick/_backgrounds/paper_by_darkwood67/brown_ice_by_darkwood67.jpg")
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	if img, _, err := image.Decode(bufio.NewReader(f)); err == nil {
+	if img, _, err := image.Decode(bufio.NewReader(file)); err == nil {
 		return imaging.Resize(img, r.Max.X, r.Max.Y, this.filter())
 	}
 
 	panic(err)
 }
 
-func (this *ImageExporter) GetImage(f *field.Field) image.Image {
-	mask := this.GetMask(f)
-	rect := this.targetDimensions(f)
+func (this *ImageExporter) GetImage() image.Image {
+	mask := this.GetMask()
+	rect := this.targetDimensions()
 	bg := this.LoadBackgroundImage(rect)
 
 	img := image.NewRGBA(rect)
@@ -171,10 +173,10 @@ func (this *ImageExporter) GetImage(f *field.Field) image.Image {
 }
 
 // Export the image to a file
-func (this *ImageExporter) Export(f *field.Field) {
+func (this *ImageExporter) Export() error {
 	file, err := os.Create(this.FileName)
 	if err != nil {
-		log.Fatalf("Could not open file '%s': %s", this.FileName, err)
+		return err
 	}
 
 	defer func() {
@@ -183,10 +185,10 @@ func (this *ImageExporter) Export(f *field.Field) {
 
 	format, err := this.detectFormat()
 	if err != nil {
-		log.Fatal("Could not auto-detect image format")
+		return err
 	}
 
-	out := this.GetImage(f)
+	out := this.GetImage()
 
 	switch format {
 	case "png":
@@ -200,6 +202,8 @@ func (this *ImageExporter) Export(f *field.Field) {
 	}
 
 	if err != nil {
-		log.Fatalf("Could not save image: %s", err)
+		return err
 	}
+
+	return nil
 }

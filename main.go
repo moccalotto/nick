@@ -41,13 +41,11 @@ func main() {
 
 	runtime := time.Now().Sub(m.StartedAt)
 
-	e := exporters.NewSuggestionExporter(
-		m.Vars,
-		exporters.NewTextExporter(),
-	)
-
-	e.Export(m.Field) // export an image.
+	exportStart := time.Now()
+	exporters.NewSuggestionExporter(m, exporters.NewTextExporter(m)).Export()
+	exportTime := time.Now().Sub(exportStart)
 
 	fmt.Printf("Seed: %d\n", m.Seed)
 	fmt.Printf("Execution Time: %f seconds\n", runtime.Seconds())
+	fmt.Printf("Export Time:    %f seconds\n", exportTime.Seconds())
 }

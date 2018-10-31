@@ -5,7 +5,6 @@ import (
 	"encoding/base64"
 	"fmt"
 	"github.com/buger/goterm"
-	"github.com/moccalotto/nick/field"
 	"image/png"
 )
 
@@ -24,8 +23,8 @@ func NewItermExporter(i *ImageExporter) *ItermExporter {
 }
 
 // Export a field directly to iTerm screen
-func (p *ItermExporter) Export(f *field.Field) {
-	img := p.ImageExporter.GetImage(f)
+func (p *ItermExporter) Export() error {
+	img := p.ImageExporter.GetImage()
 	buf := new(bytes.Buffer)
 	_ = png.Encode(buf, img)
 
@@ -42,4 +41,6 @@ func (p *ItermExporter) Export(f *field.Field) {
 	)
 
 	goterm.Flush()
+
+	return nil
 }
