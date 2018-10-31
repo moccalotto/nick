@@ -162,10 +162,14 @@ func (this *ImageExporter) GetImage() (image.Image, error) {
 		return nil, err
 	}
 
+	// the dimensions of the output image.
 	rect := this.targetDimensions()
 
+	// new black image of the given dimensions
 	img := image.NewRGBA(rect)
 
+	// draw the background on top of the (black) image
+	// through the mask
 	draw.DrawMask(
 		img,
 		rect,
