@@ -2,8 +2,10 @@ init 100 x 100
 
 loop 25
     border 1
+    rect 0 0 @width @height (off)
+    snow 30%
     scale 100
     scale-to 100 x 100
 endloop
 
-scale-to 10 x 10
+scale-to 30 x 30
