@@ -24,8 +24,8 @@ func NewField(w, h int) *Field {
 		w:        w,
 		h:        h,
 		Outside:  LivingCell,
-		OnColor:  color.Alpha{0xff},
-		OffColor: color.Alpha{0x99},
+		OnColor:  color.Alpha{0x99},
+		OffColor: color.Alpha{0xff},
 	}
 }
 
