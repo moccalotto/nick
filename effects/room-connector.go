@@ -18,19 +18,20 @@ func (rc *RoomConnector) getAllRooms(f *field.Field) []field.Area {
 	w, h := f.Width(), f.Height()
 
 	result := []field.Area{}
+	rawCells := f.Cells()
 
 	// buffer to ensure that we don't look at the same area twice
-	inspected := field.NewField(w, h)
+	inspected := make([]bool, w*h)
 
 	for y := 0; y < h; y++ {
 		for x := 0; x < w; x++ {
 			// On cells are walls
-			if a, _ := f.On(x, y); a {
+			if rawCells[x+y*w] == field.LivingCell {
 				continue
 			}
 
 			// Don't look at a cell twice
-			if a, _ := inspected.On(x, y); a {
+			if inspected[x+y*w] {
 				continue
 			}
 
@@ -41,7 +42,7 @@ func (rc *RoomConnector) getAllRooms(f *field.Field) []field.Area {
 			// For each point in the area, check if the given cell is on the edge.
 			for _, p := range _area {
 				// Mark all cells in the room as inspected
-				_ = inspected.SetOn(p.X, p.Y, true)
+				inspected[p.X+p.Y*w] = true
 
 				// check if all adjacent cells are also in the room
 				// if not, then it's a point on the edge, and therefore
@@ -55,9 +56,8 @@ func (rc *RoomConnector) getAllRooms(f *field.Field) []field.Area {
 
 					// If at least one adjacent cell is off (i.e. outside the room)
 					// The current cell must be on the edge of the room
-					if d, err := f.Off(ap.X, ap.Y); err != nil {
-						panic(err)
-					} else if d {
+
+					if rawCells[ap.X+ap.Y*w] == field.OffCell {
 						r = append(r, p)
 						continue
 					}
