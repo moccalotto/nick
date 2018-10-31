@@ -2,6 +2,7 @@ package field
 
 import (
 	"fmt"
+	"image/color"
 	"sync"
 )
 
@@ -10,16 +11,21 @@ type Field struct {
 	s    []Cell // cells
 	w, h int
 	// should we allow "circular overflow?"
-	outside Cell // if trying to access a cell outside the area, is it on or off?
+	Outside Cell // if trying to access a cell outside the area, is it on or off?
+
+	OffColor color.Color
+	OnColor  color.Color
 }
 
 // NewField returns an empty field of the specified width and height.
 func NewField(w, h int) *Field {
 	return &Field{
-		s:       make([]Cell, h*w),
-		w:       w,
-		h:       h,
-		outside: LivingCell,
+		s:        make([]Cell, h*w),
+		w:        w,
+		h:        h,
+		Outside:  LivingCell,
+		OnColor:  color.Alpha{0xff},
+		OffColor: color.Alpha{0x99},
 	}
 }
 
@@ -67,7 +73,7 @@ func (f *Field) Set(x, y int, c Cell) error {
 // Set sets the state of the specified cell to the given value.
 func (f *Field) Get(x, y int) (Cell, error) {
 	if err := f.errCoordsInRange(x, y); err != nil {
-		return f.outside, err
+		return f.Outside, err
 	}
 
 	return f.s[y*f.w+x], nil
@@ -97,7 +103,7 @@ func (f *Field) SetRadius(x, y int, r float64, c Cell) {
 // toroidally. For instance, an x value of -1 is treated as width-1.
 func (f *Field) On(x, y int) (bool, error) {
 	if err := f.errCoordsInRange(x, y); err != nil {
-		return f.outside.On(), err
+		return f.Outside.On(), err
 	}
 
 	return f.s[y*f.w+x].On(), nil
@@ -242,6 +248,6 @@ func (f *Field) MapAsyncToNewField(m CellMapper) *Field {
 		s:       s,
 		w:       f.w,
 		h:       f.h,
-		outside: f.outside,
+		Outside: f.Outside,
 	}
 }

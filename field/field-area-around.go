@@ -18,7 +18,7 @@ func (f *Field) GetAreaAround(x, y int) (Area, error) {
 		result = append(result, _p)
 		_ = inspected.SetOn(_p.X, _p.Y, true)
 
-		for _, c := range _p.Adjecent() {
+		for _, c := range _p.Adjacent() {
 			// outside the map?
 			if !f.CoordsInRange(c.X, c.Y) {
 				continue

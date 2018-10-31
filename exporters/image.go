@@ -24,7 +24,6 @@ import (
 	"github.com/disintegration/imaging"
 	"github.com/moccalotto/nick/field"
 	"image"
-	"image/color"
 	"image/draw"
 	"image/gif"
 	"image/jpeg"
@@ -48,9 +47,6 @@ type ImageExporter struct {
 	Scale float64
 
 	Algorithm string // algorithm for scaling
-
-	OffColor color.Color
-	OnColor  color.Color
 }
 
 // NewImageExporter creates a new ImageExporter
@@ -61,8 +57,6 @@ func NewImageExporter() *ImageExporter {
 		Width:     0,
 		Height:    0,
 		Algorithm: "Lanczos",
-		OnColor:   color.Alpha{0x99},
-		OffColor:  color.Alpha{0xff},
 	}
 }
 
@@ -137,23 +131,8 @@ func (this *ImageExporter) filter() imaging.ResampleFilter {
 
 // GetMask returns a raw NRGBA image (for use in other exporters, etc.)
 func (this *ImageExporter) GetMask(f *field.Field) image.Image {
-	fw := f.Width()
-	fh := f.Height()
-
-	// create an image the size of the field, it will be scaled later
-	img := image.NewAlpha(image.Rect(0, 0, fw, fh))
-
-	f.Walk(func(x, y int, c field.Cell) {
-		if c.On() {
-			img.Set(x, y, this.OnColor)
-		} else {
-			img.Set(x, y, this.OffColor)
-		}
-	})
-
 	rect := this.targetDimensions(f)
-
-	return imaging.Resize(img, rect.Max.X, rect.Max.Y, this.filter())
+	return imaging.Resize(f, rect.Max.X, rect.Max.Y, this.filter())
 }
 
 func (this *ImageExporter) LoadBackgroundImage(r image.Rectangle) image.Image {

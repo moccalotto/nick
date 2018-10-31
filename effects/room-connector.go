@@ -46,7 +46,7 @@ func (rc *RoomConnector) getAllRooms(f *field.Field) []field.Area {
 				// check if all adjacent cells are also in the room
 				// if not, then it's a point on the edge, and therefore
 				// constitunes the room
-				for _, ap := range p.Adjecent() {
+				for _, ap := range p.Adjacent() {
 					if !f.CoordsInRange(ap.X, ap.Y) {
 						// note: this means that cells on the very edge of a field
 						// will not be marked as edges.

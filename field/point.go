@@ -4,7 +4,8 @@ type Point struct {
 	X, Y int
 }
 
-func (p Point) Adjecent() Area {
+// Adjacent returns the 4 points to the north, east, south and west of p
+func (p Point) Adjacent() Area {
 	return []Point{
 		Point{p.X + 1, p.Y}, // east
 		Point{p.X - 1, p.Y}, // west
