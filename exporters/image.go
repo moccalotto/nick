@@ -136,7 +136,7 @@ func (this *ImageExporter) mask() image.Image {
 	return imaging.Resize(this.Machine.Field, rect.Max.X, rect.Max.Y, this.filter())
 }
 
-func (this *ImageExporter) backgroundImage() (image.Image, error) {
+func (this *ImageExporter) backgroundImage() (draw.Image, error) {
 
 	// THIS IS A TEMP HACK
 	file, err := os.Open("/Users/krh/Desktop/Nick/_backgrounds/paper_by_darkwood67/brown_ice_by_darkwood67.jpg")
