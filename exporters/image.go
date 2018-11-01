@@ -6,16 +6,20 @@ Considerations:
 	Dynamic map names:
 		Patterns in filename (such as %rand %Y-%m-%d-%H:%i:s or similar)
 		Sequenced filenames (map-%seq that auto-detects previous maps)
-	Detect map format from extension
+
+	Auto-detect map format from extension
+
 	Define colors via strings á la https://github.com/go-playground/colors
-		Steal code and rewrite to fit the real go colors.
-	Do we draw a grid?
-		Do we scale the grid?
-		Do we use instructions for that?
-	Image behind off-cells?
-		Do we use instructions for that?
-	Image behind live pixels (possibly drawing a grid on top of that image too)
-		Do we use instructions for that?
+		must support image/color package
+
+	Background images:
+		Tiled images
+		Offsets for tiled images
+		Separate images for areas that are on or off
+		Cropping background images to use only a portion of it
+		(disintegration/imaging can do cropping)
+
+	Customized grid color and offset
 */
 
 import (
