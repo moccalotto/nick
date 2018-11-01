@@ -136,20 +136,22 @@ func (this *ImageExporter) mask() image.Image {
 	return imaging.Resize(this.Machine.Field, this.Rect.Max.X, this.Rect.Max.Y, this.Algorithm)
 }
 func (this *ImageExporter) maskBW() image.Image {
-	// store current field colors
-	tmpOff := this.Machine.Field.OffColor
-	tmpOn := this.Machine.Field.OnColor
+	// create a backup of the existing palette
+	orig := make(color.Palette, 255)
+	copy(orig, this.Machine.Field.Palette)
 
-	// set field colors to completely transparent and completely opaque
-	this.Machine.Field.OffColor = color.Alpha{0xff}
-	this.Machine.Field.OnColor = color.Alpha{0x00}
+	// modify the palette so that free space becomes transparent
+	// and the other areas opaque
+	this.Machine.Field.Palette[0] = color.Alpha{255}
+	for i := 1; i < len(this.Machine.Field.Palette); i++ {
+		this.Machine.Field.Palette[i] = color.Alpha{0}
+	}
 
 	// generate the image
 	img := imaging.Resize(this.Machine.Field, this.Rect.Max.X, this.Rect.Max.Y, this.Algorithm)
 
 	// restore colors
-	this.Machine.Field.OffColor = tmpOff
-	this.Machine.Field.OnColor = tmpOn
+	this.Machine.Field.Palette = orig
 
 	return img
 }

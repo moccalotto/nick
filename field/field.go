@@ -13,19 +13,26 @@ type Field struct {
 	// should we allow "circular overflow?"
 	Outside Cell // if trying to access a cell outside the area, is it on or off?
 
-	OffColor color.Color
-	OnColor  color.Color
+	Palette color.Palette
 }
 
 // NewField returns an empty field of the specified width and height.
 func NewField(w, h int) *Field {
+	p := make(color.Palette, 255)
+	p[0] = color.Alpha{0xff}
+	for i := 1; i < 255; i++ {
+		opacity := i + 143
+		if opacity > 255 {
+			opacity = 255
+		}
+		p[i] = color.Alpha{uint8(opacity)}
+	}
 	return &Field{
-		s:        make([]Cell, h*w),
-		w:        w,
-		h:        h,
-		Outside:  LivingCell,
-		OnColor:  color.Alpha{0x90},
-		OffColor: color.Alpha{0xff},
+		s:       make([]Cell, h*w),
+		w:       w,
+		h:       h,
+		Outside: LivingCell,
+		Palette: p,
 	}
 }
 

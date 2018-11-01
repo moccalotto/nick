@@ -16,9 +16,11 @@ func (f *Field) Bounds() image.Rectangle {
 }
 
 func (f *Field) At(x, y int) color.Color {
-	if f.s[x+y*f.w].On() {
-		return f.OnColor
-	}
+	idx := f.s[x+y*f.w]
 
-	return f.OffColor
+	return f.Palette[idx]
+}
+
+func (f *Field) ColorIndexAt(x, y int) uint8 {
+	return uint8(f.s[x+y*f.w])
 }
