@@ -52,8 +52,7 @@ func Continue(m *Machine) {
 
 func BreakLoop(m *Machine) {
 	level := 1
-	next := 0
-	for i := m.State.PC; i < len(m.Tape); i++ {
+	for i := m.State.PC + 1; i < len(m.Tape); i++ {
 		if m.Tape[i].Cmd == "loop" {
 			level++
 		}
@@ -63,10 +62,12 @@ func BreakLoop(m *Machine) {
 		}
 
 		if level == 0 {
-			next = m.State.PC + i
+
+			m.PopState()
+			m.State.PC = i
+
+			return
 		}
 	}
 
-	m.PopState()
-	m.State.PC = next
 }
