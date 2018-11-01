@@ -5,16 +5,16 @@ import (
 )
 
 func init() {
-	InstructionHandlers["gridnm"] = GridNM
+	InstructionHandlers["gridwh"] = GridWH
 	InstructionHandlers["grid"] = Grid
 }
 
 // pattern:
-// gridnm [cols] x [rows]
+// grid [cols] x [rows]
 // OR
-// gridnm [n]
-func GridNM(m *Machine) {
-	errorMsg := "Invalid arguments. Usage: 'gridnm [int]' or 'gridnm [cols] x [rows]'"
+// grid [n]
+func Grid(m *Machine) {
+	errorMsg := "Invalid arguments. Usage: 'grid [int]' or 'grid [cols] x [rows]'"
 
 	cols := m.ArgAsString(0)
 	rows := cols
@@ -35,11 +35,11 @@ func GridNM(m *Machine) {
 }
 
 // pattern:
-// grid [width] x [height]
+// gridWH [width] x [height]
 // OR
-// grid [n]
-func Grid(m *Machine) {
-	errorMsg := "Invalid arguments. Usage: 'grid [int]' or 'grid [width] x [height]'"
+// gridWH [n]
+func GridWH(m *Machine) {
+	errorMsg := "Invalid arguments. Usage: 'gridwh [int]' or 'gridwh [width] x [height]'"
 
 	width := m.ArgAsString(0)
 	height := width
