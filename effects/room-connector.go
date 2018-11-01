@@ -26,7 +26,7 @@ func (rc *RoomConnector) getAllRooms(f *field.Field) []field.Area {
 	for y := 0; y < h; y++ {
 		for x := 0; x < w; x++ {
 			// On cells are walls
-			if rawCells[x+y*w] == field.LivingCell {
+			if rawCells[x+y*w] != field.OffCell {
 				continue
 			}
 
