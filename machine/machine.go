@@ -12,7 +12,7 @@ import (
 type Machine struct {
 	Rng        *rand.Rand       // Random Number Generator
 	Seed       int64            // Seed for the Rng
-	Cave       *field.Field     // field to populate.
+	Cave       *field.Field     // The cells/tiles of the cave.
 	Stack      *Stack           // Stack used for nesting and looping.
 	State      *MachineState    // The current state of the machine.
 	Tape       []Instruction    // the entire program.
