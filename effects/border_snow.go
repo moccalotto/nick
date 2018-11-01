@@ -23,6 +23,8 @@ func (this *BorderSnow) ApplyToField(f *field.Field) {
 	bw := w - this.Thickness - 1 // x-position of the east line
 	bh := h - this.Thickness - 1 // y-position of the south line
 
+	// cannot use async because it would mess up the order in which
+	// the rng is used, thus removing reproducability
 	f.Map(func(f *field.Field, x, y int, c field.Cell) field.Cell {
 		draw := x < this.Thickness || // west line
 			y < this.Thickness || // north line
