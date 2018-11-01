@@ -9,11 +9,11 @@ func TestInit(t *testing.T) {
 
 	Init(m)
 
-	if m.Field.Width() != 20 {
-		t.Errorf("Expected width to be 20, but it was %d", m.Field.Width())
+	if m.Cave.Width() != 20 {
+		t.Errorf("Expected width to be 20, but it was %d", m.Cave.Width())
 	}
-	if m.Field.Height() != 30 {
-		t.Errorf("Expected height to be 20, but it was %d", m.Field.Height())
+	if m.Cave.Height() != 30 {
+		t.Errorf("Expected height to be 20, but it was %d", m.Cave.Height())
 	}
 }
 

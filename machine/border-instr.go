@@ -10,7 +10,7 @@ func init() {
 }
 
 func Border(m *Machine) {
-	m.Assert(m.Field != nil, "Cannot snow a non-initialized field!")
+	m.Assert(m.Cave != nil, "Cannot snow a non-initialized field!")
 
 	border := effects.NewBorderSnow(1.0, m.Rng)
 	border.Thickness = m.ArgAsInt(0)
@@ -33,5 +33,5 @@ func Border(m *Machine) {
 		border.Cell = field.OffCell
 	}
 
-	border.ApplyToField(m.Field)
+	border.ApplyToField(m.Cave)
 }

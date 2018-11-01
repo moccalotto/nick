@@ -23,5 +23,5 @@ func Rect(m *Machine) {
 		}
 
 	}
-	r.ApplyToField(m.Field)
+	r.ApplyToField(m.Cave)
 }

@@ -16,10 +16,10 @@ func ConnectRooms(m *Machine) {
 	m.Assert(radius > 0, "Radius must be > 0")
 
 	if radius < 1.0 {
-		if m.Field.Width() > m.Field.Height() {
-			radius = radius * float64(m.Field.Height())
+		if m.Cave.Width() > m.Cave.Height() {
+			radius = radius * float64(m.Cave.Height())
 		} else {
-			radius = radius * float64(m.Field.Width())
+			radius = radius * float64(m.Cave.Width())
 		}
 	}
 
@@ -29,5 +29,5 @@ func ConnectRooms(m *Machine) {
 		10,
 	)
 
-	rc.ApplyToField(m.Field)
+	rc.ApplyToField(m.Cave)
 }

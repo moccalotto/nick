@@ -12,7 +12,7 @@ func init() {
 }
 
 func Evolve(m *Machine) {
-	m.Assert(m.Field != nil, "Cannot evolve a non-initialized field!")
+	m.Assert(m.Cave != nil, "Cannot evolve a non-initialized field!")
 
 	arg0 := m.ArgAsString(0)
 	m.Assert(
@@ -22,5 +22,5 @@ func Evolve(m *Machine) {
 		"https://en.wikipedia.org/wiki/Life-like_cellular_automaton#Notation_for_rules",
 	)
 
-	effects.NewAutomaton(arg0).ApplyToField(m.Field)
+	effects.NewAutomaton(arg0).ApplyToField(m.Cave)
 }

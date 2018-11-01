@@ -10,5 +10,5 @@ func init() {
 
 //  prune-small-areas 50	# removes areas smaller than 50 tiles
 func PruneSmallAreas(m *Machine) {
-	effects.NewSmallAreaCRemover(m.ArgAsInt(0)).ApplyToField(m.Field)
+	effects.NewSmallAreaCRemover(m.ArgAsInt(0)).ApplyToField(m.Cave)
 }

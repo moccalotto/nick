@@ -8,7 +8,7 @@ func init() {
 }
 
 func Snow(m *Machine) {
-	m.Assert(m.Field != nil, "Cannot snow a non-initialized field!")
+	m.Assert(m.Cave != nil, "Cannot snow a non-initialized field!")
 
 	// TODO: allow a "negative" or "off" modifier to the snow command.
 
@@ -32,5 +32,5 @@ func Snow(m *Machine) {
 		snow.Cell = field.OffCell
 	}
 
-	snow.ApplyToField(m.Field)
+	snow.ApplyToField(m.Cave)
 }

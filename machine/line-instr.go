@@ -30,5 +30,5 @@ func Line(m *Machine) {
 
 	}
 
-	l.ApplyToField(m.Field)
+	l.ApplyToField(m.Cave)
 }

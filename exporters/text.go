@@ -24,7 +24,7 @@ func NewTextExporter(m *machine.Machine) *TextExporter {
 }
 
 func (this *TextExporter) String() string {
-	f := this.Machine.Field
+	f := this.Machine.Cave
 	var buf strings.Builder
 	w := f.Width()
 

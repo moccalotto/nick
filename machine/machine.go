@@ -12,7 +12,7 @@ import (
 type Machine struct {
 	Rng        *rand.Rand       // Random Number Generator
 	Seed       int64            // Seed for the Rng
-	Field      *field.Field     // field to populate.
+	Cave       *field.Field     // field to populate.
 	Stack      *Stack           // Stack used for nesting and looping.
 	State      *MachineState    // The current state of the machine.
 	Tape       []Instruction    // the entire program.
@@ -20,9 +20,9 @@ type Machine struct {
 	Exception  ExceptionHandler // Exception Handler.
 	Vars       VarBag           // Map of variables set inside the program.
 	MaxRuntime time.Duration    // Max time the machine is allowed to execute instructions.
-	MaxCells   int              // Max number of cells in the field
-	MaxWidth   int              // max width of the field
-	MaxHeight  int              // max height of the field
+	MaxCells   int              // Max number of cells in the cave
+	MaxWidth   int              // max width of the cave
+	MaxHeight  int              // max height of the cave
 	StartedAt  time.Time        // When did the execution start. If 0, it hasn't started yet.
 }
 
@@ -76,9 +76,9 @@ func (m *Machine) MustGetCmd(id string) string {
 	case "line":
 		return strconv.Itoa(m.CurrentInstruction().Line)
 	case "width":
-		return strconv.Itoa(m.Field.Width())
+		return strconv.Itoa(m.Cave.Width())
 	case "height":
-		return strconv.Itoa(m.Field.Height())
+		return strconv.Itoa(m.Cave.Height())
 	default:
 		m.Throw("Unknown command special command @%s", id)
 	}

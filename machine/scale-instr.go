@@ -12,7 +12,7 @@ func init() {
 }
 
 func Scale(m *Machine) {
-	m.Assert(m.Field != nil, "Cannot scale a non-initialized field!")
+	m.Assert(m.Cave != nil, "Cannot scale a non-initialized cave!")
 	x := m.ArgAsFloat(0)
 	y := x
 	if m.ArgCount() > 1 {
@@ -20,54 +20,54 @@ func Scale(m *Machine) {
 		m.Assert(m.ArgAsString(1) == "x", "Second arg to scale must be an 'x', but '%s' was given", m.ArgAsString(1))
 
 	}
-	effects.NewScaleXY(x, y).ApplyToField(m.Field)
+	effects.NewScaleXY(x, y).ApplyToField(m.Cave)
 }
 
 func ScaleTo(m *Machine) {
-	m.Assert(m.Field != nil, "Cannot scale a non-initialized field!")
+	m.Assert(m.Cave != nil, "Cannot scale a non-initialized cave!")
 
 	newW := m.ArgAsInt(0)
 	m.Assert(m.ArgAsString(1) == "x", "Second arg to scale must be an 'x', but '%s' was given", m.ArgAsString(1))
 	newH := m.ArgAsInt(2)
 
 	effects.NewScaleTo(
-		m.Field.Width(),
+		m.Cave.Width(),
 		newW,
-		m.Field.Height(),
+		m.Cave.Height(),
 		newH,
-	).ApplyToField(m.Field)
+	).ApplyToField(m.Cave)
 }
 
 func ScaleToWidth(m *Machine) {
-	m.Assert(m.Field != nil, "Cannot scale a non-initialized field!")
+	m.Assert(m.Cave != nil, "Cannot scale a non-initialized cave!")
 
-	aspect := m.Field.AspectRatio()
+	aspect := m.Cave.AspectRatio()
 
 	newW := m.ArgAsInt(0)
 
 	newH := int(aspect / float64(newW))
 
 	effects.NewScaleTo(
-		m.Field.Width(),
+		m.Cave.Width(),
 		newW,
-		m.Field.Height(),
+		m.Cave.Height(),
 		newH,
-	).ApplyToField(m.Field)
+	).ApplyToField(m.Cave)
 }
 
 func ScaleToHeight(m *Machine) {
-	m.Assert(m.Field != nil, "Cannot scale a non-initialized field!")
+	m.Assert(m.Cave != nil, "Cannot scale a non-initialized cave!")
 
-	aspect := m.Field.AspectRatio()
+	aspect := m.Cave.AspectRatio()
 
 	newH := m.ArgAsInt(0)
 
 	newW := int(aspect * float64(newH))
 
 	effects.NewScaleTo(
-		m.Field.Width(),
+		m.Cave.Width(),
 		newW,
-		m.Field.Height(),
+		m.Cave.Height(),
 		newH,
-	).ApplyToField(m.Field)
+	).ApplyToField(m.Cave)
 }

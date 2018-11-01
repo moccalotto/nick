@@ -7,8 +7,8 @@ func init() {
 }
 
 func Stop(m *Machine) {
-	if m.Field == nil {
-		m.Field = field.NewField(1, 1)
+	if m.Cave == nil {
+		m.Cave = field.NewField(1, 1)
 	}
 	m.State.PC = len(m.Tape)
 }

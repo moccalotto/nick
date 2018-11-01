@@ -43,16 +43,16 @@ func (m *Machine) timedOut() error {
 	return nil
 }
 
-// tooManyCells returns an error if the field has too many cells
+// tooManyCells returns an error if the cave has too many cells
 // the Limits on cell count is given in Machine.MaxCells
 func (m *Machine) tooManyCells() error {
-	// we don't have a field yet, so it can't be too large
-	if m.Field == nil {
+	// we don't have a cave yet, so it can't be too large
+	if m.Cave == nil {
 		return nil
 	}
 
-	w := m.Field.Width()
-	h := m.Field.Height()
+	w := m.Cave.Width()
+	h := m.Cave.Height()
 	max := m.MaxCells
 
 	// there is no maximum number of cells
@@ -74,12 +74,12 @@ func (m *Machine) tooManyCells() error {
 }
 
 func (m *Machine) tooWide() error {
-	// we don't have a field yet, so it can't be too large
-	if m.Field == nil {
+	// we don't have a cave yet, so it can't be too large
+	if m.Cave == nil {
 		return nil
 	}
 
-	w := m.Field.Width()
+	w := m.Cave.Width()
 	max := m.MaxWidth
 
 	// there is no maximum width
@@ -99,12 +99,12 @@ func (m *Machine) tooWide() error {
 }
 
 func (m *Machine) tooTall() error {
-	// we don't have a field yet, so it can't be too large
-	if m.Field == nil {
+	// we don't have a cave yet, so it can't be too large
+	if m.Cave == nil {
 		return nil
 	}
 
-	h := m.Field.Height()
+	h := m.Cave.Height()
 	max := m.MaxHeight
 
 	// there is no maximum height

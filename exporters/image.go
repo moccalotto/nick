@@ -60,7 +60,7 @@ func NewImageExporter(m *machine.Machine) *ImageExporter {
 		FileName:  "map.png",
 		Format:    "",
 		Algorithm: imaging.Lanczos,
-		Rect:      m.Field.Bounds(),
+		Rect:      m.Cave.Bounds(),
 	}
 
 	return &exporter
@@ -69,13 +69,13 @@ func NewImageExporter(m *machine.Machine) *ImageExporter {
 // Calculate the output dimensions of the image
 func (this *ImageExporter) makeRect(w, h int) image.Rectangle {
 	if h == 0 && w == 0 {
-		h = this.Machine.Field.Height()
-		w = this.Machine.Field.Width()
+		h = this.Machine.Cave.Height()
+		w = this.Machine.Cave.Width()
 	} else if w == 0 {
-		ratio := this.Machine.Field.AspectRatio()
+		ratio := this.Machine.Cave.AspectRatio()
 		w = int(float64(h) * ratio)
 	} else if h == 0 {
-		ratio := this.Machine.Field.AspectRatio()
+		ratio := this.Machine.Cave.AspectRatio()
 		h = int(float64(w) / ratio)
 	}
 
@@ -133,25 +133,25 @@ func (this *ImageExporter) parseAlgorithmString(algorithm string) (imaging.Resam
 }
 
 func (this *ImageExporter) mask() image.Image {
-	return imaging.Resize(this.Machine.Field, this.Rect.Max.X, this.Rect.Max.Y, this.Algorithm)
+	return imaging.Resize(this.Machine.Cave, this.Rect.Max.X, this.Rect.Max.Y, this.Algorithm)
 }
 func (this *ImageExporter) maskBW() image.Image {
 	// create a backup of the existing palette
 	orig := make(color.Palette, 255)
-	copy(orig, this.Machine.Field.Palette)
+	copy(orig, this.Machine.Cave.Palette)
 
 	// modify the palette so that free space becomes transparent
 	// and the other areas opaque
-	this.Machine.Field.Palette[0] = color.Alpha{255}
-	for i := 1; i < len(this.Machine.Field.Palette); i++ {
-		this.Machine.Field.Palette[i] = color.Alpha{0}
+	this.Machine.Cave.Palette[0] = color.Alpha{255}
+	for i := 1; i < len(this.Machine.Cave.Palette); i++ {
+		this.Machine.Cave.Palette[i] = color.Alpha{0}
 	}
 
 	// generate the image
-	img := imaging.Resize(this.Machine.Field, this.Rect.Max.X, this.Rect.Max.Y, this.Algorithm)
+	img := imaging.Resize(this.Machine.Cave, this.Rect.Max.X, this.Rect.Max.Y, this.Algorithm)
 
 	// restore colors
-	this.Machine.Field.Palette = orig
+	this.Machine.Cave.Palette = orig
 
 	return img
 }

@@ -30,7 +30,7 @@ func init() {
 }
 
 func Egress(m *Machine) {
-	m.Assert(m.Field != nil, "Cannot snow a non-initialized field!")
+	m.Assert(m.Cave != nil, "Cannot snow a non-initialized cave!")
 
 	errStr := "Invalid use of egress. Use one of: 'egress [direction]' or 'egress [direction] [size]'"
 
@@ -40,14 +40,14 @@ func Egress(m *Machine) {
 	if m.ArgCount() == 2 {
 		radius = m.ArgAsFloat(1)
 	} else {
-		radius = minAsFloat(m.Field.Width(), m.Field.Height()) / 6
+		radius = minAsFloat(m.Cave.Width(), m.Cave.Height()) / 6
 	}
 
 	direction := makeDirection(m)
 
 	egress := effects.NewEgress(direction, radius, m.Rng)
 
-	egress.ApplyToField(m.Field)
+	egress.ApplyToField(m.Cave)
 }
 
 func minAsFloat(a, b int) float64 {
