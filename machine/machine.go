@@ -10,8 +10,8 @@ import (
 
 // This is the machine, that executes cave-scripts
 type Machine struct {
-	Rng        *rand.Rand       // Random Number Generator
 	Seed       int64            // Seed for the Rng
+	Rng        *rand.Rand       // Random Number Generator
 	Cave       *field.Field     // The cells/tiles of the cave.
 	Stack      *Stack           // Stack used for nesting and looping.
 	State      *MachineState    // The current state of the machine.
