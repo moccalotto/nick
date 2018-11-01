@@ -56,7 +56,7 @@ func NewThielePattern(a, b int) *ThielePattern {
 
 	return &ThielePattern{
 		complex(float64(a), float64(b)),
-		field.LivingCell,
+		field.OnCell,
 		a,
 		b,
 	}
@@ -100,7 +100,7 @@ func (t *ThielePattern) mapper(f *field.Field, x, y int, c field.Cell) field.Cel
 
 	for _, c := range numbers {
 		if c == c1 {
-			return field.LivingCell
+			return field.OnCell
 			break
 		}
 	}

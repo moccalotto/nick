@@ -22,7 +22,7 @@ func NewLine(startX, startY, endX, endY int, rng *rand.Rand) *Line {
 		X1:       endX,
 		Y1:       endY,
 		Coverage: 1.0,
-		Cell:     field.LivingCell,
+		Cell:     field.OnCell,
 		rng:      rng,
 	}
 }

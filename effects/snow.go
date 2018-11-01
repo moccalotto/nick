@@ -15,7 +15,7 @@ type Snow struct {
 }
 
 func NewSnow(p float64, rng *rand.Rand) *Snow {
-	return &Snow{p, field.LivingCell, rng}
+	return &Snow{p, field.OnCell, rng}
 }
 
 // Turn on cells randomly throughout the field.

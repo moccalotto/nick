@@ -31,7 +31,7 @@ func NewField(w, h int) *Field {
 		s:       make([]Cell, h*w),
 		w:       w,
 		h:       h,
-		Outside: LivingCell,
+		Outside: OnCell,
 		Palette: p,
 	}
 }

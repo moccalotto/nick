@@ -19,4 +19,4 @@ func (c Cell) AsInt() int {
 }
 
 const OffCell Cell = 0
-const LivingCell Cell = 1
+const OnCell Cell = 1

@@ -40,14 +40,14 @@ func NewAutomaton(str string) *Automaton {
 		if e != nil {
 			panic(e)
 		}
-		_b[v] = field.LivingCell
+		_b[v] = field.OnCell
 	}
 	for _, digit := range sDigits {
 		v, e := strconv.Atoi(digit)
 		if e != nil {
 			panic(e)
 		}
-		_s[v] = field.LivingCell
+		_s[v] = field.OnCell
 	}
 
 	return &Automaton{_b, _s}

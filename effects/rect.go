@@ -22,7 +22,7 @@ func NewRect(startX, startY, endX, endY int, rng *rand.Rand) *Rect {
 		EndX:     endX,
 		EndY:     endY,
 		Coverage: 1.0,
-		Cell:     field.LivingCell,
+		Cell:     field.OnCell,
 		rng:      rng,
 	}
 }

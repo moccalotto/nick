@@ -44,7 +44,7 @@ func (e *Egress) ApplyToField(f *field.Field) {
 
 	cell := field.OffCell
 	if e.On {
-		cell = field.LivingCell
+		cell = field.OnCell
 	}
 
 	switch pos {
