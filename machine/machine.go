@@ -16,7 +16,6 @@ type Machine struct {
 	Stack      *Stack           // Stack used for nesting and looping.
 	State      *MachineState    // The current state of the machine.
 	Tape       []Instruction    // the entire program.
-	Trace      []int            // trace of executed instructions.
 	Exception  ExceptionHandler // Exception Handler.
 	Vars       VarBag           // Map of variables set inside the program.
 	MaxRuntime time.Duration    // Max time the machine is allowed to execute instructions.
