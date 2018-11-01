@@ -8,6 +8,8 @@ suggest export.format    = jpeg
 set $width  between 20 and 60
 set $height between 20 and $width
 
+grid $width x $height
+
 init $width x $height               # New, small-ish, canvas.
                                     # Large initial sizes yields multi-room or
                                     # complex caves with stalactites/columns, etc.
@@ -52,8 +54,6 @@ loop 1000
     evolve B5678/S5678              # ...twice
 
 endloop
-
-gridnm $width x $height
 
 # evolve B8/S1234567 Turn the map into an outline
 
