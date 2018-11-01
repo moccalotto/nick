@@ -4,6 +4,12 @@ type Point struct {
 	X, Y int
 }
 
+func (p1 Point) DistSq(p2 Point) int {
+	dx := p1.X - p2.X
+	dy := p1.Y - p2.Y
+	return dx*dx + dy*dy
+}
+
 // Adjacent returns the 4 points to the north, east, south and west of p
 func (p Point) Adjacent() Area {
 	return []Point{
