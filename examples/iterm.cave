@@ -1,6 +1,10 @@
 init 31 x 31
 
-suggest export.type  = iterm
+grid 31 x 31
+
+suggest export.type       = iterm   // output to iterm
+suggest export.width      = 1024    // downscale
+suggest export.algorithm  = Box     // change algorithm
 
 border 1
 
