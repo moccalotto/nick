@@ -24,12 +24,14 @@ import (
 	"github.com/disintegration/imaging"
 	"github.com/moccalotto/nick/machine"
 	"image"
+	"image/color"
 	"image/draw"
 	"image/gif"
 	"image/jpeg"
 	"image/png"
 	"log"
 	"os"
+	"strconv"
 	"strings"
 )
 
@@ -135,6 +137,25 @@ func (this *ImageExporter) mask() image.Image {
 	rect := this.targetDimensions()
 	return imaging.Resize(this.Machine.Field, rect.Max.X, rect.Max.Y, this.filter())
 }
+func (this *ImageExporter) maskBW() image.Image {
+	// store current field colors
+	tmpOff := this.Machine.Field.OffColor
+	tmpOn := this.Machine.Field.OnColor
+
+	// set field colors to completely transparent and completely opaque
+	this.Machine.Field.OffColor = color.Alpha{0xff}
+	this.Machine.Field.OnColor = color.Alpha{0x00}
+
+	// generate the image
+	rect := this.targetDimensions()
+	img := imaging.Resize(this.Machine.Field, rect.Max.X, rect.Max.Y, this.filter())
+
+	// restore colors
+	this.Machine.Field.OffColor = tmpOff
+	this.Machine.Field.OnColor = tmpOn
+
+	return img
+}
 
 func (this *ImageExporter) backgroundImage() (draw.Image, error) {
 
@@ -155,6 +176,65 @@ func (this *ImageExporter) backgroundImage() (draw.Image, error) {
 	return imaging.Resize(img, rect.Max.X, rect.Max.Y, this.filter()), nil
 }
 
+func (this *ImageExporter) grid() (image.Image, error) {
+	// the dimensions of the output image.
+	rect := this.targetDimensions()
+
+	img := image.NewRGBA(rect)
+
+	tileWidth, tileHeight := float64(-1.0), float64(-1.0)
+
+	if str, ok := this.Machine.Vars["suggestion.grid.cols"]; ok {
+		if num, err := strconv.ParseFloat(str, 64); err == nil {
+			tileWidth = float64(rect.Max.X) / num
+		} else {
+			return nil, err
+		}
+	}
+	if str, ok := this.Machine.Vars["suggestion.grid.rows"]; ok {
+		if num, err := strconv.ParseFloat(str, 64); err == nil {
+			tileHeight = float64(rect.Max.Y) / num
+		} else {
+			return nil, err
+		}
+	}
+	if str, ok := this.Machine.Vars["suggestion.grid.width"]; ok {
+		if num, err := strconv.ParseFloat(str, 64); err == nil {
+			tileWidth = num
+		} else {
+			return nil, err
+		}
+	}
+	if str, ok := this.Machine.Vars["suggestion.grid.height"]; ok {
+		if num, err := strconv.ParseFloat(str, 64); err == nil {
+			tileHeight = num
+		} else {
+			return nil, err
+		}
+	}
+
+	nextX := tileWidth
+	nextY := tileHeight
+
+	for curY := 0; curY < rect.Max.Y; curY++ {
+		for curX := 0; curX < rect.Max.X; curX++ {
+			if curX == int(nextX) {
+				img.Set(curX, curY, color.NRGBA{0x44, 0x44, 0x44, 0x55})
+				nextX += tileWidth
+			}
+			if curY == int(nextY) {
+				img.Set(curX, curY, color.NRGBA{0x44, 0x44, 0x44, 0x55})
+			}
+		}
+		if curY == int(nextY) {
+			nextY += tileHeight
+		}
+		nextX = tileWidth
+	}
+
+	return img, nil
+}
+
 func (this *ImageExporter) GetImage() (image.Image, error) {
 	mask := this.mask()
 	bg, err := this.backgroundImage()
@@ -170,15 +250,15 @@ func (this *ImageExporter) GetImage() (image.Image, error) {
 
 	// draw the background on top of the (black) image
 	// through the mask
-	draw.DrawMask(
-		img,
-		rect,
-		bg,
-		rect.Min,
-		mask,
-		rect.Min,
-		draw.Over,
-	)
+	draw.DrawMask(img, rect, bg, rect.Min, mask, rect.Min, draw.Over)
+
+	// draw tiles on the image (through the mask
+	grid, err := this.grid()
+	if err != nil {
+		return nil, err
+	}
+
+	draw.DrawMask(img, rect, grid, rect.Min, this.maskBW(), rect.Min, draw.Over)
 
 	return img, nil
 }
