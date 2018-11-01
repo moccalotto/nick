@@ -31,53 +31,48 @@ import (
 	"image/png"
 	"log"
 	"os"
-	"strconv"
 	"strings"
 )
 
+type GridSettings struct {
+	CellWidthPx  float64
+	CellHeightPx float64
+}
+
 // ImageExporter exports images to files
 type ImageExporter struct {
-	Machine  *machine.Machine
-	FileName string
-	Format   string
-
-	// If both Width and Height are 0, the image is sized via Scale instead
-	Width  int // Scale to new width. If 0, aspect ratio is preserved
-	Height int // Scale to new height.If 0, aspect ratio is preserved.
-
-	// Scale the image by a given factor instead of a given pixel count.
-	// Useful for scaling x2 or x4 without loss of quality.
-	Scale float64
-
-	Algorithm string // algorithm for scaling
+	Machine   *machine.Machine
+	FileName  string
+	Format    string
+	Grid      *GridSettings
+	Rect      image.Rectangle
+	Algorithm imaging.ResampleFilter
 }
 
 // NewImageExporter creates a new ImageExporter
 func NewImageExporter(m *machine.Machine) *ImageExporter {
-	return &ImageExporter{
+	exporter := ImageExporter{
 		Machine:   m,
 		FileName:  "map.png",
 		Format:    "",
-		Width:     0,
-		Height:    0,
-		Algorithm: "Lanczos",
+		Algorithm: imaging.Lanczos,
+		Rect:      m.Field.Bounds(),
 	}
+
+	return &exporter
 }
 
 // Calculate the output dimensions of the image
-func (this *ImageExporter) targetDimensions() image.Rectangle {
-	w := this.Width
-	h := this.Height
-
+func (this *ImageExporter) makeRect(w, h int) image.Rectangle {
 	if h == 0 && w == 0 {
 		h = this.Machine.Field.Height()
 		w = this.Machine.Field.Width()
 	} else if w == 0 {
 		ratio := this.Machine.Field.AspectRatio()
-		w = int(float64(this.Height) * ratio)
+		w = int(float64(h) * ratio)
 	} else if h == 0 {
 		ratio := this.Machine.Field.AspectRatio()
-		h = int(float64(this.Width) / ratio)
+		h = int(float64(w) / ratio)
 	}
 
 	return image.Rect(0, 0, w, h)
@@ -105,37 +100,36 @@ func (this *ImageExporter) detectFormat() (string, error) {
 	return "", fmt.Errorf("Could not determine file type from suffix: %s", suffix)
 }
 
-func (this *ImageExporter) filter() imaging.ResampleFilter {
-	switch this.Algorithm {
+func (this *ImageExporter) parseAlgorithmString(algorithm string) (imaging.ResampleFilter, error) {
+	switch algorithm {
 	case "NearestNeighbor":
 		// NearestNeighbor is a nearest-neighbor filter (no anti-aliasing).
-		return imaging.NearestNeighbor
+		return imaging.NearestNeighbor, nil
 	case "Linear":
 		// Bilinear interpolation filter, produces reasonably good, smooth output.
-		return imaging.Linear
+		return imaging.Linear, nil
 	case "Lanczos":
 		// High-quality resampling filter for photographic images yielding sharp results (slow).
-		return imaging.Lanczos
+		return imaging.Lanczos, nil
 	case "CatmullRom":
 		// A sharp cubic filter. It's a good filter for both upscaling and downscaling if sharp results are needed.
-		return imaging.CatmullRom
+		return imaging.CatmullRom, nil
 	case "MitchellNetravali":
 		// A high quality cubic filter that produces smoother results with less ringing artifacts than CatmullRom.
-		return imaging.MitchellNetravali
+		return imaging.MitchellNetravali, nil
 	case "Box":
 		// Simple and fast averaging filter appropriate for downscaling.
 		// When upscaling it's similar to NearestNeighbor.
-		return imaging.Box
+		return imaging.Box, nil
 	default:
-		log.Fatalf("Unknown image scaling algorithm: %s", this.Algorithm)
+		return imaging.NearestNeighbor, fmt.Errorf("Unknown image scaling algorithm: %s", algorithm)
 	}
 
 	panic("Should never be reached!")
 }
 
 func (this *ImageExporter) mask() image.Image {
-	rect := this.targetDimensions()
-	return imaging.Resize(this.Machine.Field, rect.Max.X, rect.Max.Y, this.filter())
+	return imaging.Resize(this.Machine.Field, this.Rect.Max.X, this.Rect.Max.Y, this.Algorithm)
 }
 func (this *ImageExporter) maskBW() image.Image {
 	// store current field colors
@@ -147,8 +141,7 @@ func (this *ImageExporter) maskBW() image.Image {
 	this.Machine.Field.OnColor = color.Alpha{0x00}
 
 	// generate the image
-	rect := this.targetDimensions()
-	img := imaging.Resize(this.Machine.Field, rect.Max.X, rect.Max.Y, this.filter())
+	img := imaging.Resize(this.Machine.Field, this.Rect.Max.X, this.Rect.Max.Y, this.Algorithm)
 
 	// restore colors
 	this.Machine.Field.OffColor = tmpOff
@@ -171,65 +164,35 @@ func (this *ImageExporter) backgroundImage() (draw.Image, error) {
 		return nil, err
 	}
 
-	rect := this.targetDimensions()
-
-	return imaging.Resize(img, rect.Max.X, rect.Max.Y, this.filter()), nil
+	return imaging.Resize(img, this.Rect.Max.X, this.Rect.Max.Y, this.Algorithm), nil
 }
 
 func (this *ImageExporter) grid() (image.Image, error) {
+
+	if this.Grid == nil {
+		return nil, fmt.Errorf("No grid settings")
+	}
+
 	// the dimensions of the output image.
-	rect := this.targetDimensions()
+	img := image.NewRGBA(this.Rect)
 
-	img := image.NewRGBA(rect)
+	nextX := this.Grid.CellWidthPx
+	nextY := this.Grid.CellHeightPx
 
-	tileWidth, tileHeight := float64(-1.0), float64(-1.0)
-
-	if str, ok := this.Machine.Vars["suggestion.grid.cols"]; ok {
-		if num, err := strconv.ParseFloat(str, 64); err == nil {
-			tileWidth = float64(rect.Max.X) / num
-		} else {
-			return nil, err
-		}
-	}
-	if str, ok := this.Machine.Vars["suggestion.grid.rows"]; ok {
-		if num, err := strconv.ParseFloat(str, 64); err == nil {
-			tileHeight = float64(rect.Max.Y) / num
-		} else {
-			return nil, err
-		}
-	}
-	if str, ok := this.Machine.Vars["suggestion.grid.width"]; ok {
-		if num, err := strconv.ParseFloat(str, 64); err == nil {
-			tileWidth = num
-		} else {
-			return nil, err
-		}
-	}
-	if str, ok := this.Machine.Vars["suggestion.grid.height"]; ok {
-		if num, err := strconv.ParseFloat(str, 64); err == nil {
-			tileHeight = num
-		} else {
-			return nil, err
-		}
-	}
-
-	nextX := tileWidth
-	nextY := tileHeight
-
-	for curY := 0; curY < rect.Max.Y; curY++ {
-		for curX := 0; curX < rect.Max.X; curX++ {
+	for curY := 0; curY < this.Rect.Max.Y; curY++ {
+		for curX := 0; curX < this.Rect.Max.X; curX++ {
 			if curX == int(nextX) {
 				img.Set(curX, curY, color.NRGBA{0x44, 0x44, 0x44, 0x55})
-				nextX += tileWidth
+				nextX += this.Grid.CellWidthPx
 			}
 			if curY == int(nextY) {
 				img.Set(curX, curY, color.NRGBA{0x44, 0x44, 0x44, 0x55})
 			}
 		}
 		if curY == int(nextY) {
-			nextY += tileHeight
+			nextY += this.Grid.CellHeightPx
 		}
-		nextX = tileWidth
+		nextX = this.Grid.CellWidthPx
 	}
 
 	return img, nil
@@ -242,23 +205,21 @@ func (this *ImageExporter) GetImage() (image.Image, error) {
 		return nil, err
 	}
 
-	// the dimensions of the output image.
-	rect := this.targetDimensions()
-
 	// new black image of the given dimensions
-	img := image.NewRGBA(rect)
+	img := image.NewRGBA(this.Rect)
 
-	// draw the background on top of the (black) image
-	// through the mask
-	draw.DrawMask(img, rect, bg, rect.Min, mask, rect.Min, draw.Over)
+	// draw the background on top of the (black) image through the mask.
+	draw.DrawMask(img, this.Rect, bg, this.Rect.Min, mask, this.Rect.Min, draw.Over)
 
-	// draw tiles on the image (through the mask
-	grid, err := this.grid()
-	if err != nil {
-		return nil, err
+	// draw tiles on the image through a mask that completely blocks drawing on the occupied areas.
+	if this.Grid != nil {
+		grid, err := this.grid()
+		if err != nil {
+			return nil, err
+		}
+
+		draw.DrawMask(img, this.Rect, grid, this.Rect.Min, this.maskBW(), this.Rect.Min, draw.Over)
 	}
-
-	draw.DrawMask(img, rect, grid, rect.Min, this.maskBW(), rect.Min, draw.Over)
 
 	return img, nil
 }
