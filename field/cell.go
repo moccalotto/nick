@@ -7,7 +7,7 @@ type CellMapper func(f *Field, x, y int, c Cell) Cell
 type CellWalker func(x, y int, c Cell)
 
 func (c Cell) On() bool {
-	return c == LivingCell
+	return c > 0
 }
 
 func (c Cell) Toggled() Cell {
