@@ -24,10 +24,6 @@ func (e *SuggestionExporter) image() (*ImageExporter, error) {
 		ie.FileName = fn
 	}
 
-	if fmt, ok := e.Machine.Vars["suggestion.export.format"]; ok {
-		ie.Format = fmt
-	}
-
 	var width, height int
 
 	if w, ok := e.Machine.Vars["suggestion.export.width"]; ok {
