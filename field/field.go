@@ -230,5 +230,6 @@ func (f *Field) MapAsyncToNewField(m CellMapper) *Field {
 		w:       f.w,
 		h:       f.h,
 		Outside: f.Outside,
+		Palette: f.Palette,
 	}
 }
