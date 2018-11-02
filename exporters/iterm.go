@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/base64"
 	"fmt"
-	"image/png"
+	"image/jpeg"
 )
 
 // ItermExporter exports an image directly to an iTerm screen (not a file)
@@ -30,7 +30,7 @@ func (p *ItermExporter) Export() error {
 	}
 
 	buf := new(bytes.Buffer)
-	if err := png.Encode(buf, img); err != nil {
+	if err := jpeg.Encode(buf, img, &jpeg.Options{Quality: 50}); err != nil {
 		return err
 	}
 
