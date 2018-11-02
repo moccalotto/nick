@@ -2,8 +2,6 @@
 # seed -6877898940050874091 # very detailed - almost confusing
 # seed 1194388964278034965  # Very interesting, including sub-caves.
 
-seed 5197468983880934165
-
 suggest export.type      = iterm
 suggest export.format    = jpeg
 
