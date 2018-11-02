@@ -30,7 +30,7 @@ snow $snow
 # Cover 65 to 85% of the border with dots.
 set $coverage  between 50% and 85%
 border 10% $coverage
-egress random  20%
+egress random  25%
 
 evolve B5678/S345678            # run standard escavator
 evolve B5678/S345678            # ...twice
