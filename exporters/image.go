@@ -24,6 +24,7 @@ import (
 	"bufio"
 	"fmt"
 	"github.com/disintegration/imaging"
+	"github.com/moccalotto/nick/effects"
 	"github.com/moccalotto/nick/field"
 	"github.com/moccalotto/nick/machine"
 	"image"
@@ -52,6 +53,10 @@ type ImageExporter struct {
 	Grid       *GridSettings          // Grid settings
 	Rect       image.Rectangle        // Dimensions of the output image
 	Algorithm  imaging.ResampleFilter // Algorithm used to scale the image
+	WallColor  color.Color
+
+	maskBWCache image.Image
+	maskCache   image.Image
 }
 
 // NewImageExporter creates a new ImageExporter
@@ -61,6 +66,7 @@ func NewImageExporter(m *machine.Machine) *ImageExporter {
 		FileName:  "map.png",
 		Algorithm: imaging.Lanczos,
 		Rect:      m.Cave.Bounds(),
+		WallColor: color.NRGBA{255, 0, 0, 144},
 	}
 
 	return &exporter
@@ -127,22 +133,33 @@ func (this *ImageExporter) parseAlgorithmString(algorithm string) (imaging.Resam
 }
 
 func (this *ImageExporter) mask() image.Image {
-	return imaging.Resize(this.Machine.Cave, this.Rect.Max.X, this.Rect.Max.Y, this.Algorithm)
+
+	if this.maskCache == nil {
+		this.maskCache = imaging.Resize(this.Machine.Cave, this.Rect.Max.X, this.Rect.Max.Y, this.Algorithm)
+	}
+
+	return this.maskCache
 }
+
 func (this *ImageExporter) maskBW() image.Image {
-	// backup the palette
-	tmp := this.Machine.Cave.Palette
 
-	// use a different palette
-	this.Machine.Cave.Palette = field.BinaryPalette()
+	if this.maskBWCache == nil {
 
-	// generate the image
-	img := imaging.Resize(this.Machine.Cave, this.Rect.Max.X, this.Rect.Max.Y, this.Algorithm)
+		// backup the palette
+		tmp := this.Machine.Cave.Palette
 
-	// restore the palette
-	this.Machine.Cave.Palette = tmp
+		// use a different palette
+		this.Machine.Cave.Palette = field.BinaryPalette()
 
-	return img
+		// generate the image
+		this.maskBWCache = imaging.Resize(this.Machine.Cave, this.Rect.Max.X, this.Rect.Max.Y, this.Algorithm)
+
+		// restore the palette
+		this.Machine.Cave.Palette = tmp
+
+	}
+
+	return this.maskBWCache
 }
 
 func (this *ImageExporter) backgroundImage() (draw.Image, error) {
@@ -167,6 +184,20 @@ func (this *ImageExporter) backgroundImage() (draw.Image, error) {
 	}
 
 	return imaging.Resize(img, this.Rect.Max.X, this.Rect.Max.Y, this.Algorithm), nil
+}
+
+func (this *ImageExporter) outline() (image.Image, error) {
+
+	if this.WallColor == nil {
+		return nil, nil
+	}
+
+	outliner := effects.NewAutomaton("B678/S1234567")
+
+	f := this.Machine.Cave.MapAsyncToNewField(outliner.NextCellState)
+	f.Palette = field.InvertedBinaryPalette()
+
+	return imaging.Resize(f, this.Rect.Max.X, this.Rect.Max.Y, this.Algorithm), nil
 }
 
 func (this *ImageExporter) grid() (image.Image, error) {
@@ -200,32 +231,59 @@ func (this *ImageExporter) grid() (image.Image, error) {
 	return img, nil
 }
 
-func (this *ImageExporter) GetImage() (image.Image, error) {
+func (this *ImageExporter) applyBackground(img draw.Image) error {
 	mask := this.mask()
-	bg, err := this.backgroundImage()
-	if err != nil {
-		return nil, err
-	}
-
-	// new black image of the given dimensions
-	img := image.NewRGBA(this.Rect)
 
 	// if a background image was specified, apply it to the image.
-	if bf, err := this.backgroundImage(); err != nil {
-		return nil, err
-	} else if bf != nil {
+	if bg, err := this.backgroundImage(); err != nil {
+		return err
+	} else if bg != nil {
 		// draw the background on top of the (black) image through the mask.
 		draw.DrawMask(img, this.Rect, bg, this.Rect.Min, mask, this.Rect.Min, draw.Over)
 	} else {
 		draw.DrawMask(img, this.Rect, image.Opaque, this.Rect.Min, mask, this.Rect.Min, draw.Over)
 	}
 
+	return nil
+}
+
+func (this *ImageExporter) applyGrid(img draw.Image) error {
 	if grid, err := this.grid(); err != nil {
-		return nil, err
+		return err
 	} else if grid != nil {
 		// draw tiles on the image through a mask that completely blocks drawing on the occupied areas.
 		draw.DrawMask(img, this.Rect, grid, this.Rect.Min, this.maskBW(), this.Rect.Min, draw.Over)
 	}
+
+	return nil
+}
+
+func (this *ImageExporter) applyOutline(img draw.Image) error {
+	if outline, err := this.outline(); err != nil {
+		return err
+	} else if outline != nil {
+		// draw tiles on the image through a mask that completely blocks drawing on the occupied areas.
+		draw.DrawMask(
+			img,                              // draw onto img
+			this.Rect,                        // on the entire image
+			image.NewUniform(this.WallColor), // draw this color
+			this.Rect.Min,                    // start drawing at the top left corner
+			outline,                          // draw through the mask defined in the outline
+			this.Rect.Min,                    // the mask also starts at the top left corner
+			draw.Over,                        // draw the outline over img
+		)
+	}
+
+	return nil
+}
+
+func (this *ImageExporter) GetImage() (image.Image, error) {
+	// new black image of the given dimensions
+	img := image.NewRGBA(this.Rect)
+
+	this.applyBackground(img)
+	this.applyGrid(img)
+	this.applyOutline(img)
 
 	return img, nil
 }
