@@ -77,6 +77,10 @@ func (e *SuggestionExporter) image() (*ImageExporter, error) {
 		}
 	}
 
+	if str, ok := e.Machine.Vars["suggestion.background.file"]; ok {
+		ie.Background = &BackgroundSettings{str}
+	}
+
 	if tileWidth > 0 && tileHeight > 0 {
 		ie.Grid = &GridSettings{tileWidth, tileHeight}
 	}

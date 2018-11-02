@@ -39,13 +39,18 @@ type GridSettings struct {
 	CellHeightPx float64
 }
 
+type BackgroundSettings struct {
+	FileName string
+}
+
 // ImageExporter exports images to files
 type ImageExporter struct {
-	Machine   *machine.Machine
-	FileName  string
-	Grid      *GridSettings
-	Rect      image.Rectangle
-	Algorithm imaging.ResampleFilter
+	Machine    *machine.Machine       // The machine to export
+	FileName   string                 // Filename of the generated image
+	Background *BackgroundSettings    // Background image settings
+	Grid       *GridSettings          // Grid settings
+	Rect       image.Rectangle        // Dimensions of the output image
+	Algorithm  imaging.ResampleFilter // Algorithm used to scale the image
 }
 
 // NewImageExporter creates a new ImageExporter
@@ -146,8 +151,15 @@ func (this *ImageExporter) maskBW() image.Image {
 
 func (this *ImageExporter) backgroundImage() (draw.Image, error) {
 
-	// THIS IS A TEMP HACK
-	file, err := os.Open("/Users/krh/Desktop/Nick/_backgrounds/paper_by_darkwood67/brown_ice_by_darkwood67.jpg")
+	if this.Background == nil {
+		return nil, nil
+	}
+
+	if this.Background.FileName == "" {
+		return nil, nil
+	}
+
+	file, err := os.Open(this.Background.FileName)
 	if err != nil {
 		return nil, err
 	}
@@ -164,7 +176,7 @@ func (this *ImageExporter) backgroundImage() (draw.Image, error) {
 func (this *ImageExporter) grid() (image.Image, error) {
 
 	if this.Grid == nil {
-		return nil, fmt.Errorf("No grid settings")
+		return nil, nil
 	}
 
 	// the dimensions of the output image.
@@ -202,16 +214,20 @@ func (this *ImageExporter) GetImage() (image.Image, error) {
 	// new black image of the given dimensions
 	img := image.NewRGBA(this.Rect)
 
-	// draw the background on top of the (black) image through the mask.
-	draw.DrawMask(img, this.Rect, bg, this.Rect.Min, mask, this.Rect.Min, draw.Over)
+	// if a background image was specified, apply it to the image.
+	if bf, err := this.backgroundImage(); err != nil {
+		return nil, err
+	} else if bf != nil {
+		// draw the background on top of the (black) image through the mask.
+		draw.DrawMask(img, this.Rect, bg, this.Rect.Min, mask, this.Rect.Min, draw.Over)
+	} else {
+		draw.DrawMask(img, this.Rect, image.Opaque, this.Rect.Min, mask, this.Rect.Min, draw.Over)
+	}
 
-	// draw tiles on the image through a mask that completely blocks drawing on the occupied areas.
-	if this.Grid != nil {
-		grid, err := this.grid()
-		if err != nil {
-			return nil, err
-		}
-
+	if grid, err := this.grid(); err != nil {
+		return nil, err
+	} else if grid != nil {
+		// draw tiles on the image through a mask that completely blocks drawing on the occupied areas.
 		draw.DrawMask(img, this.Rect, grid, this.Rect.Min, this.maskBW(), this.Rect.Min, draw.Over)
 	}
 
