@@ -40,7 +40,17 @@ func Egress(m *Machine) {
 	if m.ArgCount() == 2 {
 		radius = m.ArgAsFloat(1)
 	} else {
-		radius = minAsFloat(m.Cave.Width(), m.Cave.Height()) / 6
+		radius = 1.0 / 6.0
+	}
+
+	// the radius was specified in the range (0, 1)
+	// set the radius as a factor of the smalles cave dimension
+	if radius < 1 {
+		radius = radius * minAsFloat(m.Cave.Width(), m.Cave.Height()) / 2.0
+	}
+
+	if radius < 1 {
+		radius = 1
 	}
 
 	direction := makeDirection(m)
