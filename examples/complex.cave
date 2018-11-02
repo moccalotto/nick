@@ -1,9 +1,6 @@
-# seed -8600179748397948651 # Oddly shaped cavern
-# seed -6877898940050874091 # very detailed - almost confusing
-# seed 1194388964278034965  # Very interesting, including sub-caves.
+# seed 60369166530011925
 
-suggest export.type      = iterm
-suggest export.format    = jpeg
+suggest export.type = iterm
 
 suggest background.file = assets/backgrounds/paper_by_darkwood67/old_paper_by_darkwood67.jpeg
 
@@ -27,10 +24,14 @@ init $width x $height               # New, small-ish, canvas.
 set $snow between 30% and 40%
 snow $snow
 
-# Cover 65 to 85% of the border with dots.
-set $coverage  between 50% and 85%
-border 10% $coverage
-egress random  25%
+# Cover 50 to 85% of the border with dots.
+set $border-coverage  between 50% and 85%
+set $border-size      between 5% and 20%
+border $border-size $border-coverage
+
+
+set $egress-size between $border-size and 45%
+egress random  $egress-size
 
 evolve B5678/S345678            # run standard escavator
 evolve B5678/S345678            # ...twice
