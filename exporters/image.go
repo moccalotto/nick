@@ -7,8 +7,6 @@ Considerations:
 		Patterns in filename (such as %rand %Y-%m-%d-%H:%i:s or similar)
 		Sequenced filenames (map-%seq that auto-detects previous maps)
 
-	Auto-detect map format from extension
-
 	Define colors via strings á la https://github.com/go-playground/colors
 		must support image/color package
 
@@ -30,10 +28,8 @@ import (
 	"image"
 	"image/color"
 	"image/draw"
-	"image/gif"
 	"image/jpeg"
 	"image/png"
-	"log"
 	"os"
 	"strings"
 )
@@ -47,7 +43,6 @@ type GridSettings struct {
 type ImageExporter struct {
 	Machine   *machine.Machine
 	FileName  string
-	Format    string
 	Grid      *GridSettings
 	Rect      image.Rectangle
 	Algorithm imaging.ResampleFilter
@@ -58,7 +53,6 @@ func NewImageExporter(m *machine.Machine) *ImageExporter {
 	exporter := ImageExporter{
 		Machine:   m,
 		FileName:  "map.png",
-		Format:    "",
 		Algorithm: imaging.Lanczos,
 		Rect:      m.Cave.Bounds(),
 	}
@@ -83,10 +77,6 @@ func (this *ImageExporter) makeRect(w, h int) image.Rectangle {
 }
 
 func (this *ImageExporter) detectFormat() (string, error) {
-	if this.Format != "" {
-		return this.Format, nil
-	}
-
 	parts := strings.Split(this.FileName, ".")
 	suffix := parts[len(parts)-1]
 
@@ -97,8 +87,6 @@ func (this *ImageExporter) detectFormat() (string, error) {
 		return "jpeg", nil
 	case "jpeg":
 		return "jpeg", nil
-	case "gif":
-		return "gif", nil
 	}
 
 	return "", fmt.Errorf("Could not determine file type from suffix: %s", suffix)
@@ -232,40 +220,49 @@ func (this *ImageExporter) GetImage() (image.Image, error) {
 
 // Export the image to a file
 func (this *ImageExporter) Export() error {
-	file, err := os.Create(this.FileName)
-	if err != nil {
+	var file *os.File
+	var format string
+	var err error
+	var img image.Image
+
+	// Infer the file format from the given file name
+	if format, err = this.detectFormat(); err != nil {
 		return err
 	}
 
-	defer func() {
-		_ = file.Close()
-	}()
+	// Open the file for writing
+	if file, err = os.Create(this.FileName); err != nil {
+		return err
+	} else {
+		defer func() { _ = file.Close() }()
+	}
 
-	format, err := this.detectFormat()
-	if err != nil {
+	// Render the image
+	if img, err = this.GetImage(); err != nil {
 		return err
 	}
 
-	out, err := this.GetImage()
+	// Encode the image
+	return encodeImage(format, file, img)
+}
 
-	if err != nil {
-		return err
+// Write binary image data into a file
+func encodeImage(format string, file *os.File, img image.Image) error {
+	if format == "png" {
+		if err := png.Encode(file, img); err != nil {
+			return err
+		}
+
+		return nil
 	}
 
-	switch format {
-	case "png":
-		err = png.Encode(file, out)
-	case "gif":
-		err = gif.Encode(file, out, &gif.Options{NumColors: 2})
-	case "jpeg":
-		err = jpeg.Encode(file, out, &jpeg.Options{Quality: 90})
-	default:
-		log.Fatalf("Unknown file format: %s", this.Format)
+	if format == "jpeg" {
+		if err := jpeg.Encode(file, img, &jpeg.Options{Quality: 80}); err != nil {
+			return err
+		}
+
+		return nil
 	}
 
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return fmt.Errorf("Could not infer format from filename.")
 }
