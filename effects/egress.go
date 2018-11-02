@@ -22,7 +22,7 @@ const (
 type Egress struct {
 	Radius   float64
 	Position Direction
-	On       bool
+	Cell     field.Cell
 	rng      *rand.Rand
 }
 
@@ -30,7 +30,7 @@ func NewEgress(position Direction, radius float64, rng *rand.Rand) *Egress {
 	return &Egress{
 		Radius:   radius,
 		Position: position,
-		On:       false, // by default, an egress consists of empty pace.
+		Cell:     field.OffCell,
 		rng:      rng,
 	}
 }
@@ -42,67 +42,62 @@ func (e *Egress) ApplyToField(f *field.Field) {
 		pos = Direction(e.rng.Intn(8) + 1)
 	}
 
-	cell := field.OffCell
-	if e.On {
-		cell = field.OnCell
-	}
-
 	switch pos {
 	case North:
 		f.SetRadius(
 			f.Width()/2,
 			0,
 			e.Radius,
-			cell,
-		)
-	case South:
-		f.SetRadius(
-			f.Width()/2,
-			f.Height()-1,
-			e.Radius,
-			cell,
-		)
-	case East:
-		f.SetRadius(
-			f.Width()-1,
-			f.Height()/2,
-			e.Radius,
-			cell,
-		)
-	case West:
-		f.SetRadius(
-			0,
-			f.Height()/2,
-			e.Radius,
-			cell,
+			e.Cell,
 		)
 	case NorthEast:
 		f.SetRadius(
 			f.Width()-1,
 			0,
 			e.Radius,
-			cell,
+			e.Cell,
 		)
-	case NorthWest:
+	case East:
 		f.SetRadius(
-			0,
-			0,
+			f.Width()-1,
+			f.Height()/2,
 			e.Radius,
-			cell,
-		)
-	case SouthWest:
-		f.SetRadius(
-			0,
-			f.Height()-1,
-			e.Radius,
-			cell,
+			e.Cell,
 		)
 	case SouthEast:
 		f.SetRadius(
 			f.Width()-1,
 			f.Height()-1,
 			e.Radius,
-			cell,
+			e.Cell,
+		)
+	case South:
+		f.SetRadius(
+			f.Width()/2,
+			f.Height()-1,
+			e.Radius,
+			e.Cell,
+		)
+	case SouthWest:
+		f.SetRadius(
+			0,
+			f.Height()-1,
+			e.Radius,
+			e.Cell,
+		)
+	case West:
+		f.SetRadius(
+			0,
+			f.Height()/2,
+			e.Radius,
+			e.Cell,
+		)
+	case NorthWest:
+		f.SetRadius(
+			0,
+			0,
+			e.Radius,
+			e.Cell,
 		)
 	}
 }
