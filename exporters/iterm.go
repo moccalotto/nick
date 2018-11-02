@@ -30,7 +30,7 @@ func (p *ItermExporter) Export() error {
 	}
 
 	buf := new(bytes.Buffer)
-	if err := jpeg.Encode(buf, img, &jpeg.Options{Quality: 50}); err != nil {
+	if err := jpeg.Encode(buf, img, &jpeg.Options{Quality: 60}); err != nil {
 		return err
 	}
 
