@@ -24,6 +24,7 @@ import (
 	"bufio"
 	"fmt"
 	"github.com/disintegration/imaging"
+	"github.com/moccalotto/nick/field"
 	"github.com/moccalotto/nick/machine"
 	"image"
 	"image/color"
@@ -129,22 +130,17 @@ func (this *ImageExporter) mask() image.Image {
 	return imaging.Resize(this.Machine.Cave, this.Rect.Max.X, this.Rect.Max.Y, this.Algorithm)
 }
 func (this *ImageExporter) maskBW() image.Image {
-	// create a backup of the existing palette
-	orig := make(color.Palette, 255)
-	copy(orig, this.Machine.Cave.Palette)
+	// backup the palette
+	tmp := this.Machine.Cave.Palette
 
-	// modify the palette so that free space becomes transparent
-	// and the other areas opaque
-	this.Machine.Cave.Palette[0] = color.Alpha{255}
-	for i := 1; i < len(this.Machine.Cave.Palette); i++ {
-		this.Machine.Cave.Palette[i] = color.Alpha{0}
-	}
+	// use a different palette
+	this.Machine.Cave.Palette = field.BinaryPalette()
 
 	// generate the image
 	img := imaging.Resize(this.Machine.Cave, this.Rect.Max.X, this.Rect.Max.Y, this.Algorithm)
 
-	// restore colors
-	this.Machine.Cave.Palette = orig
+	// restore the palette
+	this.Machine.Cave.Palette = tmp
 
 	return img
 }

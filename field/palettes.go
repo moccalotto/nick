@@ -1,0 +1,38 @@
+package field
+
+import (
+	"image/color"
+)
+
+var binaryPalette color.Palette
+var defeaultPalette color.Palette
+
+// The default palette
+// Off-cells are completely opaque and other cells are of increasing shades of gray
+func DefaultPalette() color.Palette {
+	if len(defeaultPalette) == 0 {
+		defeaultPalette = make(color.Palette, 256)
+		defeaultPalette[0] = color.Alpha{0xff}
+		opacity := uint8(144)
+		for i := 1; i < 255; i++ {
+			defeaultPalette[i] = color.Alpha{opacity}
+			if opacity < 255 {
+				opacity += 1
+			}
+		}
+	}
+	return defeaultPalette
+}
+
+// Get the default binary palette
+// Off-cells are completely opaque and all other cells are completely transparent.
+func BinaryPalette() color.Palette {
+	if len(binaryPalette) == 0 {
+		binaryPalette = make(color.Palette, 256)
+		binaryPalette[0] = color.Alpha{255}
+		for i := 1; i < 255; i++ {
+			binaryPalette[i] = color.Alpha{0}
+		}
+	}
+	return binaryPalette
+}

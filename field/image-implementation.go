@@ -5,6 +5,7 @@ package field
 import (
 	"image"
 	"image/color"
+	"log"
 )
 
 func (f *Field) ColorModel() color.Model {
@@ -16,7 +17,11 @@ func (f *Field) Bounds() image.Rectangle {
 }
 
 func (f *Field) At(x, y int) color.Color {
-	idx := f.s[x+y*f.w]
+	idx := int(f.s[x+y*f.w])
+
+	if int(idx) > len(f.Palette) {
+		log.Fatalf("Trying to access element no. %d of the palette. But the palette only contains %d elements", idx, len(f.Palette))
+	}
 
 	return f.Palette[idx]
 }
