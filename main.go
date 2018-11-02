@@ -42,8 +42,12 @@ func main() {
 	runtime := time.Now().Sub(m.StartedAt)
 
 	exportStart := time.Now()
-	exporters.NewSuggestionExporter(m, exporters.NewTextExporter(m)).Export()
+	err := exporters.NewSuggestionExporter(m, exporters.NewTextExporter(m)).Export()
 	exportTime := time.Now().Sub(exportStart)
+
+	if err != nil {
+		fmt.Printf("Error: %s\n", err)
+	}
 
 	fmt.Printf("Seed: %d\n", m.Seed)
 	fmt.Printf("Execution Time: %f seconds\n", runtime.Seconds())
