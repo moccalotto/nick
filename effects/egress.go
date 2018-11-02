@@ -2,6 +2,7 @@ package effects
 
 import (
 	"github.com/moccalotto/nick/field"
+	"log"
 	"math/rand"
 )
 
@@ -27,6 +28,11 @@ type Egress struct {
 }
 
 func NewEgress(position Direction, radius float64, rng *rand.Rand) *Egress {
+
+	if radius < 1 {
+		log.Fatal("Radius too low")
+	}
+
 	return &Egress{
 		Radius:   radius,
 		Position: position,
@@ -42,18 +48,20 @@ func (e *Egress) ApplyToField(f *field.Field) {
 		pos = Direction(e.rng.Intn(8) + 2)
 	}
 
+	offset := int(e.Radius / 2.0)
+
 	switch pos {
 	case North:
 		f.SetRadius(
 			f.Width()/2,
-			2,
+			offset,
 			e.Radius,
 			e.Cell,
 		)
 	case NorthEast:
 		f.SetRadius(
-			f.Width()-1,
-			0,
+			f.Width()-offset,
+			offset,
 			e.Radius,
 			e.Cell,
 		)
@@ -66,36 +74,36 @@ func (e *Egress) ApplyToField(f *field.Field) {
 		)
 	case SouthEast:
 		f.SetRadius(
-			f.Width()-1,
-			f.Height()-1,
+			f.Width()-offset,
+			f.Height()-offset,
 			e.Radius,
 			e.Cell,
 		)
 	case South:
 		f.SetRadius(
 			f.Width()/2,
-			f.Height()-1,
+			f.Height()-offset,
 			e.Radius,
 			e.Cell,
 		)
 	case SouthWest:
 		f.SetRadius(
-			0,
-			f.Height()-1,
+			offset,
+			f.Height()-offset,
 			e.Radius,
 			e.Cell,
 		)
 	case West:
 		f.SetRadius(
-			0,
+			offset,
 			f.Height()/2,
 			e.Radius,
 			e.Cell,
 		)
 	case NorthWest:
 		f.SetRadius(
-			0,
-			0,
+			offset,
+			offset,
 			e.Radius,
 			e.Cell,
 		)
