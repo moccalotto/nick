@@ -11,6 +11,8 @@ func init() {
 // connect-rooms 3
 // connect-rooms 3 20
 func ConnectRooms(m *Machine) {
+	m.Assert(m.Cave != nil, "The '%s' instruction can only be used after the 'init'", m.CurrentInstruction().Cmd)
+
 	radius := m.ArgAsFloat(0)
 
 	m.Assert(radius > 0, "Radius must be > 0")

@@ -10,6 +10,8 @@ func init() {
 // Line:
 // usage: line x0 y0 x1 y1
 func Line(m *Machine) {
+	m.Assert(m.Cave != nil, "The '%s' instruction can only be used after the 'init'", m.CurrentInstruction().Cmd)
+
 	if m.HasArg(4) {
 		m.ArgAsFloat(4)
 	}

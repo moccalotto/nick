@@ -8,9 +8,7 @@ func init() {
 }
 
 func Snow(m *Machine) {
-	m.Assert(m.Cave != nil, "Cannot snow a non-initialized field!")
-
-	// TODO: allow a "negative" or "off" modifier to the snow command.
+	m.Assert(m.Cave != nil, "The '%s' instruction can only be used after the 'init'", m.CurrentInstruction().Cmd)
 
 	probability := m.ArgAsFloat(0)
 

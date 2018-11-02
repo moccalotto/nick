@@ -12,7 +12,7 @@ func init() {
 }
 
 func Evolve(m *Machine) {
-	m.Assert(m.Cave != nil, "Cannot evolve a non-initialized field!")
+	m.Assert(m.Cave != nil, "The '%s' instruction can only be used after the 'init'", m.CurrentInstruction().Cmd)
 
 	arg0 := m.ArgAsString(0)
 	m.Assert(

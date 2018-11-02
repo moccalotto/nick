@@ -9,6 +9,8 @@ func init() {
 }
 
 func Thiele(m *Machine) {
+	m.Assert(m.Cave != nil, "The '%s' instruction can only be used after the 'init'", m.CurrentInstruction().Cmd)
+
 	a := m.ArgAsInt(0)
 	b := 0
 	if m.HasArg(1) {

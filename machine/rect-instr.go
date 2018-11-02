@@ -8,6 +8,8 @@ func init() {
 }
 
 func Rect(m *Machine) {
+	m.Assert(m.Cave != nil, "The '%s' instruction can only be used after the 'init'", m.CurrentInstruction().Cmd)
+
 	r := effects.NewRect(
 		m.ArgAsInt(0),
 		m.ArgAsInt(1),

@@ -30,7 +30,7 @@ func init() {
 }
 
 func Egress(m *Machine) {
-	m.Assert(m.Cave != nil, "Cannot snow a non-initialized cave!")
+	m.Assert(m.Cave != nil, "The '%s' instruction can only be used after the 'init'", m.CurrentInstruction().Cmd)
 
 	errStr := "Invalid use of egress. Use one of: 'egress [direction]' or 'egress [direction] [size]'"
 

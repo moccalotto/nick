@@ -12,7 +12,8 @@ func init() {
 }
 
 func Scale(m *Machine) {
-	m.Assert(m.Cave != nil, "Cannot scale a non-initialized cave!")
+	m.Assert(m.Cave != nil, "The '%s' instruction can only be used after the 'init'", m.CurrentInstruction().Cmd)
+
 	x := m.ArgAsFloat(0)
 	y := x
 	if m.ArgCount() > 1 {
@@ -24,7 +25,7 @@ func Scale(m *Machine) {
 }
 
 func ScaleTo(m *Machine) {
-	m.Assert(m.Cave != nil, "Cannot scale a non-initialized cave!")
+	m.Assert(m.Cave != nil, "The '%s' instruction can only be used after the 'init'", m.CurrentInstruction().Cmd)
 
 	newW := m.ArgAsInt(0)
 	m.Assert(m.ArgAsString(1) == "x", "Second arg to scale must be an 'x', but '%s' was given", m.ArgAsString(1))
@@ -39,7 +40,7 @@ func ScaleTo(m *Machine) {
 }
 
 func ScaleToWidth(m *Machine) {
-	m.Assert(m.Cave != nil, "Cannot scale a non-initialized cave!")
+	m.Assert(m.Cave != nil, "The '%s' instruction can only be used after the 'init'", m.CurrentInstruction().Cmd)
 
 	aspect := m.Cave.AspectRatio()
 
@@ -56,7 +57,7 @@ func ScaleToWidth(m *Machine) {
 }
 
 func ScaleToHeight(m *Machine) {
-	m.Assert(m.Cave != nil, "Cannot scale a non-initialized cave!")
+	m.Assert(m.Cave != nil, "The '%s' instruction can only be used after the 'init'", m.CurrentInstruction().Cmd)
 
 	aspect := m.Cave.AspectRatio()
 

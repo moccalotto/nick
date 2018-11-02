@@ -10,7 +10,7 @@ func init() {
 }
 
 func Border(m *Machine) {
-	m.Assert(m.Cave != nil, "Cannot snow a non-initialized field!")
+	m.Assert(m.Cave != nil, "The '%s' instruction can only be used after the 'init'", m.CurrentInstruction().Cmd)
 
 	border := effects.NewBorderSnow(1.0, m.Rng)
 	border.Thickness = m.ArgAsInt(0)
