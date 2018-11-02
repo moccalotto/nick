@@ -5,6 +5,7 @@ import (
 )
 
 var binaryPalette color.Palette
+var invertedBinaryPalette color.Palette
 var defaultPalette color.Palette
 
 // The default palette
@@ -35,4 +36,17 @@ func BinaryPalette() color.Palette {
 		}
 	}
 	return binaryPalette
+}
+
+// Get the default binary palette
+// Off-cells are completely opaque and all other cells are completely transparent.
+func InvertedBinaryPalette() color.Palette {
+	if len(invertedBinaryPalette) == 0 {
+		invertedBinaryPalette = make(color.Palette, 256)
+		invertedBinaryPalette[0] = color.Alpha{0}
+		for i := 1; i < 255; i++ {
+			invertedBinaryPalette[i] = color.Alpha{255}
+		}
+	}
+	return invertedBinaryPalette
 }
