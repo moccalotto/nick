@@ -16,23 +16,35 @@ type Field struct {
 	Palette color.Palette
 }
 
+var binaryPalette color.Palette
+var defeaultPalette color.Palette
+
+func DefaultPalette() color.Palette {
+	if len(defeaultPalette) == 0 {
+		defeaultPalette = make(color.Palette, 255)
+		defeaultPalette[0] = color.Alpha{0xff}
+		opacity := uint8(144)
+		for i := 1; i < 255; i++ {
+			defeaultPalette[i] = color.Alpha{opacity}
+			if opacity < 255 {
+				opacity += 1
+			}
+		}
+	}
+	return defeaultPalette
+}
+func BinaryPalette() color.Palette {
+	return binaryPalette
+}
+
 // NewField returns an empty field of the specified width and height.
 func NewField(w, h int) *Field {
-	p := make(color.Palette, 255)
-	p[0] = color.Alpha{0xff}
-	for i := 1; i < 255; i++ {
-		opacity := i + 143
-		if opacity > 255 {
-			opacity = 255
-		}
-		p[i] = color.Alpha{uint8(opacity)}
-	}
 	return &Field{
 		s:       make([]Cell, h*w),
 		w:       w,
 		h:       h,
 		Outside: OnCell,
-		Palette: p,
+		Palette: DefaultPalette(),
 	}
 }
 
