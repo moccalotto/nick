@@ -39,14 +39,14 @@ func (e *Egress) ApplyToField(f *field.Field) {
 	pos := e.Position
 
 	if pos == Random {
-		pos = Direction(e.rng.Intn(8) + 1)
+		pos = Direction(e.rng.Intn(8) + 2)
 	}
 
 	switch pos {
 	case North:
 		f.SetRadius(
 			f.Width()/2,
-			0,
+			2,
 			e.Radius,
 			e.Cell,
 		)
@@ -99,5 +99,7 @@ func (e *Egress) ApplyToField(f *field.Field) {
 			e.Radius,
 			e.Cell,
 		)
+	default:
+		panic("This should never happen!")
 	}
 }
