@@ -1,0 +1,25 @@
+suggest export.type       = iterm   # output to iterm
+
+set $width between 200 and 300
+set $height calc round($width * 9 / 16)
+
+set $maxX  calc round($width - 1)
+set $maxY  calc round($height - 1)
+set $halfX calc round($width / 2)
+set $halfY calc round($height / 2)
+
+init $width x $height
+
+border 1
+
+line  0      0      $maxX   $maxY   # criss
+line  0      $maxY  $maxX   0       # cross
+line  0      $halfY $maxX   $halfY  # horizontal line
+line $halfX  0      $halfX  $maxY   # vertical line
+
+loop 2
+    scale 2
+    evolve B12345678/S12345678  # make lines thicker
+    evolve B12345678/S12345678  # make lines thicker
+    evolve B5678/S5678  # edge smoother
+endloop
