@@ -46,31 +46,41 @@ func Set(m *Machine) {
 	case "calc":
 		statement := ""
 		for i := 2; i < m.ArgCount(); i++ {
-			statement += m.ArgAsString(i)
-			calc := utils.NewCalculator(
-				func(varName string) float64 {
-					s := m.MustGetVar(varName)
-
-					res, err := strconv.ParseFloat(s, 64)
-
-					if err != nil {
-						m.Throw("Variable %s is not a number", varName)
-					}
-
-					return res
-				},
-				func(callName string, args []float64) float64 {
-					return math.NaN()
-				},
-			)
-
-			m.Vars[a.StrVal] = strconv.FormatFloat(
-				calc.Eval(statement),
-				'f',
-				-1,
-				64,
-			)
+			statement += " " + m.ArgAsString(i)
 		}
+		calc := utils.NewCalculator(
+			func(varName string) float64 {
+				s := m.MustGetVar(varName)
+
+				res, err := strconv.ParseFloat(s, 64)
+
+				if err != nil {
+					m.Throw("Variable %s is not a number", varName)
+				}
+
+				return res
+			},
+			func(callName string, args []float64) float64 {
+
+				switch callName {
+				case "floor":
+					return math.Floor(args[0])
+				case "ceil":
+					return math.Ceil(args[0])
+				case "round":
+					return math.Round(args[0])
+				}
+
+				return math.NaN()
+			},
+		)
+
+		m.Vars[a.StrVal] = strconv.FormatFloat(
+			calc.Eval(statement),
+			'f',
+			-1,
+			64,
+		)
 
 	default:
 		m.Throw(errStr)
