@@ -3,6 +3,7 @@ package machine
 import (
 	"fmt"
 	"github.com/moccalotto/nick/field"
+	"github.com/moccalotto/nick/utils"
 	"math/rand"
 	"strconv"
 	"time"
@@ -10,19 +11,20 @@ import (
 
 // This is the machine, that executes cave-scripts
 type Machine struct {
-	Seed       int64            // Seed for the Rng.
-	Rng        *rand.Rand       // Random Number Generator.
-	Cave       *field.Field     // The cells/tiles of the cave.
-	Stack      *Stack           // Stack used for nesting and looping.
-	State      *MachineState    // The current state of the machine.
-	Tape       []Instruction    // the entire program.
-	Exception  ExceptionHandler // Exception Handler.
-	Vars       VarBag           // Map of variables set inside the program.
-	MaxRuntime time.Duration    // Max time the machine is allowed to execute instructions.
-	MaxCells   int              // Max number of cells in the cave.
-	MaxWidth   int              // Max width of the cave.
-	MaxHeight  int              // Max height of the cave.
-	StartedAt  time.Time        // When did the execution start. If 0, it hasn't started yet.
+	Seed       int64             // Seed for the Rng.
+	Rng        *rand.Rand        // Random Number Generator.
+	Cave       *field.Field      // The cells/tiles of the cave.
+	Stack      *Stack            // Stack used for nesting and looping.
+	State      *MachineState     // The current state of the machine.
+	Tape       []Instruction     // the entire program.
+	Exception  ExceptionHandler  // Exception Handler.
+	Vars       VarBag            // Map of variables set inside the program.
+	MaxRuntime time.Duration     // Max time the machine is allowed to execute instructions.
+	MaxCells   int               // Max number of cells in the cave.
+	MaxWidth   int               // Max width of the cave.
+	MaxHeight  int               // Max height of the cave.
+	StartedAt  time.Time         // When did the execution start. If 0, it hasn't started yet.
+	calculator *utils.Calculator // Math parsing engine
 }
 
 func (m *Machine) Assert(condition bool, msg interface{}, a ...interface{}) {
@@ -79,6 +81,14 @@ func (m *Machine) MustGetCmd(id string) string {
 	case "height":
 		return strconv.Itoa(m.Cave.Height())
 	default:
+		if id[0:5] == "calc:" {
+			return strconv.FormatFloat(
+				m.Calculator().Eval(id[5:]),
+				'f',
+				-1,
+				64,
+			)
+		}
 		m.Throw("Unknown command special command @%s", id)
 	}
 
