@@ -40,7 +40,7 @@ func escapeString(s string) (string, []string) {
 
 		placeholders = append(placeholders, txt)
 
-		return fmt.Sprintf("___REP___%09d___PER___", i)
+		return fmt.Sprintf("[[%09d]]", i)
 	})
 
 	return escaped, placeholders
@@ -49,7 +49,7 @@ func escapeString(s string) (string, []string) {
 func unescapeString(s string, placeholders []string) string {
 	return stringUnescaper.ReplaceAllStringFunc(s, func(m string) string {
 		var i int
-		_, err := fmt.Sscanf(m, "___REP___%09d___PER___", &i)
+		_, err := fmt.Sscanf(m, "[[%09d]]", &i)
 
 		if err != nil {
 			return m

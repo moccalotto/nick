@@ -8,5 +8,5 @@ var noSkip InstructionFilter = make(InstructionFilter)
 
 // pre-compiled regular expressions.
 var stringEscaper *regexp.Regexp = regexp.MustCompile(`\[\[[^\]]*\]\]`)
-var stringUnescaper *regexp.Regexp = regexp.MustCompile(`___REP___\d{9}___PER___`)
+var stringUnescaper *regexp.Regexp = regexp.MustCompile(`\[\[\d{9}\]\]`)
 var lineExploder *regexp.Regexp = regexp.MustCompile(`[\n\r]`)
