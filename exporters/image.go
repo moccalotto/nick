@@ -39,6 +39,7 @@ import (
 type GridSettings struct {
 	CellWidthPx  float64
 	CellHeightPx float64
+	Color        color.Color
 }
 
 type BackgroundSettings struct {
@@ -163,28 +164,33 @@ func (this *ImageExporter) maskBW() image.Image {
 	return this.maskBWCache
 }
 
-func (this *ImageExporter) backgroundImage() (draw.Image, error) {
+func (this *ImageExporter) backgroundImage() (image.Image, error) {
 
 	if this.Background == nil {
 		return nil, nil
 	}
 
-	if this.Background.FileName == "" {
-		return nil, nil
+	if this.Background.FileName != "" {
+
+		file, err := os.Open(this.Background.FileName)
+		if err != nil {
+			return nil, err
+		}
+
+		img, _, err := image.Decode(bufio.NewReader(file))
+
+		if err != nil {
+			return nil, err
+		}
+
+		return imaging.Resize(img, this.Rect.Max.X, this.Rect.Max.Y, this.Algorithm), nil
 	}
 
-	file, err := os.Open(this.Background.FileName)
-	if err != nil {
-		return nil, err
+	if _, _, _, A := this.Background.Color.RGBA(); A > 0 {
+		return image.NewUniform(this.Background.Color), nil
 	}
 
-	img, _, err := image.Decode(bufio.NewReader(file))
-
-	if err != nil {
-		return nil, err
-	}
-
-	return imaging.Resize(img, this.Rect.Max.X, this.Rect.Max.Y, this.Algorithm), nil
+	return nil, nil
 }
 
 func (this *ImageExporter) outline() (image.Image, error) {
@@ -213,14 +219,22 @@ func (this *ImageExporter) grid() (image.Image, error) {
 	nextX := this.Grid.CellWidthPx
 	nextY := this.Grid.CellHeightPx
 
+	var gridColor color.Color
+
+	if this.Grid.Color == nil {
+		gridColor = color.NRGBA{0x44, 0x44, 0x44, 0x55}
+	} else if _, _, _, A := this.Grid.Color.RGBA(); A > 0 {
+		gridColor = this.Grid.Color
+	}
+
 	for curY := 0; curY < this.Rect.Max.Y; curY++ {
 		for curX := 0; curX < this.Rect.Max.X; curX++ {
 			if curX == int(nextX) {
-				img.Set(curX, curY, color.NRGBA{0x44, 0x44, 0x44, 0x55})
+				img.Set(curX, curY, gridColor)
 				nextX += this.Grid.CellWidthPx
 			}
 			if curY == int(nextY) {
-				img.Set(curX, curY, color.NRGBA{0x44, 0x44, 0x44, 0x55})
+				img.Set(curX, curY, gridColor)
 			}
 		}
 		if curY == int(nextY) {
