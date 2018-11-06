@@ -43,6 +43,7 @@ type GridSettings struct {
 
 type BackgroundSettings struct {
 	FileName string
+	Color    color.Color
 }
 
 // ImageExporter exports images to files
