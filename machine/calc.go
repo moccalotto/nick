@@ -73,17 +73,19 @@ func (m *Machine) initCalculator() {
 				return args[0] * 360.0 / (2 * math.Pi)
 			case "rand":
 				rand.Float64()
+			case "randint":
+				return float64(rand.Intn(int(args[0])))
 			case "round":
 				return math.Round(args[0])
 			case "sin":
 				return math.Sin(args[0])
 			case "tan":
 				return math.Tan(args[0])
+			default:
+				m.Throw("Unknown function: %s", callName)
 			}
 
-			m.Throw("Unknown function: %s", callName)
-
-			return math.NaN()
+			panic("This code should never be reached!")
 		},
 	)
 }
