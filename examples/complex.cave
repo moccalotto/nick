@@ -1,8 +1,7 @@
-# seed 60369166530011925
-
 suggest export.type = iterm
 
-suggest background.file = assets/backgrounds/paper_by_darkwood67/old_paper_by_darkwood67.jpeg
+background-file     assets/backgrounds/paper_by_darkwood67/old_paper_by_darkwood67.jpeg
+background-color    rgb(200,200,200)
 
 set $width  between 20 and 60
 set $height between 20 and $width
@@ -25,28 +24,23 @@ set $snow between 30% and 40%
 snow $snow
 
 # Cover 50 to 85% of the border with dots.
-set $border-coverage  between 50% and 85%
-set $border-size      between 5% and 20%
-border $border-size $border-coverage
+set $border_coverage  between 50% and 85%
+set $border_size      between 5% and 20%
+border $border_size $border_coverage
 
-
-set $egress-size between $border-size and 45%
-egress random  $egress-size
 
 evolve B5678/S345678            # run standard escavator
 evolve B5678/S345678            # ...twice
 
 
-set $prune-threshold between 1 and $height
-prune-small-areas $prune-threshold
+egress random @[[ max(2, ceil($height / 10)) ]]
 connect-rooms 5%
-
+prune-small-areas @[[ randint($height * 3 / 5) ]]
 
 loop 3
     scale 1.5
     evolve B5678/S345678            # run standard escavator
 endloop
-
 
 loop 1000
     evolve B5678/S5678              # run edge smoother
