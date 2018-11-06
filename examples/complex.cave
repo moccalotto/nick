@@ -1,7 +1,6 @@
-suggest export.type = image
+suggest export.type = iterm
 
 background-file assets/backgrounds/paper_by_darkwood67/old_paper_by_darkwood67.jpeg
-
 
 set $width  between 20 and 60
 set $height between 20 and $width
