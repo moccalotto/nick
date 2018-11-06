@@ -3,6 +3,7 @@ package exporters
 import (
 	"fmt"
 	"github.com/moccalotto/nick/machine"
+	"github.com/moccalotto/nick/utils"
 	"strconv"
 )
 
@@ -77,8 +78,17 @@ func (e *SuggestionExporter) image() (*ImageExporter, error) {
 		}
 	}
 
+	ie.Background = &BackgroundSettings{}
 	if str, ok := e.Machine.Vars["suggestion.background.file"]; ok {
-		ie.Background = &BackgroundSettings{str}
+		ie.Background.FileName = str
+	}
+
+	if str, ok := e.Machine.Vars["suggestion.background.color"]; ok {
+		if col, err := utils.ParseColorString(str); err == nil {
+			ie.Background.Color = col
+		} else {
+			return nil, err
+		}
 	}
 
 	if tileWidth > 0 && tileHeight > 0 {
