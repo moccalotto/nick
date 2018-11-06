@@ -11,13 +11,9 @@ type Direction int
 const (
 	Random Direction = iota + 1
 	North
-	NorthEast
 	East
-	SouthEast
 	South
-	SouthWest
 	West
-	NorthWest
 )
 
 type Egress struct {
@@ -45,65 +41,37 @@ func (e *Egress) ApplyToField(f *field.Field) {
 	pos := e.Position
 
 	if pos == Random {
-		pos = Direction(e.rng.Intn(8) + 2)
+		pos = Direction(e.rng.Intn(4) + 2)
 	}
 
-	offset := int(e.Radius / 2.0)
+	distanceFromEdge := int(e.Radius * 3.0 / 4.0)
 
 	switch pos {
 	case North:
 		f.SetRadius(
-			f.Width()/2,
-			offset,
-			e.Radius,
-			e.Cell,
-		)
-	case NorthEast:
-		f.SetRadius(
-			f.Width()-offset,
-			offset,
+			e.rng.Intn(f.Width()),
+			distanceFromEdge,
 			e.Radius,
 			e.Cell,
 		)
 	case East:
 		f.SetRadius(
-			f.Width()-1,
-			f.Height()/2,
-			e.Radius,
-			e.Cell,
-		)
-	case SouthEast:
-		f.SetRadius(
-			f.Width()-offset,
-			f.Height()-offset,
+			f.Width()-distanceFromEdge-1,
+			e.rng.Intn(f.Height()),
 			e.Radius,
 			e.Cell,
 		)
 	case South:
 		f.SetRadius(
-			f.Width()/2,
-			f.Height()-offset,
-			e.Radius,
-			e.Cell,
-		)
-	case SouthWest:
-		f.SetRadius(
-			offset,
-			f.Height()-offset,
+			e.rng.Intn(f.Width()),
+			f.Height()-distanceFromEdge-1,
 			e.Radius,
 			e.Cell,
 		)
 	case West:
 		f.SetRadius(
-			offset,
-			f.Height()/2,
-			e.Radius,
-			e.Cell,
-		)
-	case NorthWest:
-		f.SetRadius(
-			offset,
-			offset,
+			distanceFromEdge,
+			e.rng.Intn(f.Height()),
 			e.Radius,
 			e.Cell,
 		)

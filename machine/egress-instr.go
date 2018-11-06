@@ -6,27 +6,32 @@ import (
 )
 
 var dirs map[string]effects.Direction = map[string]effects.Direction{
-	"random":     effects.Random,
-	"north":      effects.North,
-	"N":          effects.North,
-	"north-east": effects.NorthEast,
-	"NE":         effects.NorthEast,
-	"east":       effects.East,
-	"E":          effects.East,
-	"south-east": effects.SouthEast,
-	"SE":         effects.SouthEast,
-	"south":      effects.South,
-	"S":          effects.South,
-	"south-west": effects.SouthWest,
-	"SW":         effects.SouthWest,
-	"west":       effects.West,
-	"W":          effects.West,
-	"north-west": effects.NorthWest,
-	"NW":         effects.NorthWest,
+	"random": effects.Random,
+	"north":  effects.North,
+	"N":      effects.North,
+	"east":   effects.East,
+	"E":      effects.East,
+	"south":  effects.South,
+	"S":      effects.South,
+	"west":   effects.West,
+	"W":      effects.West,
 }
 
 func init() {
 	InstructionHandlers["egress"] = Egress
+	InstructionHandlers["ensure-egress"] = EnsureEgress
+}
+
+func EnsureEgress(m *Machine) {
+	if m.Cave.HasEgress() {
+		return
+	}
+
+	effects.NewEgress(
+		effects.Random,
+		minAsFloat(m.Cave.Width(), m.Cave.Height())*0.1,
+		m.Rng,
+	).ApplyToField(m.Cave)
 }
 
 func Egress(m *Machine) {
