@@ -7,6 +7,7 @@ import (
 func init() {
 	InstructionHandlers["gridwh"] = GridWH
 	InstructionHandlers["grid"] = Grid
+	InstructionHandlers["grid-color"] = GridColor
 }
 
 // pattern:
@@ -58,4 +59,16 @@ func GridWH(m *Machine) {
 
 	m.Vars["suggestion.grid.width"] = width
 	m.Vars["suggestion.grid.height"] = height
+}
+
+// pattern:
+// grid-color rgba(255,255,255,30)
+// grid-color [[#1e1e1e]]
+// grid-color rgb(30,30,30)
+func GridColor(m *Machine) {
+	errorMsg := "Invalid arguments. Usage: 'grid-color [css color definition]'"
+
+	m.Assert(m.HasArg(0), errorMsg)
+
+	m.Vars["suggestion.grid.color"] = m.ArgAsString(0)
 }
