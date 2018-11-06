@@ -21,11 +21,15 @@ func (e *SuggestionExporter) image() (*ImageExporter, error) {
 
 	var err error = nil
 
+	var width, height int
+	var tileWidth, tileHeight float64
+
+	ie.Background = &BackgroundSettings{}
+	ie.Grid = &GridSettings{}
+
 	if fn, ok := e.Machine.Vars["suggestion.export.file"]; ok {
 		ie.FileName = fn
 	}
-
-	var width, height int
 
 	if w, ok := e.Machine.Vars["suggestion.export.width"]; ok {
 		if width, err = strconv.Atoi(w); err != nil {
@@ -46,8 +50,6 @@ func (e *SuggestionExporter) image() (*ImageExporter, error) {
 			return nil, err
 		}
 	}
-
-	var tileWidth, tileHeight float64
 
 	if str, ok := e.Machine.Vars["suggestion.grid.cols"]; ok {
 		if num, err := strconv.ParseFloat(str, 64); err == nil {
@@ -78,7 +80,19 @@ func (e *SuggestionExporter) image() (*ImageExporter, error) {
 		}
 	}
 
-	ie.Background = &BackgroundSettings{}
+	if str, ok := e.Machine.Vars["suggestion.grid.color"]; ok {
+		if col, err := utils.ParseColorString(str); err != nil {
+			return nil, err
+		} else {
+			ie.Grid.Color = col
+		}
+	}
+
+	if tileWidth > 0 && tileHeight > 0 {
+		ie.Grid.CellWidthPx = tileWidth
+		ie.Grid.CellHeightPx = tileHeight
+	}
+
 	if str, ok := e.Machine.Vars["suggestion.background.file"]; ok {
 		ie.Background.FileName = str
 	}
@@ -89,10 +103,6 @@ func (e *SuggestionExporter) image() (*ImageExporter, error) {
 		} else {
 			return nil, err
 		}
-	}
-
-	if tileWidth > 0 && tileHeight > 0 {
-		ie.Grid = &GridSettings{tileWidth, tileHeight}
 	}
 
 	return ie, nil
