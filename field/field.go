@@ -233,3 +233,40 @@ func (f *Field) MapAsyncToNewField(m CellMapper) *Field {
 		Palette: f.Palette,
 	}
 }
+
+func (f *Field) HasEgress() bool {
+	rawCells := f.Cells()
+	h, w := f.Height(), f.Width()
+
+	// check if north face has 1 or more dead cells
+	for x := 0; x < w; x++ {
+		if rawCells[x] == OffCell {
+			return true
+		}
+	}
+
+	// check if east face has 1 or more dead cells
+	x := w - 1
+	for y := 0; y < h; y++ {
+		if rawCells[x+y*w] == OffCell {
+			return true
+		}
+	}
+
+	// check if south face has 1 or more dead cells
+	y := h - 1
+	for x := 0; x < w; x++ {
+		if rawCells[x+y*w] == OffCell {
+			return true
+		}
+	}
+
+	// check if west face has 1 or more dead cells
+	for y := 0; y < h; y++ {
+		if rawCells[y*w] == OffCell {
+			return true
+		}
+	}
+
+	return false
+}
