@@ -1,11 +1,12 @@
-suggest export.type = iterm
+suggest export.type = image
 
-background-file     assets/backgrounds/paper_by_darkwood67/old_paper_by_darkwood67.jpeg
-background-color    rgb(200,200,200)
+background-file assets/backgrounds/paper_by_darkwood67/old_paper_by_darkwood67.jpeg
+
 
 set $width  between 20 and 60
 set $height between 20 and $width
 
+grid-color RGBA(0x44,0x44,0x66,0x55)
 grid $width x $height
 
 init $width x $height               # New, small-ish, canvas.
