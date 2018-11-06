@@ -208,7 +208,7 @@ func (calc *Calculator) evalIdentifier() string {
 
 	res := ""
 
-	for unicode.In(calc.peekRune(), unicode.Letter, unicode.Digit) {
+	for calc.isIdentRune(calc.peekRune()) {
 		res += string(calc.peekRune())
 		calc.next()
 	}
@@ -216,6 +216,12 @@ func (calc *Calculator) evalIdentifier() string {
 	calc.skipWhite()
 
 	return res
+}
+
+func (calc *Calculator) isIdentRune(r rune) bool {
+	return r == '_' ||
+		unicode.IsLetter(r) ||
+		unicode.IsDigit(r)
 }
 
 func (calc *Calculator) nextIsAddOp() bool {
