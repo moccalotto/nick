@@ -9,11 +9,13 @@ import (
 func ParseColorString(s string) (color color.NRGBA, err error) {
 	s = strings.ToLower(s)
 
-	if s[:1] == "#" {
+	if strings.HasPrefix(s, "#") {
 		return ParseHexColorString(s)
-	} else if s[:5] == "rgba(" {
+	}
+	if strings.HasPrefix(s, "rgba(") {
 		return ParseRgbaString(s)
-	} else if s[:4] == "rgb(" {
+	}
+	if strings.HasPrefix(s, "rgb(") {
 		return ParseRgbString(s)
 	}
 
