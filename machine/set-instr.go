@@ -41,14 +41,6 @@ func Set(m *Machine) {
 			f := m.Rng.Float64()*delta + fmin
 			m.Vars[a.StrVal] = strconv.FormatFloat(f, 'f', -1, 64)
 		}
-	case "calc":
-		m.Vars[a.StrVal] = strconv.FormatFloat(
-			m.Calculator().Eval(m.ArgAsString(2)),
-			'f',
-			-1,
-			64,
-		)
-
 	default:
 		m.Throw(errStr)
 	}

@@ -2,11 +2,12 @@ package machine
 
 const (
 	// The enum values of the ArgType
-	StrArg   ArgType = iota + 1 // Arg is just a string
-	IntArg                      // Arg is an integer (can of course also be a float)
-	FloatArg                    // Arg is a float
-	VarArg                      // Arg is a var-reference (i.e. starts with $)
-	CmdArg                      // Arg is a special command (i.e. starts with @)
+	StrArg      ArgType = iota + 1 // Arg is just a string
+	IntArg                         // Arg is an integer (can of course also be a float)
+	FloatArg                       // Arg is a float
+	VarArg                         // Arg is a var-reference (i.e. starts with $)
+	CmdArg                         // Arg is a special command (i.e. starts with @)
+	Calculation                    // Arg is a special command (i.e. starts with @)
 )
 
 // ArgType is an enum that is one of the StrArg, IntArg, FloatArg, CmdArg values

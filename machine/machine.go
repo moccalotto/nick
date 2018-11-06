@@ -81,14 +81,22 @@ func (m *Machine) MustGetCmd(id string) string {
 	case "height":
 		return strconv.Itoa(m.Cave.Height())
 	default:
-		if id[0:5] == "calc:" {
-			return strconv.FormatFloat(
-				m.Calculator().Eval(id[5:]),
-				'f',
-				-1,
-				64,
+		defer func() {
+			r := recover()
+			m.Assert(
+				r == nil,
+				"Error '%s' during calculation [[ %s ]] on line %d.",
+				r,
+				id,
+				m.CurrentInstruction().Line,
 			)
-		}
+		}()
+		return strconv.FormatFloat(
+			m.Calculator().Eval(id),
+			'f',
+			-1,
+			64,
+		)
 		m.Throw("Unknown command special command @%s", id)
 	}
 

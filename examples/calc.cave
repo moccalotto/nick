@@ -1,16 +1,16 @@
 set $width between 40 and 60
 
-set $height calc [[ round($width * 9 / 16) ]]
-set $maxX   calc [[ round($width - 1)  ]]
-set $maxY   calc [[ round($height - 1) ]]
-set $halfX  calc [[ round($width / 2)  ]]
-set $halfY  calc [[ round($height / 2) ]]
+set $height = @[[ round($width * 9 / 16) ]]
+set $maxX   = @[[ round($width - 1)  ]]
+set $maxY   = @[[ round($height - 1) ]]
+set $halfX  = @[[ round($width / 2)  ]]
+set $halfY  = @[[ round($height / 2) ]]
 
 init $width x $height
 
 border 1
 
-set $radius calc [[ min($halfX, $halfY) ]]
+set $radius = @[[ min($halfX, $halfY) ]]
 set $lineCount = 10
 set $currentIteration = 0
 
@@ -18,14 +18,14 @@ set $x = $radius
 set $y = 0
 
 loop $lineCount
-    set $direction calc [[ 360 * $currentIteration / $lineCount ]]
-    set $rad calc deg2rad(direction
+    set $direction = @[[ 360 * $currentIteration / $lineCount ]]
+    set $rad       = @[[ deg2rad($direction) ]]
 
-    set $y calc [[ sin($rad) * $radius ]]
-    set $x calc [[ cos($rad) * $radius ]]
+    set $y = @[[ sin($rad) * $radius ]]
+    set $x = @[[ cos($rad) * $radius ]]
 
 
-    set $currentIteration calc [[ $currentIteration + 1 ]]
+    set $currentIteration = @[[ $currentIteration + 1 ]]
 endloop
 
 # loop 2
