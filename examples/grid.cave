@@ -1,7 +1,5 @@
 suggest export.type      = iterm    # We would like to export an image
-suggest export.format    = gif      # in gif
-suggest export.algorithm = Lanczos  # using the »box« scaling method
-# suggest export.width     = 2048     # with a fixed width
+suggest export.algorithm = Lanczos  # using the »Lanczos« scaling method
 
 set $width  between 30  and 40
 set $height between 20  and 25
