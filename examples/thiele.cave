@@ -3,7 +3,6 @@ init 143 x 143
 
 # Let's output directly to the iterm
 suggest export.type  = iterm
-suggest export.format  = gif
 
 # Print the pattern
 thiele 71
