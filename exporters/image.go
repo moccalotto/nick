@@ -7,17 +7,16 @@ Considerations:
 		Patterns in filename (such as %rand %Y-%m-%d-%H:%i:s or similar)
 		Sequenced filenames (map-%seq that auto-detects previous maps)
 
-	Define colors via strings á la https://github.com/go-playground/colors
-		must support image/color package
-
 	Background images:
 		Tiled images
-		Offsets for tiled images
+		Offsets for (tiled or stretched) backgrounds
 		Separate images for areas that are on or off
 		Cropping background images to use only a portion of it
 		(disintegration/imaging can do cropping)
 
-	Customized grid color and offset
+	Customized grid offset
+
+	ISO-3D
 */
 
 import (
