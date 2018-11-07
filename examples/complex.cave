@@ -1,54 +1,72 @@
+# Large initial sizes yields multi-room or
+# complex caves with stalactites/columns, etc.
+# Small initial sizes often yield simple caves
+# Examples:
+# 20x20: simple, one-room caves
+# 60x20: complex one-to-two room caves
+#        (depending on how much snow is added)
+
 suggest export.type = iterm
 
 background-file assets/backgrounds/paper_by_darkwood67/old_paper_by_darkwood67.jpeg
 
-set $width  between 20 and 60
-set $height between 20 and $width
+set $width              between 25 and 70
+set $height             between 25 and $width
+set $initial_coverage   between 30% and 45%
+set $min_area_size      between 1 and @[[ randint(ceil($height / 6)) ]]
+set $egress_count       between 1 and @[[ randint(randint(randint(4))) + 1 ]] # number between 1 and 4, where 1 is the most likely
+set $egress_size        between 2 and @[[ max(2, randint(ceil($height / 6))) ]]
+
+init $width x $height
+
 
 grid-color RGBA(0x44,0x44,0x66,0x55)
-grid $width x $height
-
-init $width x $height               # New, small-ish, canvas.
-                                    # Large initial sizes yields multi-room or
-                                    # complex caves with stalactites/columns, etc.
-                                    # Small initial sizes often yield simple caves
-                                    # Examples:
-                                    # 20x20: simple, one-room caves
-                                    # 60x20: complex one-to-two room caves
-                                    #        (depending on how much snow is added)
+grid @width x @height
 
 
-# Add random dots. 30% is relatively simple caves,
-# whereas 40% gives more complex caves
-set $snow between 30% and 40%
-snow $snow
+snow $initial_coverage
 
-# Cover 50 to 85% of the border with dots.
-set $border_coverage  between 50% and 85%
-set $border_size      between 5% and 20%
-border $border_size $border_coverage
+border 3 100%
+border 4  30%
+border 5  10%
+
+# standard escavator
+evolve B5678/S345678
+
+loop $egress_count
+    egress random $egress_size
+endloop
 
 
-evolve B5678/S345678            # run standard escavator
-evolve B5678/S345678            # ...twice
-
-
-egress random @[[ max(2, ceil($height / 10)) ]]
-connect-rooms 5%
 prune-small-areas @[[ randint($height * 3 / 5) ]]
 
 loop 3
+
+    # (try to) make sure that all areas are accessible
+    connect-rooms 6%
+
     scale 1.5
-    evolve B5678/S345678            # run standard escavator
+
+    # standard escavator
+    evolve B5678/S345678
 endloop
 
 loop 1000
-    evolve B5678/S5678              # run edge smoother
-    if @height > 934
+    # smooth edges
+    evolve B5678/S5678
+
+    scale 1.5
+
+    # smooth edges
+    evolve B5678/S5678
+
+    if @cells > 2000000
         break-loop
     endif
 
-    scale 1.5
-    evolve B5678/S5678              # ...twice
-
+    if @height > 960
+        break-loop
+    endif
 endloop
+
+border @[[ $height ]] 100% (off)
