@@ -72,7 +72,7 @@ func (m *Machine) initCalculator() {
 			case "rad2deg":
 				return args[0] * 360.0 / (2 * math.Pi)
 			case "rand":
-				rand.Float64()
+				return rand.Float64()
 			case "randint":
 				return float64(rand.Intn(int(args[0])))
 			case "round":
