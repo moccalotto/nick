@@ -46,10 +46,13 @@ func (e *Egress) ApplyToField(f *field.Field) {
 
 	distanceFromEdge := int(e.Radius * 3.0 / 4.0)
 
+	randX := e.rng.Intn(f.Width()/2) + f.Width()/4
+	randY := e.rng.Intn(f.Height()/2) + f.Height()/4
+
 	switch pos {
 	case North:
 		f.SetRadius(
-			e.rng.Intn(f.Width()),
+			randX,
 			distanceFromEdge,
 			e.Radius,
 			e.Cell,
@@ -57,13 +60,13 @@ func (e *Egress) ApplyToField(f *field.Field) {
 	case East:
 		f.SetRadius(
 			f.Width()-distanceFromEdge-1,
-			e.rng.Intn(f.Height()),
+			randY,
 			e.Radius,
 			e.Cell,
 		)
 	case South:
 		f.SetRadius(
-			e.rng.Intn(f.Width()),
+			randX,
 			f.Height()-distanceFromEdge-1,
 			e.Radius,
 			e.Cell,
@@ -71,7 +74,7 @@ func (e *Egress) ApplyToField(f *field.Field) {
 	case West:
 		f.SetRadius(
 			distanceFromEdge,
-			e.rng.Intn(f.Height()),
+			randY,
 			e.Radius,
 			e.Cell,
 		)
