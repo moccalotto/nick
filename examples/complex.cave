@@ -69,4 +69,6 @@ loop 1000
     endif
 endloop
 
-border @[[ $height ]] 100% (off)
+set $currentHeight = @height
+
+border @[[ $currentHeight / $height ]] 100% (off)
