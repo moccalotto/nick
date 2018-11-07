@@ -80,6 +80,8 @@ func (m *Machine) MustGetCmd(id string) string {
 		return strconv.Itoa(m.Cave.Width())
 	case "height":
 		return strconv.Itoa(m.Cave.Height())
+	case "cells":
+		return strconv.Itoa(len(m.Cave.Cells()))
 	default:
 		defer func() {
 			r := recover()
