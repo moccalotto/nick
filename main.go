@@ -49,7 +49,12 @@ func main() {
 		fmt.Printf("Error: %s\n", err)
 	}
 
-	fmt.Printf("Seed: %d\n", m.Seed)
-	fmt.Printf("Execution Time: %f seconds\n", runtime.Seconds())
-	fmt.Printf("Export Time:    %f seconds\n", exportTime.Seconds())
+	fmt.Printf("% -30s = %d\n", "Seed", m.Seed)
+	fmt.Printf("% -30s = %f seconds\n", "Execution Time", runtime.Seconds())
+	fmt.Printf("% -30s = %f seconds\n", "Export Time", exportTime.Seconds())
+
+	for n, v := range m.Vars {
+		n = "$" + n
+		fmt.Printf("% -30s = %s\n", n, v)
+	}
 }
