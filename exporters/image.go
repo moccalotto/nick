@@ -16,6 +16,8 @@ Considerations:
 
 	Customized grid offset
 
+	Turn small areas into lakes?
+
 	ISO-3D
 */
 
