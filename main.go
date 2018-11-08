@@ -42,7 +42,7 @@ func main() {
 	runtime := time.Now().Sub(m.StartedAt)
 
 	exportStart := time.Now()
-	err := exporters.NewSuggestionExporter(m, exporters.NewTextExporter(m)).Export()
+	err := exporters.NewDefaultExporter(m, "text").Export()
 	exportTime := time.Now().Sub(exportStart)
 
 	if err != nil {

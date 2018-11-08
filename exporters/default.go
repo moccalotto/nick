@@ -7,16 +7,16 @@ import (
 	"strconv"
 )
 
-type SuggestionExporter struct {
+type DefaultExporter struct {
 	Machine  *machine.Machine
-	Fallback Exporter
+	Fallback string
 }
 
-func NewSuggestionExporter(m *machine.Machine, fallback Exporter) *SuggestionExporter {
-	return &SuggestionExporter{m, fallback}
+func NewDefaultExporter(m *machine.Machine, fallback string) *DefaultExporter {
+	return &DefaultExporter{m, fallback}
 }
 
-func (e *SuggestionExporter) image() (*ImageExporter, error) {
+func (e *DefaultExporter) image() (*ImageExporter, error) {
 	ie := NewImageExporter(e.Machine)
 
 	var err error = nil
@@ -108,7 +108,7 @@ func (e *SuggestionExporter) image() (*ImageExporter, error) {
 	return ie, nil
 }
 
-func (e *SuggestionExporter) iterm() (*ItermExporter, error) {
+func (e *DefaultExporter) iterm() (*ItermExporter, error) {
 	if i, e := e.image(); e == nil {
 		return NewItermExporter(i), nil
 	} else {
@@ -116,7 +116,7 @@ func (e *SuggestionExporter) iterm() (*ItermExporter, error) {
 	}
 }
 
-func (e *SuggestionExporter) text() (*TextExporter, error) {
+func (e *DefaultExporter) text() (*TextExporter, error) {
 	te := NewTextExporter(e.Machine)
 
 	if fn, ok := e.Machine.Vars[".export.file"]; ok {
@@ -132,16 +132,19 @@ func (e *SuggestionExporter) text() (*TextExporter, error) {
 	return te, nil
 }
 
-func (e *SuggestionExporter) Export() error {
-	ex, ok := e.Machine.Vars[".export.type"]
+func (e *DefaultExporter) Export() error {
 
-	if !ok {
-		return e.Fallback.Export()
+	var exporterName string
+	var exporter Exporter
+	var err error
+
+	exporterName = e.Machine.Vars[".export.type"]
+
+	if exporterName == "" {
+		exporterName = e.Fallback
 	}
 
-	var exporter Exporter = nil
-	var err error = nil
-	switch ex {
+	switch exporterName {
 	case "image":
 		exporter, err = e.image()
 	case "iterm":
@@ -149,7 +152,7 @@ func (e *SuggestionExporter) Export() error {
 	case "text":
 		exporter, err = e.text()
 	default:
-		return fmt.Errorf("Unknown exporter: %s", ex)
+		return fmt.Errorf("Unknown exporter: %s", exporterName)
 	}
 
 	if err != nil {
