@@ -19,7 +19,6 @@ set $egress_size        between 2 and @[[ max(2, randint(ceil($height / 6))) ]]
 
 init $width x $height
 
-
 grid-color RGBA(0x44,0x44,0x66,0x55)
 grid @width x @height
 
@@ -37,8 +36,8 @@ loop $egress_count
     egress random $egress_size
 endloop
 
-
-prune-small-areas @[[ randint($height * 3 / 5) ]]
+# Remove tiny rooms/holes
+prune-small-areas $min_area_size
 
 loop 3
 
