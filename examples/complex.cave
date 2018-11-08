@@ -8,8 +8,6 @@
 
 suggest export.type = iterm
 
-background-file assets/backgrounds/paper_by_darkwood67/old_paper_by_darkwood67.jpeg
-
 set $width              between 25 and 70
 set $height             between 25 and $width
 set $initial_coverage   between 30% and 45%
@@ -17,11 +15,13 @@ set $min_area_size      between 1 and @[[ randint(ceil($height / 6)) ]]
 set $egress_count       between 1 and @[[ randint(randint(randint(4))) + 1 ]] # number between 1 and 4, where 1 is the most likely
 set $egress_size        between 2 and @[[ max(2, randint(ceil($height / 6))) ]]
 
+background-file  assets/backgrounds/paper_by_darkwood67/old_paper_by_darkwood67.jpeg
+wall-color       RGBA(0x44,0x44,0x66,0x55)
+grid-color       RGBA(0x44,0x44,0x66,0x55)
+grid             $width x $height
+
+
 init $width x $height
-
-grid-color RGBA(0x44,0x44,0x66,0x55)
-grid @width x @height
-
 
 snow $initial_coverage
 
