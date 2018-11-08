@@ -15,7 +15,7 @@ func BackgroundFile(m *Machine) {
 	errorMsg := "Invalid arguments. Usage: 'background-file [filename]'"
 
 	m.Assert(m.HasArg(0), errorMsg)
-	m.Vars["suggestion.background.file"] = m.ArgAsString(0)
+	m.Vars[".background.file"] = m.ArgAsString(0)
 }
 
 // patterns:
@@ -34,5 +34,5 @@ func BackgroundColor(m *Machine) {
 		color = "rgba(0, 0, 0, 0)"
 	}
 
-	m.Vars["suggestion.background.color"] = color
+	m.Vars[".background.color"] = color
 }

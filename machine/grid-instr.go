@@ -32,8 +32,8 @@ func Grid(m *Machine) {
 		m.Throw(errorMsg)
 	}
 
-	m.Vars["suggestion.grid.cols"] = cols
-	m.Vars["suggestion.grid.rows"] = rows
+	m.Vars[".grid.cols"] = cols
+	m.Vars[".grid.rows"] = rows
 }
 
 // pattern:
@@ -58,8 +58,8 @@ func GridWH(m *Machine) {
 		m.Throw(errorMsg)
 	}
 
-	m.Vars["suggestion.grid.width"] = width
-	m.Vars["suggestion.grid.height"] = height
+	m.Vars[".grid.width"] = width
+	m.Vars[".grid.height"] = height
 }
 
 // pattern:
@@ -77,5 +77,5 @@ func GridColor(m *Machine) {
 		color = "rgba(0, 0, 0, 0)"
 	}
 
-	m.Vars["suggestion.grid.color"] = color
+	m.Vars[".grid.color"] = color
 }

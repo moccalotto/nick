@@ -27,17 +27,17 @@ func (e *SuggestionExporter) image() (*ImageExporter, error) {
 	ie.Background = &BackgroundSettings{}
 	ie.Grid = &GridSettings{}
 
-	if fn, ok := e.Machine.Vars["suggestion.export.file"]; ok {
+	if fn, ok := e.Machine.Vars[".export.file"]; ok {
 		ie.FileName = fn
 	}
 
-	if w, ok := e.Machine.Vars["suggestion.export.width"]; ok {
+	if w, ok := e.Machine.Vars[".export.width"]; ok {
 		if width, err = strconv.Atoi(w); err != nil {
 			return nil, err
 		}
 	}
 
-	if h, ok := e.Machine.Vars["suggestion.export.height"]; ok {
+	if h, ok := e.Machine.Vars[".export.height"]; ok {
 		if height, err = strconv.Atoi(h); err != nil {
 			return nil, err
 		}
@@ -45,34 +45,34 @@ func (e *SuggestionExporter) image() (*ImageExporter, error) {
 
 	ie.Rect = ie.makeRect(width, height)
 
-	if str, ok := e.Machine.Vars["suggestion.export.algorithm"]; ok {
+	if str, ok := e.Machine.Vars[".export.algorithm"]; ok {
 		if ie.Algorithm, err = ie.parseAlgorithmString(str); err != nil {
 			return nil, err
 		}
 	}
 
-	if str, ok := e.Machine.Vars["suggestion.grid.cols"]; ok {
+	if str, ok := e.Machine.Vars[".grid.cols"]; ok {
 		if num, err := strconv.ParseFloat(str, 64); err == nil {
 			tileWidth = float64(ie.Rect.Max.X) / num
 		} else {
 			return nil, err
 		}
 	}
-	if str, ok := e.Machine.Vars["suggestion.grid.rows"]; ok {
+	if str, ok := e.Machine.Vars[".grid.rows"]; ok {
 		if num, err := strconv.ParseFloat(str, 64); err == nil {
 			tileHeight = float64(ie.Rect.Max.Y) / num
 		} else {
 			return nil, err
 		}
 	}
-	if str, ok := e.Machine.Vars["suggestion.grid.width"]; ok {
+	if str, ok := e.Machine.Vars[".grid.width"]; ok {
 		if num, err := strconv.ParseFloat(str, 64); err == nil {
 			tileWidth = num
 		} else {
 			return nil, err
 		}
 	}
-	if str, ok := e.Machine.Vars["suggestion.grid.height"]; ok {
+	if str, ok := e.Machine.Vars[".grid.height"]; ok {
 		if num, err := strconv.ParseFloat(str, 64); err == nil {
 			tileHeight = num
 		} else {
@@ -80,7 +80,7 @@ func (e *SuggestionExporter) image() (*ImageExporter, error) {
 		}
 	}
 
-	if str, ok := e.Machine.Vars["suggestion.grid.color"]; ok {
+	if str, ok := e.Machine.Vars[".grid.color"]; ok {
 		if col, err := utils.ParseColorString(str); err != nil {
 			return nil, err
 		} else {
@@ -93,11 +93,11 @@ func (e *SuggestionExporter) image() (*ImageExporter, error) {
 		ie.Grid.CellHeightPx = tileHeight
 	}
 
-	if str, ok := e.Machine.Vars["suggestion.background.file"]; ok {
+	if str, ok := e.Machine.Vars[".background.file"]; ok {
 		ie.Background.FileName = str
 	}
 
-	if str, ok := e.Machine.Vars["suggestion.background.color"]; ok {
+	if str, ok := e.Machine.Vars[".background.color"]; ok {
 		if col, err := utils.ParseColorString(str); err == nil {
 			ie.Background.Color = col
 		} else {
@@ -119,13 +119,13 @@ func (e *SuggestionExporter) iterm() (*ItermExporter, error) {
 func (e *SuggestionExporter) text() (*TextExporter, error) {
 	te := NewTextExporter(e.Machine)
 
-	if fn, ok := e.Machine.Vars["suggestion.export.file"]; ok {
+	if fn, ok := e.Machine.Vars[".export.file"]; ok {
 		te.FileName = fn
 	}
-	if l, ok := e.Machine.Vars["suggestion.export.on"]; ok {
+	if l, ok := e.Machine.Vars[".export.on"]; ok {
 		te.LiveStr = l
 	}
-	if d, ok := e.Machine.Vars["suggestion.export.off"]; ok {
+	if d, ok := e.Machine.Vars[".export.off"]; ok {
 		te.OffStr = d
 	}
 
@@ -133,7 +133,7 @@ func (e *SuggestionExporter) text() (*TextExporter, error) {
 }
 
 func (e *SuggestionExporter) Export() error {
-	ex, ok := e.Machine.Vars["suggestion.export.type"]
+	ex, ok := e.Machine.Vars[".export.type"]
 
 	if !ok {
 		return e.Fallback.Export()
