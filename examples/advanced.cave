@@ -16,7 +16,7 @@ set $egress_count       between 1 and @[[ randint(randint(randint(4))) + 1 ]] # 
 set $egress_size        between 2 and @[[ max(2, randint(ceil($height / 6))) ]]
 
 background-file  assets/backgrounds/paper_by_darkwood67/old_paper_by_darkwood67.jpeg
-wall-color       RGBA(0x44,0x44,0x66,0x55)
+wall-color       RGBA(0x44,0x44,0x44,0xcc)
 grid-color       RGBA(0x44,0x44,0x66,0x55)
 grid             $width x $height
 

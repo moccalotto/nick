@@ -105,6 +105,14 @@ func (e *DefaultExporter) image() (*ImageExporter, error) {
 		}
 	}
 
+	if str, ok := e.Machine.Vars[".wall.color"]; ok {
+		if col, err := utils.ParseColorString(str); err != nil {
+			return nil, err
+		} else {
+			ie.WallColor = col
+		}
+	}
+
 	return ie, nil
 }
 
