@@ -29,7 +29,7 @@ border 3 100%
 border 4  30%
 border 5  10%
 
-# standard escavator
+# standard excavator
 evolve B5678/S345678
 
 loop $egress_count
@@ -39,16 +39,15 @@ endloop
 # Remove tiny rooms/holes
 prune-small-areas $min_area_size
 
+# Scale up and excavate
 loop 3
-
-    # (try to) make sure that all areas are accessible
-    connect-rooms 6%
-
     scale 1.5
-
-    # standard escavator
+    # standard excavator
     evolve B5678/S345678
 endloop
+
+# Dig tunnels between all separated rooms
+connect-rooms 3%
 
 loop 1000
     # smooth edges
