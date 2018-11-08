@@ -46,6 +46,10 @@ type GridSettings struct {
 type BackgroundSettings struct {
 	FileName string
 	Color    color.Color
+	// Tiling   bool
+	// Bounds   *image.Rectangle
+	// OffsetX  int
+	// OffsetY  int
 }
 
 // ImageExporter exports images to files
