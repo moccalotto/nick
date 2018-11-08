@@ -1,6 +1,10 @@
 package field
 
 func (f *Field) GetAllRooms() []Area {
+	return f.GetAllRoomsAdv(len(f.s))
+
+}
+func (f *Field) GetAllRoomsAdv(stopAfterNRooms int) []Area {
 	result := []Area{}
 
 	// buffer to ensure that we don't look at the same area twice
@@ -50,6 +54,9 @@ func (f *Field) GetAllRooms() []Area {
 
 			if len(r) > 0 {
 				result = append(result, r)
+				if len(result) >= stopAfterNRooms {
+					return result
+				}
 			}
 		}
 	}

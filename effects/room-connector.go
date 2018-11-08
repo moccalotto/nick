@@ -5,13 +5,15 @@ import (
 )
 
 type RoomConnector struct {
-	TunnelRadius  float64
-	MaxRooms      int
-	MaxIterations int
+	TunnelRadius float64
+	MaxRooms     int
 }
 
 func NewRoomConnector(tunnelRadius float64, maxRooms, maxIterations int) *RoomConnector {
-	return &RoomConnector{tunnelRadius, maxRooms, maxIterations}
+	if maxRooms < 1 {
+		panic("maxRooms must be ≥ 1")
+	}
+	return &RoomConnector{tunnelRadius, maxRooms}
 }
 
 // Create a tunnel between room1 and room2
@@ -34,27 +36,37 @@ func (rc *RoomConnector) connect(f *field.Field, room1, room2 field.Area) {
 }
 
 // Connect all rooms in field
+// Algorithm:
+// let MaxRooms = the max number of rooms allowed in the output
+// let roomCount = the number of rooms found
+// if roomCount <= MaxRooms
+//     stop
+// else
+//     create tunnel between two arbitrary rooms
+
 func (rc *RoomConnector) ApplyToField(f *field.Field) {
-	for i := 0; i < rc.MaxIterations; i++ {
-		roomCount := 0
 
+	for {
+		// we need to fetch all rooms on every iteration
+		// because tunnelling from one room to another
+		// may have connected other rooms as well.
 		rooms := f.GetAllRooms()
+		roomCount := len(rooms)
 
-		// We have reached the allowed number of rooms, exit
-		if len(rooms) <= rc.MaxRooms {
+		if roomCount <= rc.MaxRooms {
 			return
 		}
 
-		for _, room1 := range rooms {
-			roomCount++
-			for _, room2 := range rooms {
-				if room1[0] == room2[0] {
-					continue // don't connect a room to itself.
-				}
+		lastRoom := rooms[roomCount-1]
+		closestRoom, _, _, _ := lastRoom.FindClosestArea(rooms[0 : roomCount-1])
 
-				rc.connect(f, room1, room2)
-			}
+		rc.connect(f, lastRoom, closestRoom)
+
+		// semantically, this statement has no effect,
+		// it is only there for optimization purposes.
+		if roomCount == rc.MaxRooms+1 {
+			return
 		}
-
 	}
+
 }
