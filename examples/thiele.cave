@@ -8,7 +8,7 @@ suggest export.type  = iterm
 thiele 71
 
 ## If we're only exporting to raw text, we won't do any scaling.
-if $suggestion.export.type == text
+if $.export.type == text
     stop!
 endif
 
