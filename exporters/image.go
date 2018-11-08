@@ -69,7 +69,6 @@ func NewImageExporter(m *machine.Machine) *ImageExporter {
 		FileName:  "map.png",
 		Algorithm: imaging.Lanczos,
 		Rect:      m.Cave.Bounds(),
-		// WallColor: color.NRGBA{255, 0, 0, 144},
 	}
 
 	return &exporter
