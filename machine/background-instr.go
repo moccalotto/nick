@@ -1,5 +1,9 @@
 package machine
 
+import (
+	"strings"
+)
+
 func init() {
 	InstructionHandlers["background-file"] = BackgroundFile
 	InstructionHandlers["background-color"] = BackgroundColor
@@ -24,5 +28,11 @@ func BackgroundColor(m *Machine) {
 
 	m.Assert(m.HasArg(0), errorMsg)
 
-	m.Vars["suggestion.background.color"] = m.ArgAsString(0)
+	color := strings.ToLower(m.ArgAsString(0))
+
+	if color == "none" {
+		color = "rgba(0, 0, 0, 0)"
+	}
+
+	m.Vars["suggestion.background.color"] = color
 }
