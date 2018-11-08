@@ -202,7 +202,7 @@ func (this *ImageExporter) outline() (image.Image, error) {
 		return nil, nil
 	}
 
-	outliner := effects.NewAutomaton("B678/S1234567")
+	outliner := effects.NewAutomaton("B12345678/S1234567")
 
 	f := this.Machine.Cave.MapAsyncToNewField(outliner.NextCellState)
 	f.Palette = field.InvertedBinaryPalette()
@@ -276,7 +276,7 @@ func (this *ImageExporter) applyGrid(img draw.Image) error {
 	return nil
 }
 
-func (this *ImageExporter) applyOutline(img draw.Image) error {
+func (this *ImageExporter) applyWallOutline(img draw.Image) error {
 	if outline, err := this.outline(); err != nil {
 		return err
 	} else if outline != nil {
@@ -307,7 +307,7 @@ func (this *ImageExporter) GetImage() (image.Image, error) {
 		return nil, err
 	}
 
-	if err := this.applyOutline(img); err != nil {
+	if err := this.applyWallOutline(img); err != nil {
 		return nil, err
 	}
 
