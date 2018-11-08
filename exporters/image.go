@@ -299,9 +299,17 @@ func (this *ImageExporter) GetImage() (image.Image, error) {
 	// new black image of the given dimensions
 	img := image.NewRGBA(this.Rect)
 
-	this.applyBackground(img)
-	this.applyGrid(img)
-	this.applyOutline(img)
+	if err := this.applyBackground(img); err != nil {
+		return nil, err
+	}
+
+	if err := this.applyGrid(img); err != nil {
+		return nil, err
+	}
+
+	if err := this.applyOutline(img); err != nil {
+		return nil, err
+	}
 
 	return img, nil
 }
