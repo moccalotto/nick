@@ -79,9 +79,14 @@ func (f *Field) Get(x, y int) (Cell, error) {
 
 // Turn on all cells in the area
 func (f *Field) SetRadius(x, y int, r float64, c Cell) {
-	points := (Point{x, y}).WithinRadius(r)
+	area := (Point{x, y}).WithinRadius(r)
 
-	for _, p := range points {
+	f.SetArea(area, c)
+}
+
+// Set multiple points
+func (f *Field) SetArea(area Area, c Cell) {
+	for _, p := range area {
 		_ = f.Set(p.X, p.Y, c)
 	}
 }
