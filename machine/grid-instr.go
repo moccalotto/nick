@@ -2,6 +2,7 @@ package machine
 
 import (
 	"strconv"
+	"strings"
 )
 
 func init() {
@@ -70,5 +71,11 @@ func GridColor(m *Machine) {
 
 	m.Assert(m.HasArg(0), errorMsg)
 
-	m.Vars["suggestion.grid.color"] = m.ArgAsString(0)
+	color := strings.ToLower(m.ArgAsString(0))
+
+	if color == "none" {
+		color = "rgba(0, 0, 0, 0)"
+	}
+
+	m.Vars["suggestion.grid.color"] = color
 }
