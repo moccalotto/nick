@@ -67,7 +67,7 @@ func NewImageExporter(m *machine.Machine) *ImageExporter {
 		FileName:  "map.png",
 		Algorithm: imaging.Lanczos,
 		Rect:      m.Cave.Bounds(),
-		WallColor: color.NRGBA{255, 0, 0, 144},
+		// WallColor: color.NRGBA{255, 0, 0, 144},
 	}
 
 	return &exporter
@@ -195,6 +195,10 @@ func (this *ImageExporter) backgroundImage() (image.Image, error) {
 func (this *ImageExporter) outline() (image.Image, error) {
 
 	if this.WallColor == nil {
+		return nil, nil
+	}
+
+	if _, _, _, A := this.WallColor.RGBA(); A == 0 {
 		return nil, nil
 	}
 
