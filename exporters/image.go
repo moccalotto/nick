@@ -190,6 +190,10 @@ func (this *ImageExporter) backgroundImage() (image.Image, error) {
 		return imaging.Resize(img, this.Rect.Max.X, this.Rect.Max.Y, this.Algorithm), nil
 	}
 
+	if this.Background.Color == nil {
+		return nil, nil
+	}
+
 	if _, _, _, A := this.Background.Color.RGBA(); A > 0 {
 		return image.NewUniform(this.Background.Color), nil
 	}
