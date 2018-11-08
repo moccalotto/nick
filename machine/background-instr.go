@@ -19,10 +19,10 @@ func BackgroundFile(m *Machine) {
 }
 
 // patterns:
-//   background #caa
-//   background #fafafa
-//   background rgb(255, 123, 233)
-//   background rgba(255, 123, 233, 50)
+//   background-color #caa
+//   background-color #fafafa
+//   background-color rgb(255, 123, 233)
+//   background-color rgba(255, 123, 233, 50)
 func BackgroundColor(m *Machine) {
 	errorMsg := "Invalid arguments. Usage: 'background-color [css color definition]'"
 
