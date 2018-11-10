@@ -3,6 +3,7 @@ package machine
 import (
 	"errors"
 	"fmt"
+	"github.com/moccalotto/nick/field"
 	"log"
 	"math/bits"
 	"math/rand"
@@ -27,6 +28,10 @@ func MachineFromScript(p string) *Machine {
 		Tape:      scriptToInstructions(p),
 		Exception: DefaultExceptionHandler,
 		Vars:      make(VarBag),
+		CellNames: map[string]field.Cell{
+			"Off": field.OffCell,
+			"On":  field.OnCell,
+		},
 	}
 }
 
