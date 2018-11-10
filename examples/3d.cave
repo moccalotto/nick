@@ -1,0 +1,8 @@
+init 49 x 49
+
+suggest export.type = 3d
+
+snow 40%
+
+evolve B5678/S345678
+evolve B5678/S345678

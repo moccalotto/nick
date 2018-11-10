@@ -7,20 +7,29 @@ import (
 	"github.com/g3n/engine/material"
 	"github.com/g3n/engine/math32"
 	"github.com/g3n/engine/util/application"
+	"github.com/moccalotto/nick/field"
+	"github.com/moccalotto/nick/machine"
+	"runtime"
 )
 
 type ThreeDExporter struct {
-	Width  int
-	Height int
-	Title  string
+	Width   int
+	Height  int
+	Title   string
+	Machine *machine.Machine
 }
 
-func NewThreeDExporter() *ThreeDExporter {
+func NewThreeDExporter(m *machine.Machine) *ThreeDExporter {
 	return &ThreeDExporter{
-		Width:  1440,
-		Height: 900,
-		Title:  "Nick",
+		Width:   1440,
+		Height:  900,
+		Title:   "Nick",
+		Machine: m,
 	}
+}
+
+func init() {
+	runtime.LockOSThread()
 }
 
 func (e *ThreeDExporter) Export() error {
@@ -31,11 +40,28 @@ func (e *ThreeDExporter) Export() error {
 		Height: 900,
 	})
 
-	// Create a blue torus and add it to the scene
-	geom := geometry.NewBox(1.0, 1.0, 1.0)
-	mat := material.NewPhong(math32.NewColor("DarkBlue"))
-	mesh := graphic.NewMesh(geom, mat)
-	app.Scene().Add(mesh)
+	sizeFactor := float32(0.75)
+	offX := -float32(e.Machine.Cave.Width()) / 2.0  // width-offset
+	offY := float32(0.0)                            // elevation offset
+	offZ := -float32(e.Machine.Cave.Height()) / 2.0 // height-offset
+
+	e.Machine.Cave.Walk(func(x, y int, c field.Cell) {
+		elevation := float32(c)
+		if elevation <= 0.0001 {
+			return
+		}
+
+		mat := material.NewPhong(math32.NewColor("DarkBlue"))
+		geom := geometry.NewBox(sizeFactor, elevation*sizeFactor, sizeFactor)
+		mesh := graphic.NewMesh(geom, mat)
+		mesh.SetPosition(
+			float32(x)+offX,
+			sizeFactor*elevation/2+offY,
+			float32(y)+offZ,
+		)
+		app.Scene().Add(mesh)
+
+	})
 
 	// Add lights to the scene
 	ambientLight := light.NewAmbient(&math32.Color{1.0, 1.0, 1.0}, 0.8)
@@ -49,6 +75,12 @@ func (e *ThreeDExporter) Export() error {
 	axis := graphic.NewAxisHelper(0.5)
 	app.Scene().Add(axis)
 
-	app.CameraPersp().SetPosition(0, 0, 3)
-	return app.Run()
+	// Creates a grid helper and saves its pointer in the test state
+	grid := graphic.NewGridHelper(50, 1, &math32.Color{0.4, 0.4, 0.4})
+	app.Scene().Add(grid)
+
+	app.CameraPersp().SetPosition(0, 10, 0)
+	app.Run()
+
+	return nil
 }

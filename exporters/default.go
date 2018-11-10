@@ -160,7 +160,7 @@ func (e *DefaultExporter) Export() error {
 	case "text":
 		exporter, err = e.text()
 	case "3d":
-		exporter = NewThreeDExporter()
+		exporter = NewThreeDExporter(e.Machine)
 	default:
 		return fmt.Errorf("Unknown exporter: %s", exporterName)
 	}
