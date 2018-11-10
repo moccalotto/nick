@@ -159,6 +159,8 @@ func (e *DefaultExporter) Export() error {
 		exporter, err = e.iterm()
 	case "text":
 		exporter, err = e.text()
+	case "3d":
+		exporter = NewThreeDExporter()
 	default:
 		return fmt.Errorf("Unknown exporter: %s", exporterName)
 	}
