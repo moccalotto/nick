@@ -11,7 +11,10 @@ func (c Cell) On() bool {
 }
 
 func (c Cell) Toggled() Cell {
-	return c ^ 1
+	if c > 0 {
+		return OffCell
+	}
+	return OnCell
 }
 
 func (c Cell) AsInt() int {
