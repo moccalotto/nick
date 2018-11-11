@@ -34,7 +34,7 @@ func (m *SmallAreaCRemover) ApplyToField(f *field.Field) {
 			toggled := rawCells[x+y*w].Toggled()
 
 			// retrieve all cells in the given area.
-			a, err := f.GetAreaAround(x, y)
+			a, err := f.AreaAround(x, y)
 
 			if err != nil {
 				panic(err)

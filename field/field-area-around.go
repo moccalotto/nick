@@ -1,6 +1,6 @@
 package field
 
-func (f *Field) GetAreaAround(x, y int) (Area, error) {
+func (f *Field) AreaAround(x, y int) (Area, error) {
 	w := f.Width()
 	h := f.Height()
 	queue := make(Area, 1, 100)

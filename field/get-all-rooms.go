@@ -1,11 +1,10 @@
 package field
 
-func (f *Field) GetAllRooms() []Area {
-	return f.GetAllRoomsAdv(len(f.s))
+func (f *Field) AllRoomWalls() []Area {
+	return f.AllRoomWallsAdv(len(f.s))
 
 }
-func (f *Field) GetAllRoomsAdv(stopAfterNRooms int) []Area {
-	result := []Area{}
+func (f *Field) AllRoomWallsAdv(stopAfterNRooms int) (result []Area) {
 
 	// buffer to ensure that we don't look at the same area twice
 	inspected := make([]bool, len(f.s))
@@ -23,7 +22,7 @@ func (f *Field) GetAllRoomsAdv(stopAfterNRooms int) []Area {
 				continue
 			}
 
-			area, _ := f.GetAreaAround(x, y)
+			area, _ := f.AreaAround(x, y)
 
 			r := Area{}
 
@@ -55,11 +54,11 @@ func (f *Field) GetAllRoomsAdv(stopAfterNRooms int) []Area {
 			if len(r) > 0 {
 				result = append(result, r)
 				if len(result) >= stopAfterNRooms {
-					return result
+					return
 				}
 			}
 		}
 	}
 
-	return result
+	return
 }
