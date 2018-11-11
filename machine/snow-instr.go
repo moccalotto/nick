@@ -1,7 +1,9 @@
 package machine
 
-import "github.com/moccalotto/nick/effects"
-import "github.com/moccalotto/nick/field"
+import (
+	"github.com/moccalotto/nick/effects"
+	"github.com/moccalotto/nick/field"
+)
 
 func init() {
 	InstructionHandlers["snow"] = Snow
