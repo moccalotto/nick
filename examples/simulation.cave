@@ -1,29 +1,26 @@
 init 50 x 50
 
-cell Dead  value 0 color rgb 0 0 0 
-cell Alive value 1 color rgb 200 200 200
-
 # Simulation of classic Game Of Life
 
-simulation # same as: snow 40%
-    map Dead -> Alive 40%
-endsimulation
+snow 30%
 
 simulation # same as: evolve B3/S2
-    map Dead  nextTo 3         Alive => Alive   # Birth from three parents
-    map Alive nextTo 4,5,6,7,8 Alive => Dead    # Death from overpopulation
-    map Alive nextTo 0,1       Alive => Dead    # Death from loneliness
+    map 0  nextTo 3        * 1 => 1     # Birth from three parents
+    map 1 nextTo 4,5,6,7,8 * 1 => 0    # Death from overpopulation
+    map 1 nextTo 0,1       * 1 => 0    # Death from loneliness
 endsimulation
+
+stop!
 
 ################################################################################
 
 # Simulation of white noise
 # Much more crude than simplex or perlin
 
-cell Dead  value 0   color rgb 0   0   0
-cell Black value 1   color rgb 0   0   0
-cell Gray  value 127 color rgb 127 127 127
-cell White value 255 color rgb 255 255 255
+cell 0   alias Off   color rgb 0   0   0
+cell 1   alias Black color rgb 0   0   0
+cell 127 alias Gray  color rgb 127 127 127
+cell 255 alias White color rgb 255 255 255
 
 simulation
 
@@ -31,7 +28,7 @@ simulation
     map-rand 10% Dead => Gray
     map-rand 10% Dead => White
 
-    commit
+    commit  # same as endsimulation \n simulation
 
     map-rand 10% Black => Gray
     map-rand 10% Black => White
@@ -39,6 +36,39 @@ simulation
     map-rand 10% Gray  => White
     map-rand 10% White => Black
     map-rand 10% White => Gray
+
+endsimulation
+
+
+################################################################################
+
+# Simulation of a height map
+# Much more crude than simplex or perlin
+
+simulation
+
+    # 50% of the map is covered with cells of elevation 1
+    # Effectively same as: snow 50%
+    map-rand 50% 0 => 1
+    commit 
+
+    # 50% of the elevation 1 terrain becomes elevation 2
+    map-rand 50% 1 => 2
+    commit
+
+    # 50% of the elevation 2 terrain becomes elevation 3
+    map-rand 50% 2 => 3
+    commit
+
+    map 0 nextTo 2,3,4,5,6,7,8 * 1,2,3 => 1
+    map 1 nextTo 2,3,4,5,6,7,8 * 2,3 => 2
+
+    set $i = 2
+    loop 100    # Add 100 more rules to increment the height.
+        set $next = @[[ $i + 1]]
+        map $i nextTo 3,4,5,6,7,8 * $i => $next
+        set $i = $next
+    endloop
 
 endsimulation
 
