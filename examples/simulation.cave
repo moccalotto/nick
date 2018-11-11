@@ -1,0 +1,46 @@
+init 50 x 50
+
+cell Dead  value 0 color rgb 0 0 0 
+cell Alive value 1 color rgb 200 200 200
+
+# Simulation of classic Game Of Life
+
+simulation # same as: snow 40%
+    map Dead -> Alive 40%
+endsimulation
+
+simulation # same as: evolve B3/S2
+    map Dead  nextTo 3         Alive => Alive   # Birth from three parents
+    map Alive nextTo 4,5,6,7,8 Alive => Dead    # Death from overpopulation
+    map Alive nextTo 0,1       Alive => Dead    # Death from loneliness
+endsimulation
+
+################################################################################
+
+# Simulation of white noise
+# Much more crude than simplex or perlin
+
+cell Dead  value 0   color rgb 0   0   0
+cell Black value 1   color rgb 0   0   0
+cell Gray  value 127 color rgb 127 127 127
+cell White value 255 color rgb 255 255 255
+
+simulation
+
+    map-rand 10% Dead => Black
+    map-rand 10% Dead => Gray
+    map-rand 10% Dead => White
+
+    commit
+
+    map-rand 10% Black => Gray
+    map-rand 10% Black => White
+    map-rand 10% Gray  => Black
+    map-rand 10% Gray  => White
+    map-rand 10% White => Black
+    map-rand 10% White => Gray
+
+endsimulation
+
+
+################################################################################
