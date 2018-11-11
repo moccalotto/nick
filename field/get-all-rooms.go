@@ -32,10 +32,10 @@ func (f *Field) GetAllRoomsAdv(stopAfterNRooms int) []Area {
 				// Mark all cells in the room as inspected
 				inspected[p.X+p.Y*f.w] = true
 
-				// check if all adjacent cells are also in the room
+				// check if the 4 orthogonally adjacent cells are also in the room
 				// if not, then it's a point on the edge, and therefore
-				// constitunes the room
-				for _, ap := range p.Adjacent() {
+				// constitutes the room
+				for _, ap := range p.OrthogonalAdjacent() {
 					if !f.CoordsInRange(ap.X, ap.Y) {
 						// note: this means that cells on the very edge of a field
 						// will not be marked as edges.
