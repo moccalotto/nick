@@ -5,23 +5,15 @@ init 50 x 50
 snow 30%
 
 simulation # same as: evolve B3/S2
-    map 0  nextTo 3        * 1 => 1     # Birth from three parents
+    map 0 nextTo 3         * 1 => 1    # Birth from three parents
     map 1 nextTo 4,5,6,7,8 * 1 => 0    # Death from overpopulation
     map 1 nextTo 0,1       * 1 => 0    # Death from loneliness
 endsimulation
-
-stop!
 
 ################################################################################
 
 # Simulation of white noise
 # Much more crude than simplex or perlin
-
-cell 0   alias Off   color rgb 0   0   0
-cell 1   alias Black color rgb 0   0   0
-cell 127 alias Gray  color rgb 127 127 127
-cell 255 alias White color rgb 255 255 255
-
 simulation
 
     map-rand 10% Dead => Black
@@ -38,6 +30,8 @@ simulation
     map-rand 10% White => Gray
 
 endsimulation
+
+stop!
 
 
 ################################################################################

@@ -9,7 +9,6 @@ type Transformation struct {
 	SourceFilter    map[field.Cell]bool // The transformation only runs if the source cell is represented in this map.
 	Coverage        float64             // The transformation only runs if a die roll [0, 1) is lower than this number.
 	TargetCell      field.Cell          // The transformation returns this cell if all matches occur.
-	CheckNeighbours bool                // If true, this filter must also match the number of neighbours of the given types.
 	NeighbourTypes  []field.Cell        // The transformation only runs if the number of neighbours of the given type
 	NeighbourCounts [9]bool             //   is represented in NeighbourCounts.
 }
