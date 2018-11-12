@@ -21,8 +21,8 @@ type ThreeDExporter struct {
 
 func NewThreeDExporter(m *machine.Machine) *ThreeDExporter {
 	return &ThreeDExporter{
-		Width:   1440,
-		Height:  900,
+		Width:   1200,
+		Height:  800,
 		Title:   "Nick",
 		Machine: m,
 	}
@@ -66,8 +66,8 @@ func (e *ThreeDExporter) Export() error {
 	// Add lights to the scene
 	ambientLight := light.NewAmbient(&math32.Color{1.0, 1.0, 1.0}, 0.8)
 	app.Scene().Add(ambientLight)
-	pointLight := light.NewPoint(&math32.Color{1, 1, 1}, 5.0)
-	pointLight.SetPosition(1, 0, 2)
+	pointLight := light.NewPoint(&math32.Color{1, 1, 1}, 20.0)
+	pointLight.SetPosition(2, 10, 2)
 
 	app.Scene().Add(pointLight)
 
