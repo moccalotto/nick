@@ -20,7 +20,7 @@ func NewSnow(p float64, rng *rand.Rand) *Snow {
 
 // Turn on cells randomly throughout the field.
 func (s *Snow) ApplyToField(f *field.Field) {
-	// We cannot generate snow asynchronously because it would intorduce
+	// We cannot generate snow asynchronously because it would introduce
 	// actual randomness due to race conditions.
 	cells := f.Cells()
 

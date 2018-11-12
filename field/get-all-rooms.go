@@ -1,11 +1,10 @@
 package field
 
-func (f *Field) GetAllRooms() []Area {
-	return f.GetAllRoomsAdv(len(f.s))
+func (f *Field) AllRoomWalls() []Area {
+	return f.AllRoomWallsAdv(len(f.s))
 
 }
-func (f *Field) GetAllRoomsAdv(stopAfterNRooms int) []Area {
-	result := []Area{}
+func (f *Field) AllRoomWallsAdv(stopAfterNRooms int) (result []Area) {
 
 	// buffer to ensure that we don't look at the same area twice
 	inspected := make([]bool, len(f.s))
@@ -23,7 +22,7 @@ func (f *Field) GetAllRoomsAdv(stopAfterNRooms int) []Area {
 				continue
 			}
 
-			area, _ := f.GetAreaAround(x, y)
+			area, _ := f.AreaAround(x, y)
 
 			r := Area{}
 
@@ -32,10 +31,10 @@ func (f *Field) GetAllRoomsAdv(stopAfterNRooms int) []Area {
 				// Mark all cells in the room as inspected
 				inspected[p.X+p.Y*f.w] = true
 
-				// check if all adjacent cells are also in the room
+				// check if the 4 orthogonally adjacent cells are also in the room
 				// if not, then it's a point on the edge, and therefore
-				// constitunes the room
-				for _, ap := range p.Adjacent() {
+				// constitutes the room
+				for _, ap := range p.OrthogonalAdjacent() {
 					if !f.CoordsInRange(ap.X, ap.Y) {
 						// note: this means that cells on the very edge of a field
 						// will not be marked as edges.
@@ -55,11 +54,11 @@ func (f *Field) GetAllRoomsAdv(stopAfterNRooms int) []Area {
 			if len(r) > 0 {
 				result = append(result, r)
 				if len(result) >= stopAfterNRooms {
-					return result
+					return
 				}
 			}
 		}
 	}
 
-	return result
+	return
 }

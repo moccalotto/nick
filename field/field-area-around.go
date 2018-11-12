@@ -1,6 +1,6 @@
 package field
 
-func (f *Field) GetAreaAround(x, y int) (Area, error) {
+func (f *Field) AreaAround(x, y int) (Area, error) {
 	w := f.Width()
 	h := f.Height()
 	queue := make(Area, 1, 100)
@@ -22,7 +22,7 @@ func (f *Field) GetAreaAround(x, y int) (Area, error) {
 		result = append(result, _p)
 		inspected[_p.X+_p.Y*w] = true
 
-		for _, c := range _p.Adjacent() {
+		for _, c := range _p.OrthogonalAdjacent() {
 			// outside the map?
 			if !f.CoordsInRange(c.X, c.Y) {
 				continue

@@ -127,6 +127,43 @@ func (f *Field) ReplaceCells(w, h int, s []Cell) {
 	f.w = w
 }
 
+// Count the neighbouring cells by type
+func (f *Field) NeighbourCountByType(x, y int) (result map[Cell]int) {
+	// Check neighbours above
+	if y > 0 {
+		_y := y - 1
+		for _x := x - 1; _x <= x+1; _x++ {
+			cell := f.s[_x+_y*f.w]
+			result[cell]++
+		}
+	}
+
+	// Check neighbours on the line below
+	if y < f.h-1 {
+		_y := y + 1
+		for _x := x - 1; _x <= x+1; _x++ {
+			cell := f.s[_x+_y*f.w]
+			result[cell]++
+		}
+	}
+
+	// Check neighbour to the left
+	if x > 0 {
+		_x := x - 1
+		cell := f.s[_x+y*f.w]
+		result[cell]++
+	}
+
+	// Check neighbour to the right
+	if x > f.w-1 {
+		_x := x + 1
+		cell := f.s[_x+y*f.w]
+		result[cell]++
+	}
+
+	return
+}
+
 // Get number of neighbours
 func (f *Field) NeighbourCount(x, y int) int {
 	neighbourCount := 0

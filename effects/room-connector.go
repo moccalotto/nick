@@ -50,7 +50,7 @@ func (rc *RoomConnector) ApplyToField(f *field.Field) {
 		// we need to fetch all rooms on every iteration
 		// because tunnelling from one room to another
 		// may have connected other rooms as well.
-		rooms := f.GetAllRooms()
+		rooms := f.AllRoomWalls()
 		roomCount := len(rooms)
 
 		if roomCount <= rc.MaxRooms {

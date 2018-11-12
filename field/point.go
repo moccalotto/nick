@@ -10,8 +10,8 @@ func (p1 Point) DistSq(p2 Point) int {
 	return dx*dx + dy*dy
 }
 
-// Adjacent returns the 4 points to the north, east, south and west of p
-func (p Point) Adjacent() Area {
+// OrthogonalAdjacent returns the 4 points to the north, east, south and west of p
+func (p Point) OrthogonalAdjacent() Area {
 	return []Point{
 		Point{p.X + 1, p.Y}, // east
 		Point{p.X - 1, p.Y}, // west
