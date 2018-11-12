@@ -43,10 +43,10 @@ func (e *DefaultExporter) image() (*ImageExporter, error) {
 		}
 	}
 
-	ie.Rect = ie.makeRect(width, height)
+	ie.Rect = ie.MakeRect(width, height)
 
 	if str, ok := e.Machine.Vars[".export.algorithm"]; ok {
-		if ie.Algorithm, err = ie.parseAlgorithmString(str); err != nil {
+		if ie.Algorithm, err = ie.ParseAlgorithmString(str); err != nil {
 			return nil, err
 		}
 	}
@@ -159,8 +159,6 @@ func (e *DefaultExporter) Export() error {
 		exporter, err = e.iterm()
 	case "text":
 		exporter, err = e.text()
-	case "3d":
-		exporter = NewThreeDExporter(e.Machine)
 	default:
 		return fmt.Errorf("Unknown exporter: %s", exporterName)
 	}

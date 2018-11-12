@@ -1,4 +1,5 @@
 # Large initial sizes yields multi-room or
+
 # complex caves with stalactites/columns, etc.
 # Small initial sizes often yield simple caves
 # Examples:
@@ -14,12 +15,13 @@ set $initial_coverage   between 30% and 45%
 set $min_area_size      between 1 and @[[ randint(ceil($height / 6)) ]]
 set $egress_count       between 1 and @[[ randint(randint(randint(4))) + 1 ]] # number between 1 and 4, where 1 is the most likely
 set $egress_size        between 2 and @[[ max(2, randint(ceil($height / 6))) ]]
+set $ratio              = @[[ $width / $height ]]
 
+preview-window   1400 x @[[ floor(1400 / $ratio) ]]
 background-file  assets/backgrounds/paper_by_darkwood67/old_paper_by_darkwood67.jpeg
 wall-color       RGBA(0x44,0x44,0x44,0xcc)
 grid-color       RGBA(0x44,0x44,0x66,0x55)
 grid             $width x $height
-
 
 init $width x $height
 
@@ -31,6 +33,8 @@ border 5  10%
 
 # standard excavator
 evolve B5678/S345678
+
+preview
 
 loop $egress_count
     egress random $egress_size
@@ -70,3 +74,4 @@ endloop
 set $currentHeight = @height
 
 border @[[ $currentHeight / $height ]] 100% (off)
+preview

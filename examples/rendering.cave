@@ -1,0 +1,10 @@
+init 31 x 31
+
+snow 40%
+
+loop 100 
+    evolve B3/S23 # game of life
+    preview 1200 x 800
+endloop 
+
+render  14032 x 9921 thing-{counter}.png

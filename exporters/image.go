@@ -79,7 +79,7 @@ func NewImageExporter(m *machine.Machine) *ImageExporter {
 }
 
 // Calculate the output dimensions of the image
-func (this *ImageExporter) makeRect(w, h int) image.Rectangle {
+func (this *ImageExporter) MakeRect(w, h int) image.Rectangle {
 	if h == 0 && w == 0 {
 		h = this.Machine.Cave.Height()
 		w = this.Machine.Cave.Width()
@@ -110,7 +110,7 @@ func (this *ImageExporter) detectFormat() (string, error) {
 	return "", fmt.Errorf("Could not determine file type from suffix: %s", suffix)
 }
 
-func (this *ImageExporter) parseAlgorithmString(algorithm string) (imaging.ResampleFilter, error) {
+func (this *ImageExporter) ParseAlgorithmString(algorithm string) (imaging.ResampleFilter, error) {
 	switch algorithm {
 	case "NearestNeighbor":
 		// NearestNeighbor is a nearest-neighbor filter (no anti-aliasing).
