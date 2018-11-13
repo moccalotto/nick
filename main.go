@@ -11,6 +11,7 @@ import (
 	"log"
 	"os"
 	"strconv"
+	"time"
 )
 
 var (
@@ -26,12 +27,12 @@ var (
 
 func init() {
 	machine.InstructionHandlers["preview"] = PreviewInstr
-	machine.InstructionHandlers["preview-window"] = PreviewWindowResizeInstr
+	machine.InstructionHandlers["window"] = SetWindowSizeInstr
 
-	scale = 1.0 / ebiten.DeviceScaleFactor() // disable osx scaling
+	scale = 1.0 / ebiten.DeviceScaleFactor() // Disable HiDPI compensation
 }
 
-func PreviewWindowResizeInstr(m *machine.Machine) {
+func SetWindowSizeInstr(m *machine.Machine) {
 	m.Assert(m.HasArg(2), "Correct usage: 'preview-size WIDTH x HEIGHT'")
 	m.Assert(m.ArgAsString(1) == "x", "Correct usage: 'preview-size WIDTH x HEIGHT'")
 
@@ -52,6 +53,10 @@ func PreviewInstr(m *machine.Machine) {
 
 	currentImage, err = ebiten.NewImageFromImage(img, ebiten.FilterDefault)
 	m.Assert(err == nil, "Preview failed: %s", err)
+
+	if m.HasArg(0) {
+		time.Sleep(time.Duration(m.ArgAsFloat(0) * float64(time.Second)))
+	}
 }
 
 func newMachineFromFile(filename string) *machine.Machine {
