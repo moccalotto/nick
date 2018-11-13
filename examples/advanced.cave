@@ -15,9 +15,8 @@ set $initial_coverage   between 30% and 45%
 set $min_area_size      between 1 and @[[ randint(ceil($height / 6)) ]]
 set $egress_count       between 1 and @[[ randint(randint(randint(4))) + 1 ]] # number between 1 and 4, where 1 is the most likely
 set $egress_size        between 2 and @[[ max(2, randint(ceil($height / 6))) ]]
-set $ratio              = @[[ $width / $height ]]
 
-preview-window   1400 x @[[ floor(1400 / $ratio) ]]
+window           1400 x @[[ floor(1400 * $height / $width) ]]
 background-file  assets/backgrounds/paper_by_darkwood67/old_paper_by_darkwood67.jpeg
 wall-color       RGBA(0x44,0x44,0x44,0xcc)
 grid-color       RGBA(0x44,0x44,0x66,0x55)
@@ -48,6 +47,7 @@ loop 3
     scale 1.5
     # standard excavator
     evolve B5678/S345678
+    preview
 endloop
 
 # Dig tunnels between all separated rooms
@@ -61,6 +61,8 @@ loop 1000
 
     # smooth edges
     evolve B5678/S5678
+
+    preview
 
     if @cells > 2000000
         break-loop

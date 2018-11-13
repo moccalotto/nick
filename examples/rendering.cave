@@ -1,10 +1,13 @@
-init 31 x 31
+init 120 x 80
+
+window 1200 x 800
+suggest export.algorithm = Box
 
 snow 40%
 
-loop 100 
+loop 1000
     evolve B3/S23 # game of life
-    preview 1200 x 800
+    preview 0.1 # preview the image for 100ms before rendering next frame
 endloop 
 
-render  14032 x 9921 thing-{counter}.png
+# render  14032 x 9921 thing-{counter}.png
