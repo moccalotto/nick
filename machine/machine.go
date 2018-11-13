@@ -157,6 +157,7 @@ func (m *Machine) MustGetInt(a Arg) int {
 
 func (m *Machine) CurrentInstruction() Instruction {
 	m.Assert(m.State.PC < len(m.Tape), "Program Counter is out of scope. Was the machine even loaded? (%+v)", m)
+	m.Assert(m.State.PC >= 0, "Program Counter is out of scope. Was the machine even loaded? (%+v)", m)
 
 	return m.Tape[m.State.PC]
 }
