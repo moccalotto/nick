@@ -192,8 +192,6 @@ func main() {
 		if err := m.Execute(); err != nil {
 			panic(err)
 		}
-		PreviewInstr(m)
-
 		done = true
 	}()
 
