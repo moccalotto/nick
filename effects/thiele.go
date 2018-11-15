@@ -1,8 +1,9 @@
 package effects
 
 import (
-	"github.com/moccalotto/nick/field"
 	"math"
+
+	"github.com/moccalotto/nick/field"
 )
 
 type ThielePattern struct {
@@ -101,7 +102,6 @@ func (t *ThielePattern) mapper(f *field.Field, x, y int, c field.Cell) field.Cel
 	for _, c := range numbers {
 		if c == c1 {
 			return field.OnCell
-			break
 		}
 	}
 

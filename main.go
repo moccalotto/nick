@@ -2,16 +2,17 @@ package main
 
 import (
 	"flag"
-	"github.com/hajimehoshi/ebiten"
-	"github.com/hajimehoshi/ebiten/ebitenutil"
-	"github.com/moccalotto/nick/exporters"
-	"github.com/moccalotto/nick/machine"
-	"github.com/moccalotto/nick/utils"
 	"io/ioutil"
 	"log"
 	"os"
 	"strconv"
 	"time"
+
+	"github.com/hajimehoshi/ebiten"
+	"github.com/hajimehoshi/ebiten/ebitenutil"
+	"github.com/moccalotto/nick/exporters"
+	"github.com/moccalotto/nick/machine"
+	"github.com/moccalotto/nick/utils"
 )
 
 var (
