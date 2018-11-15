@@ -7,7 +7,4 @@ snow 40%
 
 loop 1000
     evolve B3/S23 # game of life
-    preview 0.1 # preview the image for 100ms before rendering next frame
 endloop 
-
-# render  14032 x 9921 thing-{counter}.png

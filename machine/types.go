@@ -42,6 +42,8 @@ type ExceptionHandler func(m *Machine, msg interface{}, a ...interface{})
 
 type InstructionHandler func(m *Machine)
 
+type Ticker func(m *Machine, i *Instruction) error
+
 type InstructionFilter map[string]bool
 
 type VarBag map[string]string

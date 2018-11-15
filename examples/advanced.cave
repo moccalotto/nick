@@ -7,16 +7,16 @@
 # 60x20: complex one-to-two room caves
 #        (depending on how much snow is added)
 
-suggest export.type = iterm
-
 set $width              between 25 and 70
 set $height             between 25 and $width
 set $initial_coverage   between 30% and 45%
-set $min_area_size      between 1 and @[[ randint(ceil($height / 6)) ]]
-set $egress_count       between 1 and @[[ randint(randint(randint(4))) + 1 ]] # number between 1 and 4, where 1 is the most likely
-set $egress_size        between 2 and @[[ max(2, randint(ceil($height / 6))) ]]
+set $min_area_size      = @[[ 1 + randint(ceil($height / 6)) ]]
+set $egress_count       = @[[ 1 + randint(randint(1))  ]]
+set $egress_size        = @[[ 1 + randint(ceil($height / 6)) ]]
+set $target_width       = 1400
+set $target_height      = @[[ floor(1400 * $height / $width) ]]
 
-window           1400 x @[[ floor(1400 * $height / $width) ]]
+window           $target_width x $target_height
 background-file  assets/backgrounds/paper_by_darkwood67/old_paper_by_darkwood67.jpeg
 wall-color       RGBA(0x44,0x44,0x44,0xcc)
 grid-color       RGBA(0x44,0x44,0x66,0x55)
@@ -26,15 +26,15 @@ init $width x $height
 
 snow $initial_coverage
 
-border 3 100%
-border 4  30%
-border 5  10%
+# Add borders/wall around the periphery
+border 3 100%       # 3 lines covered with 100% wall
+border 4  30%       # 1 extra line with ≥30% wall
+border 5  10%       # 1 extra line with 10% wall
 
 # standard excavator
 evolve B5678/S345678
 
-preview
-
+# make exits
 loop $egress_count
     egress random $egress_size
 endloop
@@ -45,30 +45,26 @@ prune-small-areas $min_area_size
 # Scale up and excavate
 loop 3
     scale 1.5
+
     # standard excavator
     evolve B5678/S345678
-    preview
 endloop
 
 # Dig tunnels between all separated rooms
 connect-rooms 3%
 
+# scale up to desired height while smoothing edges.
+set $scale_factor = 1.5
 loop 1000
     # smooth edges
     evolve B5678/S5678
 
-    scale 1.5
+    scale $scale_factor
 
     # smooth edges
     evolve B5678/S5678
 
-    preview
-
-    if @cells > 2000000
-        break-loop
-    endif
-
-    if @height > 960
+    if @height > @[[ $target_height / $scale_factor]]
         break-loop
     endif
 endloop
@@ -76,4 +72,5 @@ endloop
 set $currentHeight = @height
 
 border @[[ $currentHeight / $height ]] 100% (off)
-preview
+
+window @width x @height
