@@ -72,5 +72,3 @@ endloop
 set $currentHeight = @height
 
 border @[[ $currentHeight / $height ]] 100% (off)
-
-window @width x @height
