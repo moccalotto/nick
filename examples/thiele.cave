@@ -1,26 +1,20 @@
 # This grid is twice the size of the thile pattern + 1 cell
-init 143 x 143
-
-# Let's output directly to the iterm
-suggest export.type  = iterm
+init 71 x 71
 
 # Print the pattern
 thiele 71
-
-## If we're only exporting to raw text, we won't do any scaling.
-if $.export.type == text
-    stop!
-endif
+window 1200 x 1200
 
 # Remove outliers and make sure all areas are accessible.
-prune-small-areas 20
-connect-rooms 1
+#prune-small-areas 20
+#connect-rooms 1
 
 # Scale up with edge smoothing
 # We initiate a very long loop, but we break out of it as soon as we have reached our target height
 loop 100
-    scale 1.25
-    evolve B5678/S5678
+    scale 2
+    evolve B45678/S45678
+    preview
 
     # We want to stop just before the height reaches 1400
     if @height > 1120 # 1120 * 1.25 ≈ 1400

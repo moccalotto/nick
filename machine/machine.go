@@ -241,12 +241,18 @@ func (m *Machine) ShouldSkip(i *Instruction) bool {
 // Execute runs the script.
 // NOTE that this will modify the machine's properties, except for the tape.
 // If you want the machine to be pristine, you should clone the machine beforehand.
-func (m *Machine) Execute() error {
+func (m *Machine) Execute(ticker Ticker) error {
 	m.StartedAt = time.Now()
 	m.State.Cond = true
 
 	for m.State.PC = 0; m.State.PC < len(m.Tape); m.State.PC++ {
-		m.execCurrentInstruction()
+		executed := m.execCurrentInstruction()
+		if executed == true && ticker != nil {
+			i := m.CurrentInstruction()
+			if err := ticker(m, &i); err != nil {
+				return err
+			}
+		}
 
 		if err := m.checkRestrictions(); err != nil {
 			return err
@@ -256,19 +262,23 @@ func (m *Machine) Execute() error {
 	return nil
 }
 
-func (m *Machine) execCurrentInstruction() {
+// Execute current instruction
+// Returns true if instruction was executed successfully.
+func (m *Machine) execCurrentInstruction() bool {
 	i := m.Tape[m.State.PC]
 
 	if m.ShouldSkip(&i) {
-		return
+		return false
 	}
 
 	handler, ok := InstructionHandlers[i.Cmd]
 
 	if !ok {
 		m.Throw("Unknown instruction '%s' on line %d (%+v)", i.Cmd, i.Line, i)
-		return
+		return false
 	}
 
 	handler(m)
+
+	return true
 }

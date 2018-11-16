@@ -6,7 +6,6 @@ import (
 	"log"
 	"os"
 	"strconv"
-	"time"
 
 	"github.com/hajimehoshi/ebiten"
 	"github.com/hajimehoshi/ebiten/ebitenutil"
@@ -17,17 +16,15 @@ import (
 
 var (
 	m             *machine.Machine
-	iterations    int  = 0
-	width         int  = 800
-	height        int  = 600
-	done          bool = false
+	ticks         int = 0
+	width         int = 800
+	height        int = 600
 	scale         float64
 	currentImage  *ebiten.Image
 	imageExporter *exporters.ImageExporter
 )
 
 func init() {
-	machine.InstructionHandlers["preview"] = PreviewInstr
 	machine.InstructionHandlers["window"] = SetWindowSizeInstr
 
 	scale = 1.0 / ebiten.DeviceScaleFactor() // Disable HiDPI compensation
@@ -43,7 +40,11 @@ func SetWindowSizeInstr(m *machine.Machine) {
 	ebiten.SetScreenSize(width, height)
 }
 
-func PreviewInstr(m *machine.Machine) {
+func render(m *machine.Machine) {
+	if m.Cave == nil {
+		return
+	}
+
 	var err error
 
 	imageExporter, err = newImageExporter(m, width, height)
@@ -55,9 +56,7 @@ func PreviewInstr(m *machine.Machine) {
 	currentImage, err = ebiten.NewImageFromImage(img, ebiten.FilterDefault)
 	m.Assert(err == nil, "Preview failed: %s", err)
 
-	if m.HasArg(0) {
-		time.Sleep(time.Duration(m.ArgAsFloat(0) * float64(time.Second)))
-	}
+	return
 }
 
 func newMachineFromFile(filename string) *machine.Machine {
@@ -73,8 +72,7 @@ func newMachineFromFile(filename string) *machine.Machine {
 }
 
 func gameLoop(screen *ebiten.Image) error {
-
-	iterations++
+	ticks++
 
 	if ebiten.IsKeyPressed(ebiten.KeyEscape) {
 		log.Println("Done")
@@ -86,15 +84,13 @@ func gameLoop(screen *ebiten.Image) error {
 		return nil
 	}
 
-	if m == nil {
-		return ebitenutil.DebugPrint(screen, "Waiting for machine to execute. "+strconv.Itoa(iterations)+" ...")
-	}
-
 	if currentImage == nil {
-		return ebitenutil.DebugPrint(screen, "Waiting for preview to become ready. "+strconv.Itoa(m.State.PC)+" ...")
+		return ebitenutil.DebugPrint(screen, "Waiting for machine to execute. "+strconv.Itoa(ticks)+" ...")
 	}
 
-	return screen.DrawImage(currentImage, nil)
+	err := screen.DrawImage(currentImage, nil)
+
+	return err
 }
 
 func newImageExporter(m *machine.Machine, width, height int) (*exporters.ImageExporter, error) {
@@ -190,12 +186,16 @@ func main() {
 
 	m = newMachineFromFile(*f)
 	go func() {
-		if err := m.Execute(); err != nil {
+		tick := func(m *machine.Machine, i *machine.Instruction) error {
+			switch i.Cmd {
+			case "scale", "snow", "evolve", "border":
+				render(m)
+			}
+			return nil
+		}
+		if err := m.Execute(tick); err != nil {
 			panic(err)
 		}
-		PreviewInstr(m)
-
-		done = true
 	}()
 
 	err := ebiten.Run(gameLoop, width, height, scale, "Nick")

@@ -74,7 +74,11 @@ func (m *Machine) initCalculator() {
 			case "rand":
 				return rand.Float64()
 			case "randint":
-				return float64(rand.Intn(int(args[0])))
+				max := int(args[0])
+				if max <= 0 {
+					return 0
+				}
+				return float64(rand.Intn(max))
 			case "round":
 				return math.Round(args[0])
 			case "sin":

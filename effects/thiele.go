@@ -115,6 +115,7 @@ func (t *ThielePattern) remaind(c complex128) field.Point {
 	return cGauss(floatpart * t.Base)
 }
 
+// ApplyToField creates a Thiele pattern on a field.
 func (t *ThielePattern) ApplyToField(f *field.Field) {
 	numbers := t.residueNumbers()
 
@@ -125,7 +126,6 @@ func (t *ThielePattern) ApplyToField(f *field.Field) {
 		for _, baseRemainder := range numbers {
 			if baseRemainder == remaind {
 				return t.Cell
-				break
 			}
 		}
 
