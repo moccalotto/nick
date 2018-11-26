@@ -259,6 +259,8 @@ func (m *Machine) Execute(ticker Ticker) error {
 		}
 	}
 
+	ticker(m, nil)
+
 	return nil
 }
 

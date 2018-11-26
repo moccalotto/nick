@@ -16,6 +16,7 @@ import (
 
 var (
 	m             *machine.Machine
+	caveFileName  string
 	ticks         int = 0
 	width         int = 800
 	height        int = 600
@@ -74,7 +75,7 @@ func newMachineFromFile(filename string) *machine.Machine {
 func gameLoop(screen *ebiten.Image) error {
 	ticks++
 
-	if ebiten.IsKeyPressed(ebiten.KeyEscape) {
+	if ebiten.IsKeyPressed(ebiten.KeyEscape) || ebiten.IsKeyPressed(ebiten.KeyQ) {
 		log.Println("Done")
 		os.Exit(0)
 		return nil
@@ -85,10 +86,15 @@ func gameLoop(screen *ebiten.Image) error {
 	}
 
 	if currentImage == nil {
-		return ebitenutil.DebugPrint(screen, "Waiting for machine to execute. "+strconv.Itoa(ticks)+" ...")
+		return ebitenutil.DebugPrint(screen, "Creating Map")
 	}
 
 	err := screen.DrawImage(currentImage, nil)
+
+	if ebiten.IsKeyPressed(ebiten.KeyN) {
+		currentImage = nil
+		drawAnImage()
+	}
 
 	return err
 }
@@ -175,6 +181,24 @@ func newImageExporter(m *machine.Machine, width, height int) (*exporters.ImageEx
 	return ie, nil
 }
 
+func drawAnImage() {
+	m = newMachineFromFile(caveFileName)
+	tick := func(m *machine.Machine, i *machine.Instruction) error {
+		if i == nil {
+			render(m)
+			return nil
+		}
+
+		return nil
+	}
+	go func() {
+		if err := m.Execute(tick); err != nil {
+			panic(err)
+		}
+	}()
+
+}
+
 func main() {
 	f := flag.String("script", "examples/empty.cave", "Path to script to execute")
 	flag.Parse()
@@ -184,20 +208,9 @@ func main() {
 		return
 	}
 
-	m = newMachineFromFile(*f)
-	go func() {
-		tick := func(m *machine.Machine, i *machine.Instruction) error {
-			switch i.Cmd {
-			case "scale", "snow", "evolve", "border":
-				render(m)
-			}
-			return nil
-		}
-		if err := m.Execute(tick); err != nil {
-			panic(err)
-		}
-	}()
+	caveFileName = *f
 
+	drawAnImage()
 	err := ebiten.Run(gameLoop, width, height, scale, "Nick")
 	m.Assert(err == nil, "Error in render-loop")
 }
